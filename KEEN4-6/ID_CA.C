@@ -56,12 +56,6 @@ loaded into the data segment
 
 typedef struct
 {
-  unsigned bit0,bit1;	// 0-255 is a character, > is a pointer to a node
-} huffnode;
-
-
-typedef struct
-{
 	unsigned	RLEWtag;
 	long		headeroffsets[100];
 	byte		tileinfo[];
@@ -104,28 +98,12 @@ void	(*finishcachebox)	(void);
 extern	long	far	CGAhead;
 extern	long	far	TGAhead;
 extern	long	far	EGAhead;
-extern	byte	CGAdict;
-extern	byte	EGAdict;
 extern	byte	far	maphead;
-extern	byte	mapdict;
 extern	byte	far	audiohead;
-extern	byte	audiodict;
 
 
 long		_seg *grstarts;	// array of offsets in egagraph, -1 for sparse
 long		_seg *audiostarts;	// array of offsets in audio / audiot
-
-#ifdef GRHEADERLINKED
-huffnode	*grhuffman;
-#else
-huffnode	grhuffman[255];
-#endif
-
-#ifdef AUDIOHEADERLINKED
-huffnode	*audiohuffman;
-#else
-huffnode	audiohuffman[255];
-#endif
 
 
 int			grhandle;		// handle to EGAGRAPH
@@ -299,198 +277,15 @@ done:
 
 
 /*
-===============
-=
-= CAL_OptimizeNodes
-=
-= Goes through a huffman table and changes the 256-511 node numbers to the
-= actular address of the node.  Must be called before CAL_HuffExpand
-=
-===============
-*/
-#if GRMODE == CGAGR || GRMODE == EGAGR
-void CAL_OptimizeNodes (huffnode *table)
-{
-  huffnode *node;
-  int i;
-
-  node = table;
-
-  for (i=0;i<255;i++)
-  {
-	if (node->bit0 >= 256)
-	  node->bit0 = (unsigned)(table+(node->bit0-256));
-	if (node->bit1 >= 256)
-	  node->bit1 = (unsigned)(table+(node->bit1-256));
-	node++;
-  }
-}
-#endif
-
-
-/*
 ======================
 =
-= CAL_HuffExpand
+= CAL_Lzsa2Expand
 =
-= Length is the length of the EXPANDED data
 =
 ======================
 */
-#if GRMODE == CGAGR || GRMODE == EGAGR
-void CAL_HuffExpand (byte huge *source, byte huge *dest,
-  long length,huffnode *hufftable)
-{
-//  unsigned bit,byte,node,code;
-  unsigned sourceseg,sourceoff,destseg,destoff,endoff;
-  huffnode *headptr;
-//  huffnode *nodeon;
 
-  headptr = hufftable+254;	// head node is allways node 254
-
-  source++;	// normalize
-  source--;
-  dest++;
-  dest--;
-
-  sourceseg = FP_SEG(source);
-  sourceoff = FP_OFF(source);
-  destseg = FP_SEG(dest);
-  destoff = FP_OFF(dest);
-  endoff = destoff+length;
-
-//
-// ds:si source
-// es:di dest
-// ss:bx node pointer
-//
-
-	if (length <0xfff0)
-	{
-
-//--------------------------
-// expand less than 64k of data
-//--------------------------
-
-asm mov	bx,[headptr]
-
-asm	mov	si,[sourceoff]
-asm	mov	di,[destoff]
-asm	mov	es,[destseg]
-asm	mov	ds,[sourceseg]
-asm	mov	ax,[endoff]
-
-asm	mov	ch,[si]				// load first byte
-asm	inc	si
-asm	mov	cl,1
-
-expandshort:
-asm	test	ch,cl			// bit set?
-asm	jnz	bit1short
-asm	mov	dx,[ss:bx]			// take bit0 path from node
-asm	shl	cl,1				// advance to next bit position
-asm	jc	newbyteshort
-asm	jnc	sourceupshort
-
-bit1short:
-asm	mov	dx,[ss:bx+2]		// take bit1 path
-asm	shl	cl,1				// advance to next bit position
-asm	jnc	sourceupshort
-
-newbyteshort:
-asm	mov	ch,[si]				// load next byte
-asm	inc	si
-asm	mov	cl,1				// back to first bit
-
-sourceupshort:
-asm	or	dh,dh				// if dx<256 its a byte, else move node
-asm	jz	storebyteshort
-asm	mov	bx,dx				// next node = (huffnode *)code
-asm	jmp	expandshort
-
-storebyteshort:
-asm	mov	[es:di],dl
-asm	inc	di					// write a decopmpressed byte out
-asm	mov	bx,[headptr]		// back to the head node for next bit
-
-asm	cmp	di,ax				// done?
-asm	jne	expandshort
-	}
-	else
-	{
-
-//--------------------------
-// expand more than 64k of data
-//--------------------------
-
-  length--;
-
-asm mov	bx,[headptr]
-asm	mov	cl,1
-
-asm	mov	si,[sourceoff]
-asm	mov	di,[destoff]
-asm	mov	es,[destseg]
-asm	mov	ds,[sourceseg]
-
-asm	lodsb			// load first byte
-
-expand:
-asm	test	al,cl		// bit set?
-asm	jnz	bit1
-asm	mov	dx,[ss:bx]	// take bit0 path from node
-asm	jmp	gotcode
-bit1:
-asm	mov	dx,[ss:bx+2]	// take bit1 path
-
-gotcode:
-asm	shl	cl,1		// advance to next bit position
-asm	jnc	sourceup
-asm	lodsb
-asm	cmp	si,0x10		// normalize ds:si
-asm  	jb	sinorm
-asm	mov	cx,ds
-asm	inc	cx
-asm	mov	ds,cx
-asm	xor	si,si
-sinorm:
-asm	mov	cl,1		// back to first bit
-
-sourceup:
-asm	or	dh,dh		// if dx<256 its a byte, else move node
-asm	jz	storebyte
-asm	mov	bx,dx		// next node = (huffnode *)code
-asm	jmp	expand
-
-storebyte:
-asm	mov	[es:di],dl
-asm	inc	di		// write a decopmpressed byte out
-asm	mov	bx,[headptr]	// back to the head node for next bit
-
-asm	cmp	di,0x10		// normalize es:di
-asm  	jb	dinorm
-asm	mov	dx,es
-asm	inc	dx
-asm	mov	es,dx
-asm	xor	di,di
-dinorm:
-
-asm	sub	[WORD PTR ss:length],1
-asm	jnc	expand
-asm  	dec	[WORD PTR ss:length+2]
-asm	jns	expand		// when length = ffff ffff, done
-
-	}
-
-asm	mov	ax,ss
-asm	mov	ds,ax
-
-}
-
-#elif GRMODE == TGAGR
-
-void CAL_HuffExpand (byte huge *source, byte huge *dest,
-  long length,huffnode *hufftable)
+void CAL_Lzsa2Expand (byte huge *source, byte huge *dest)
 {
 	unsigned sourceseg,sourceoff,destseg,destoff;
 
@@ -730,7 +525,6 @@ asm	mov	ds,ax
 asm	mov	es,ax
 }
 
-#endif
 
 
 /*
@@ -1006,14 +800,8 @@ void CAL_SetupGrFile (void)
 #ifdef GRHEADERLINKED
 
 #if GRMODE == EGAGR
-	grhuffman = (huffnode *)&EGAdict;
-	CAL_OptimizeNodes (grhuffman);
-	
 	grstarts = (long _seg *)FP_SEG(&EGAhead);
 #elif GRMODE == CGAGR
-	grhuffman = (huffnode *)&CGAdict;
-	CAL_OptimizeNodes (grhuffman);
-	
 	grstarts = (long _seg *)FP_SEG(&CGAhead);
 #elif GRMODE == TGAGR
 	grstarts = (long _seg *)FP_SEG(&TGAhead);
@@ -1021,17 +809,6 @@ void CAL_SetupGrFile (void)
 
 #else
 
-//
-// load ???dict.ext (huffman dictionary for graphics files)
-//
-
-	if ((handle = open(GREXT"DICT."EXTENSION,
-		 O_RDONLY | O_BINARY, S_IREAD)) == -1)
-		Quit ("Can't open "GREXT"DICT."EXTENSION"!");
-
-	read(handle, &grhuffman, sizeof(grhuffman));
-	close(handle);
-	CAL_OptimizeNodes (grhuffman);
 //
 // load the data offsets from ???head.ext
 //
@@ -1064,7 +841,7 @@ void CAL_SetupGrFile (void)
 	CAL_GetGrChunkLength(STRUCTPIC);		// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
-	CAL_HuffExpand (compseg, (byte huge *)pictable,NUMPICS*sizeof(pictabletype),grhuffman);
+	CAL_Lzsa2Expand (compseg, (byte huge *)pictable);
 	MM_FreePtr(&compseg);
 #endif
 
@@ -1073,7 +850,7 @@ void CAL_SetupGrFile (void)
 	CAL_GetGrChunkLength(STRUCTPICM);		// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
-	CAL_HuffExpand (compseg, (byte huge *)picmtable,NUMPICS*sizeof(pictabletype),grhuffman);
+	CAL_Lzsa2Expand (compseg, (byte huge *)picmtable);
 	MM_FreePtr(&compseg);
 #endif
 
@@ -1082,7 +859,7 @@ void CAL_SetupGrFile (void)
 	CAL_GetGrChunkLength(STRUCTSPRITE);	// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
-	CAL_HuffExpand (compseg, (byte huge *)spritetable,NUMSPRITES*sizeof(spritetabletype),grhuffman);
+	CAL_Lzsa2Expand (compseg, (byte huge *)spritetable);
 	MM_FreePtr(&compseg);
 #endif
 
@@ -1163,10 +940,6 @@ void CAL_SetupAudioFile (void)
 	CA_FarRead(handle, (byte far *)audiostarts, length);
 	close(handle);
 #else
-#if GRMODE == CGAGR || GRMODE == EGAGR
-	audiohuffman = (huffnode *)&audiodict;
-	CAL_OptimizeNodes (audiohuffman);
-#endif
 	audiostarts = (long _seg *)FP_SEG(&audiohead);
 #endif
 
@@ -1307,7 +1080,7 @@ void CA_CacheAudioChunk (int chunk)
 	MM_GetPtr (&(memptr)audiosegs[chunk],expanded);
 	if (mmerror)
 		goto done;
-	CAL_HuffExpand (source,audiosegs[chunk],expanded,audiohuffman);
+	CAL_Lzsa2Expand (source,audiosegs[chunk]);
 
 done:
 	if (compressed>BUFFERSIZE)
@@ -1508,7 +1281,7 @@ void CAL_CacheSprite (int chunk, byte far *compressed)
 //
 // expand the unshifted shape
 //
-	CAL_HuffExpand (compressed, &dest->data[0],smallplane*2,grhuffman);
+	CAL_Lzsa2Expand (compressed, &dest->data[0]);
 
 #endif
 
@@ -1537,7 +1310,7 @@ void CAL_CacheSprite (int chunk, byte far *compressed)
 //
 // expand the unshifted shape
 //
-	CAL_HuffExpand (compressed, &dest->data[0],smallplane*5,grhuffman);
+	CAL_Lzsa2Expand (compressed, &dest->data[0]);
 
 //
 // make the shifts!
@@ -1674,7 +1447,7 @@ void CAL_ExpandGrChunk (int chunk, byte far *source)
 		MM_GetPtr (&grsegs[chunk],expanded);
 		if (mmerror)
 			return;
-		CAL_HuffExpand (source,grsegs[chunk],expanded,grhuffman);
+		CAL_Lzsa2Expand (source,grsegs[chunk]);
 	}
 }
 
