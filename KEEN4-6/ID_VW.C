@@ -83,7 +83,6 @@ void	VWL_MeasureString (char far *string, word *width, word *height,
 		fontstruct _seg *font);
 void 	VWL_DrawCursor (void);
 void 	VWL_EraseCursor (void);
-void 	VWL_DBSetup (void);
 void	VWL_UpdateScreenBlocks (void);
 
 
@@ -1218,19 +1217,6 @@ void VW_FixRefreshBuffer (void)
 	VW_ScreenToScreen (displayofs,bufferofs,PORTTILESWIDE*4*CHARWIDTH,
 		(PORTTILESHIGH-1)*16);
 #endif
-}
-
-
-/*
-======================
-=
-= VW_QuitDoubleBuffer
-=
-======================
-*/
-
-void VW_QuitDoubleBuffer (void)
-{
 }
 
 

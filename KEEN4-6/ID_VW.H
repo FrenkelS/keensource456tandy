@@ -75,6 +75,7 @@
 #endif
 
 #if GRMODE == CGAGR
+
 #define WHITE			3			// graphics mode independant colors
 #define BLACK			0
 #define FIRSTCOLOR		1
@@ -99,7 +100,6 @@
 
 #if GRMODE == EGAGR
 #define SCREENXMASK		(~7)
-#define SCREENXPLUS		(7)
 #define SCREENXDIV		(8)
 #endif
 
