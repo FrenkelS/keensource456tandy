@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is primarily based on:
@@ -960,9 +964,10 @@ SD_SetMusicMode(SMMode mode)
 {
 	boolean	result;
 
-	SD_FadeOutMusic();
-	while (SD_MusicPlaying())
-		;
+	if (MusicMode == smm_AdLib)
+	{
+		SD_MusicOff();
+	}
 
 	switch (mode)
 	{
@@ -1291,46 +1296,4 @@ asm	cli
 	}
 
 asm	popf
-}
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	SD_FadeOutMusic() - starts fading out the music. Call SD_MusicPlaying()
-//		to see if the fadeout is complete
-//
-///////////////////////////////////////////////////////////////////////////
-void
-SD_FadeOutMusic(void)
-{
-	switch (MusicMode)
-	{
-	case smm_AdLib:
-		// DEBUG - quick hack to turn the music off
-		SD_MusicOff();
-		break;
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	SD_MusicPlaying() - returns true if music is currently playing, false if
-//		not
-//
-///////////////////////////////////////////////////////////////////////////
-boolean
-SD_MusicPlaying(void)
-{
-	boolean	result;
-
-	switch (MusicMode)
-	{
-	case smm_AdLib:
-		result = false;
-		// DEBUG - not written
-		break;
-	default:
-		result = false;
-	}
-
-	return(result);
 }

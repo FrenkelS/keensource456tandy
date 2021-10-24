@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is primarily based on:
@@ -193,10 +197,8 @@ extern	void	SD_Startup(void),
 				SD_StartMusic(MusicGroup far *music),
 				SD_MusicOn(void),
 				SD_MusicOff(void),
-				SD_FadeOutMusic(void),
 				SD_SetUserHook(void (*hook)(void));
-extern	boolean	SD_MusicPlaying(void),
-				SD_SetSoundMode(SDMode mode),
+extern	boolean	SD_SetSoundMode(SDMode mode),
 				SD_SetMusicMode(SMMode mode);
 extern	word	SD_SoundPlaying(void);
 
