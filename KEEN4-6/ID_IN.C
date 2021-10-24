@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is primarily based on:
@@ -63,11 +67,6 @@
 		word		GravisAction[4];
 		word		GravisMap[4];
 
-		boolean	Latch;
-		long	MouseDownCount;
-		boolean	LatchedButton0[MaxPlayers];
-		boolean	LatchedButton1[MaxPlayers];
-
 		Demo		DemoMode = demo_Off;
 		byte _seg	*DemoBuffer;
 		word		DemoOffset,DemoSize;
@@ -75,7 +74,6 @@
 //	Internal variables
 static	boolean		IN_Started;
 static	boolean		CapsLock;
-static	ScanCode	CurCode,LastCode;
 static	byte        far ASCIINames[] =		// Unshifted ASCII for scan codes
 					{
 //	 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
@@ -145,7 +143,6 @@ static	Direction	DirTable[] =		// Quick lookup for total direction
 						dir_SouthWest,	dir_South,	dir_SouthEast
 					};
 
-static	void			(*INL_KeyHook)(void);
 static	void interrupt	(*OldKeyVect)(void);
 
 static	char			*ParmStrings[] = {"nojoys","nomouse",nil};
@@ -187,30 +184,8 @@ static	boolean	special;
 		}
 		else			// Make code
 		{
-			LastCode = CurCode;
-			CurCode = LastScan = k;
+			LastScan = k;
 			Keyboard[k] = true;
-
-			if (Latch)
-			{
-				for (player = 0; player < MaxPlayers; player++)
-				{
-					if (Controls[player] == ctrl_Keyboard1)
-					{
-						if (CurCode == KbdDefs[0].button0)
-							LatchedButton0[player] = true;
-						else if (CurCode == KbdDefs[0].button1)
-							LatchedButton1[player] = true;
-					}
-					else if (Controls[player] == ctrl_Keyboard1)	// BUG? should probably check for ctrl_Keyboard2 here...
-					{
-						if (CurCode == KbdDefs[1].button0)
-							LatchedButton0[player] = true;
-						else if (CurCode == KbdDefs[1].button1)
-							LatchedButton1[player] = true;
-					}
-				}
-			}
 
 			if (special)
 				c = SpecialNames[k];
@@ -242,8 +217,6 @@ static	boolean	special;
 		special = false;
 	}
 
-	if (INL_KeyHook && !special)
-		INL_KeyHook();
 	outportb(0x20,0x20);
 }
 
@@ -490,8 +463,6 @@ IN_GetJoyButtonsDB(word joy)
 static void
 INL_StartKbd(void)
 {
-	INL_KeyHook = 0;	// Clear key hook
-
 	IN_ClearKeysDown();
 
 	OldKeyVect = getvect(KeyInt);
@@ -625,74 +596,6 @@ INL_ShutJoy(word joy)
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//	IN_ClearButtonLatch() - Clears the button latch stuff
-//
-///////////////////////////////////////////////////////////////////////////
-void
-IN_ClearButtonLatch(void)
-{
-	int player;
-
-asm		pushf
-asm		cli
-
-	MouseDownCount = 0;
-
-	for (player = 0; player < MaxPlayers; player++)
-	{
-		LatchedButton0[player] = LatchedButton1[player] = 0;
-	}
-
-asm		popf
-}
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	LatchSndHook() - Hook routine for joystick button latch
-//
-///////////////////////////////////////////////////////////////////////////
-void
-LatchSndHook(void)
-{
-	int player;
-	ControlType ctrl;
-	word buttons;
-
-	for (player = 0; player < MaxPlayers; player++)
-	{
-		ctrl = Controls[player];
-
-		if (ctrl == ctrl_Joystick1 || ctrl == ctrl_Joystick2)
-		{
-			buttons = INL_GetJoyButtons(ctrl - ctrl_Joystick1);
-
-			if (buttons & 1)
-				LatchedButton0[player] = true;
-			if (buttons & 2)
-				LatchedButton1[player] = true;
-		}
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	IN_LatchButtons() - Enables or disables button latch
-//
-///////////////////////////////////////////////////////////////////////////
-void IN_LatchButtons(boolean enabled)
-{
-	if (enabled)
-	{
-		Latch = false;
-		IN_ClearButtonLatch();
-	}
-
-	Latch = enabled;
-	SD_SetUserHook(Latch ? LatchSndHook : NULL);
-}
-
-///////////////////////////////////////////////////////////////////////////
-//
 //	IN_Startup() - Starts up the Input Mgr
 //
 ///////////////////////////////////////////////////////////////////////////
@@ -767,19 +670,6 @@ IN_Shutdown(void)
 	INL_ShutKbd();
 
 	IN_Started = false;
-}
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	IN_SetKeyHook() - Sets the routine that gets called by INL_KeyService()
-//			everytime a real make/break code gets hit
-//
-///////////////////////////////////////////////////////////////////////////
-void
-IN_SetKeyHook(void (*hook)())
-{
-	// BUG: interrupts should be disabled while setting INL_KeyHook!
-	INL_KeyHook = hook;
 }
 
 ///////////////////////////////////////////////////////////////////////////

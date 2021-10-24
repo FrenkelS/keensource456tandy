@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is primarily based on:
@@ -210,7 +214,6 @@ extern	word		DemoOffset,DemoSize;
 // DEBUG - put names in prototypes
 extern	void		IN_Startup(void),IN_Shutdown(void),
 					IN_Default(boolean gotit,ControlType in),
-					IN_SetKeyHook(void (*)()),
 					IN_ClearKeysDown(void),
 					IN_ReadCursor(CursorInfo *),
 					IN_ReadControl(int,ControlInfo *),
