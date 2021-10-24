@@ -39,16 +39,11 @@
 //
 //	Globals:
 //		For User Mgr:
-//			SoundSourcePresent - Sound Source thingie present?
-//			SoundBlasterPresent - SoundBlaster card present?
 //			AdLibPresent - AdLib card present?
 //			SoundMode - What device is used for sound effects
 //				(Use SM_SetSoundMode() to set)
 //			MusicMode - What device is used for music
 //				(Use SM_SetMusicMode() to set)
-//		For Cache Mgr:
-//			NeedsDigitized - load digitized sounds?
-//			NeedsMusic - load music?
 //
 
 #pragma hdrstop		// Wierdo thing with MUSE
@@ -71,20 +66,15 @@
 #define	readstat()	inportb(0x388)
 
 //	Global variables
-	boolean		SoundSourcePresent,SoundBlasterPresent,AdLibPresent,QuietFX,
-				NeedsDigitized,NeedsMusic;
+	boolean		AdLibPresent,QuietFX;
 	SDMode		SoundMode;
 	SMMode		MusicMode;
 	longword	TimeCount;
 	word		HackCount;
 	word		*SoundTable;	// Really * _seg *SoundTable, but that don't work
-	boolean		ssIsTandy;
-	word		ssPort = 2;
 
 //	Internal variables
 static	boolean			SD_Started;
-static	boolean			TimerDone;
-static	word			TimerVal,TimerDelay10,TimerDelay25,TimerDelay100;
 static	longword		TimerDivisor,TimerCount;
 static	char			*ParmStrings[] =
 						{
@@ -92,7 +82,6 @@ static	char			*ParmStrings[] =
 							"adlib",
 							nil
 						};
-static	void			(*SoundUserHook)(void);
 static	word			SoundNumber,SoundPriority;
 static	void interrupt	(*t0OldService)(void);
 //static	word			t0CountTable[] = {8,8,8,8,40,40};
@@ -113,16 +102,11 @@ static	Instrument		alZeroInst;
 
 // This table maps channel numbers to carrier and modulator op cells
 static	byte			carriers[9] =  { 3, 4, 5,11,12,13,19,20,21},
-						modifiers[9] = { 0, 1, 2, 8, 9,10,16,17,18},
-// This table maps percussive voice numbers to op cells
-						pcarriers[5] = {19,0xff,0xff,0xff,0xff},
-						pmodifiers[5] = {16,17,18,20,21};
+						modifiers[9] = { 0, 1, 2, 8, 9,10,16,17,18};
 
 //	Sequencer variables
 static	boolean			sqActive;
 static	word			alFXReg;
-static	ActiveTrack		*tracks[sqMaxTracks],
-						mytracks[sqMaxTracks];
 static	word			sqMode,sqFadeStep;
 static	word			far *sqHack,far *sqHackPtr,sqHackLen,sqHackSeqLen;
 static	long			sqHackTime;
@@ -159,84 +143,6 @@ SDL_SetIntsPerSec(word ints)
 {
 	SDL_SetTimer0(1192030 / ints);
 }
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	SDL_TimingService() - Used by SDL_InitDelay() to determine a timing
-//		value for the current system that we're running on
-//
-///////////////////////////////////////////////////////////////////////////
-static void interrupt
-SDL_TimingService(void)
-{
-	TimerVal = _CX;
-	TimerDone++;
-
-	outportb(0x20,0x20);				// Ack interrupt
-}
-
-#if 0
-///////////////////////////////////////////////////////////////////////////
-//
-//	SDL_InitDelay() - Sets up TimerDelay's for SDL_Delay()
-//
-///////////////////////////////////////////////////////////////////////////
-static void
-SDL_InitDelay(void)
-{
-	int		i;
-	word	timer;
-
-	setvect(8,SDL_TimingService);		// Set to my timer 0 ISR
-
-	SDL_SetIntsPerSec(1000);			// Time 1ms
-
-	for (i = 0,timer = 0;i < 10;i++)	// Do timing test 10 times
-	{
-	asm	xor		dx,dx					// Zero DX
-	asm	mov		cx,0xffff				// Put starting value in CX
-	asm	mov		[TimerDone],cx			// TimerDone = false - 1
-startloop:
-	asm	or		[TimerDone],0
-	asm	jnz		startloop				// Make sure we're at the start
-loop:
-	asm	test	[TimerDone],1			// See if TimerDone flag got hit
-	asm	jnz		done					// Yep - drop out of the loop
-	asm	loop	loop
-done:
-
-		if (0xffff - TimerVal > timer)
-			timer = 0xffff - TimerVal;
-	}
-	timer += timer / 2;					// Use some slop
-	TimerDelay10 =  timer / (1000 / 10);
-	TimerDelay25 =  timer / (1000 / 25);
-	TimerDelay100 = timer / (1000 / 100);
-
-	SDL_SetTimer0(0);					// Reset timer 0
-
-	setvect(8,t0OldService);			// Set back to old ISR
-}
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	SDL_Delay() - Delays the specified amount of time
-//
-///////////////////////////////////////////////////////////////////////////
-static void
-SDL_Delay(word delay)
-{
-	if (!delay)
-		return;
-
-asm	mov		cx,[delay]
-loop:
-asm	test	[TimerDone],0	// Useless code - just for timing equivilency
-asm	jnz		done
-asm	loop	loop
-done:;
-}
-#endif
 
 //
 //	PC Sound code
@@ -378,16 +284,13 @@ asm	cli
 asm	mov		dx,0x388
 asm	mov		al,[n]
 asm	out		dx,al
-#if 0
-	SDL_Delay(TimerDelay10);
-#else
+
 asm	in	al, dx
 asm	in	al, dx
 asm	in	al, dx
 asm	in	al, dx
 asm	in	al, dx
 asm	in	al, dx
-#endif
 
 asm	mov		dx,0x389
 asm	mov		al,[b]
@@ -395,9 +298,6 @@ asm	out		dx,al
 
 asm	popf
 
-#if 0
-	SDL_Delay(TimerDelay25);
-#else
 asm	mov	dx,0x388
 asm	in	al, dx
 asm	in	al, dx
@@ -437,53 +337,7 @@ asm	in	al, dx
 asm	in	al, dx
 asm	in	al, dx
 asm	in	al, dx
-#endif
 }
-
-#if 0
-///////////////////////////////////////////////////////////////////////////
-//
-//	SDL_SetInstrument() - Puts an instrument into a generator
-//
-///////////////////////////////////////////////////////////////////////////
-static void
-SDL_SetInstrument(int track,int which,Instrument far *inst,boolean percussive)
-{
-	byte		c,m;
-
-	if (percussive)
-	{
-		c = pcarriers[which];
-		m = pmodifiers[which];
-	}
-	else
-	{
-		c = carriers[which];
-		m = modifiers[which];
-	}
-
-	tracks[track - 1]->inst = *inst;
-	tracks[track - 1]->percussive = percussive;
-
-	alOut(m + alChar,inst->mChar);
-	alOut(m + alScale,inst->mScale);
-	alOut(m + alAttack,inst->mAttack);
-	alOut(m + alSus,inst->mSus);
-	alOut(m + alWave,inst->mWave);
-
-	// Most percussive instruments only use one cell
-	if (c != 0xff)
-	{
-		alOut(c + alChar,inst->cChar);
-		alOut(c + alScale,inst->cScale);
-		alOut(c + alAttack,inst->cAttack);
-		alOut(c + alSus,inst->cSus);
-		alOut(c + alWave,inst->cWave);
-	}
-
-	alOut(which + alFeedCon,inst->nConn);	// DEBUG - I think this is right
-}
-#endif
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -607,20 +461,6 @@ SDL_ALSoundService(void)
 	}
 }
 
-#if 0
-///////////////////////////////////////////////////////////////////////////
-//
-//	SDL_SelectMeasure() - sets up sequencing variables for a given track
-//
-///////////////////////////////////////////////////////////////////////////
-static void
-SDL_SelectMeasure(ActiveTrack *track)
-{
-	track->seq = track->moods[track->mood];
-	track->nextevent = 0;
-}
-#endif
-
 static void
 SDL_ALService(void)
 {
@@ -718,9 +558,7 @@ SDL_DetectAdLib(boolean force)
 	status1 = readstat();
 	alOut(2,0xff);	// Set timer 1
 	alOut(4,0x21);	// Start timer 1
-#if 0
-	SDL_Delay(TimerDelay100);
-#else
+
 	asm	mov	dx, 0x388;
 	asm	mov	cx, 100;
 waitloop:
@@ -728,7 +566,6 @@ waitloop:
 	asm	jmp	here;
 here:
 	asm	loop	waitloop;
-#endif
 
 	status2 = readstat();
 	alOut(4,0x60);
@@ -778,8 +615,6 @@ asm	out	dx,al
 		{
 			LocalTime++;
 			TimeCount++;
-			if (SoundUserHook)
-				SoundUserHook();
 		}
 		if (!(count & 3))
 		{
@@ -800,8 +635,6 @@ asm	out	dx,al
 		{
 			LocalTime++;
 			TimeCount++;
-			if (SoundUserHook)
-				SoundUserHook();
 		}
 		switch (SoundMode)
 		{
@@ -917,19 +750,16 @@ SD_SetSoundMode(SDMode mode)
 	switch (mode)
 	{
 	case sdm_Off:
-		NeedsDigitized = false;
 		result = true;
 		break;
 	case sdm_PC:
 		tableoffset = STARTPCSOUNDS;
-		NeedsDigitized = false;
 		result = true;
 		break;
 	case sdm_AdLib:
 		if (AdLibPresent)
 		{
 			tableoffset = STARTADLIBSOUNDS;
-			NeedsDigitized = false;
 			result = true;
 		}
 		break;
@@ -972,13 +802,11 @@ SD_SetMusicMode(SMMode mode)
 	switch (mode)
 	{
 	case smm_Off:
-		NeedsMusic = false;
 		result = true;
 		break;
 	case smm_AdLib:
 		if (AdLibPresent)
 		{
-			NeedsMusic = true;
 			result = true;
 		}
 		break;
@@ -1012,7 +840,6 @@ SD_Startup(void)
 	if (SD_Started)
 		return;
 
-	ssIsTandy = false;
 	alNoCheck = false;
 #ifndef	_MUSE_
 	for (i = 1;i < _argc;i++)
@@ -1030,11 +857,7 @@ SD_Startup(void)
 	}
 #endif
 
-	SoundUserHook = 0;
-
 	t0OldService = getvect(8);	// Get old timer 0 ISR
-
-	//SDL_InitDelay();			// SDL_InitDelay() uses t0OldService
 
 	setvect(8,SDL_t0Service);	// Set to my timer 0 ISR
 	LocalTime = TimeCount = alTimeCount = 0;
@@ -1130,19 +953,6 @@ SD_Shutdown(void)
 	asm	popf
 
 	SD_Started = false;
-}
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	SD_SetUserHook() - sets the routine that the Sound Mgr calls every 1/70th
-//		of a second from its timer 0 ISR
-//
-///////////////////////////////////////////////////////////////////////////
-void
-SD_SetUserHook(void (* hook)(void))
-{
-	// BUG: interrupts should be disabled while setting SoundUserHook!
-	SoundUserHook = hook;
 }
 
 ///////////////////////////////////////////////////////////////////////////

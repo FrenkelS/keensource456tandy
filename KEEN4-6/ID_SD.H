@@ -129,7 +129,6 @@ typedef	struct
 //	Sequencing stuff
 //
 #define	sqMaxTracks	10
-#define	sqMaxMoods	1	// DEBUG
 
 #define	sev_Null		0	// Does nothing
 #define	sev_NoteOff		1	// Turns a note off
@@ -160,18 +159,6 @@ typedef	struct
 		} MusicGroup;
 #endif
 
-typedef	struct
-		{
-			/* This part needs to be set up by the user */
-			word        mood,far *moods[sqMaxMoods];
-
-			/* The rest is set up by the code */
-			Instrument	inst;
-			boolean		percussive;
-			word		far *seq;
-			longword	nextevent;
-		} ActiveTrack;
-
 #define	sqmode_Normal		0
 #define	sqmode_FadeIn		1
 #define	sqmode_FadeOut		2
@@ -181,7 +168,6 @@ typedef	struct
 
 // Global variables
 extern	boolean		AdLibPresent,
-					NeedsMusic,	// For Caching Mgr
 					QuietFX;
 extern	SDMode		SoundMode;
 extern	SMMode		MusicMode;
@@ -196,8 +182,7 @@ extern	void	SD_Startup(void),
 				SD_WaitSoundDone(void),
 				SD_StartMusic(MusicGroup far *music),
 				SD_MusicOn(void),
-				SD_MusicOff(void),
-				SD_SetUserHook(void (*hook)(void));
+				SD_MusicOff(void);
 extern	boolean	SD_SetSoundMode(SDMode mode),
 				SD_SetMusicMode(SMMode mode);
 extern	word	SD_SoundPlaying(void);
