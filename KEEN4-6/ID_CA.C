@@ -1542,19 +1542,6 @@ void CA_SetAllPurge (void)
 }
 
 
-void CA_SetGrPurge (void)
-{
-	int i;
-
-//
-// free graphics
-//
-	for (i=0;i<NUMCHUNKS;i++)
-		if (grsegs[i])
-			MM_SetPurge (&(memptr)grsegs[i],3);
-}
-
-
 //===========================================================================
 
 

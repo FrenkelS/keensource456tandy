@@ -774,7 +774,7 @@ void HelpScreens(void)
 #endif
 
 	CA_UpLevel();
-	CA_SetGrPurge();
+	CA_FreeGraphics();
 	VW_ClearVideo(BACKCOLOR);
 
 #if GRMODE == EGAGR
@@ -881,7 +881,7 @@ void FinaleLayout(void)
 	VW_ClearVideo(BACKCOLOR);
 	RF_FixOfs();
 	CA_UpLevel();
-	CA_SetGrPurge();
+	CA_FreeGraphics();
 	CA_CacheGrChunk(H_FLASHARROW2PIC);
 	CA_CacheGrChunk(H_FLASHARROW1PIC);
 

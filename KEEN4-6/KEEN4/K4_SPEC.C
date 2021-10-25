@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is loosely based on:
@@ -848,7 +852,7 @@ void RescueJanitor(void)
 void CantSwim(void)
 {
 	SD_WaitSoundDone();
-	CA_UpLevel();	// kinda useless without CA_CacheMarks or CA_SetGrPurge
+	CA_UpLevel();	// kinda useless without CA_CacheMarks or CA_FreeGraphics
 	// BUG: haven't made anything purgable here, caching the pic may cause an "out of memory" crash
 	CA_CacheGrChunk(KEENTALK1PIC);
 

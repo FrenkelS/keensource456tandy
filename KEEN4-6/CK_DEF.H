@@ -63,7 +63,6 @@
 //HACK IMPORTS:
 void RFL_InitAnimList(void);
 void CA_FreeGraphics(void);
-void CA_SetGrPurge(void);
 
 /*
 Note:
