@@ -1,4 +1,7 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +31,8 @@
 /////////////////////////////////////////////////
 
 #define NUMSOUNDS     LASTSOUND
-#define NUMSNDCHUNKS  ((3*LASTSOUND)+LASTMUSIC)
+#define NUMMUSIC      LASTMUSIC
+#define NUMSNDCHUNKS  ((3*LASTSOUND)+(2*NUMMUSIC))
 
 //
 // Sound names & indexes
@@ -101,7 +105,8 @@ typedef enum {
 #define STARTPCSOUNDS     0
 #define STARTADLIBSOUNDS  (STARTPCSOUNDS+NUMSOUNDS)
 #define STARTDIGISOUNDS   (STARTADLIBSOUNDS+NUMSOUNDS)
-#define STARTMUSIC        (STARTDIGISOUNDS+NUMSOUNDS)
+#define STARTADLIBMUSIC   (STARTDIGISOUNDS+NUMSOUNDS)
+#define STARTTANDYMUSIC   (STARTADLIBMUSIC+NUMMUSIC)
 
 //
 // Music names & indexes

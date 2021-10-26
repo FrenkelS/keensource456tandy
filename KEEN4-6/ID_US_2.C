@@ -204,6 +204,7 @@ static  boolean USL_ConfigCustom(UserCall call,struct UserItem far *item),
 	{
 		{DefRButton(sc_N,"NO MUSIC")},
 		{DefRButton(sc_A,"ADLIB/SOUNDBLASTER")},
+		{DefRButton(sc_T,"TANDY")},
 		{uii_Bad}
 	};
 	UserItemGroup   far musicgroup = {8,0,CP_MUSICMENUPIC,sc_None,musici};

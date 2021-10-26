@@ -97,8 +97,10 @@ static	boolean			alNoCheck;
 static	byte			far *alSound;
 static	word			alBlock;
 static	longword		alLengthLeft;
-static	longword		alTimeCount;
 static	Instrument		alZeroInst;
+
+//	Music variables
+static	longword		musicTimeCount;
 
 // This table maps channel numbers to carrier and modulator op cells
 static	byte			carriers[9] =  { 3, 4, 5,11,12,13,19,20,21},
@@ -462,7 +464,7 @@ SDL_ALSoundService(void)
 }
 
 static void
-SDL_ALService(void)
+SDL_MusicService(void)
 {
 	byte	a,v;
 	word	w;
@@ -470,22 +472,31 @@ SDL_ALService(void)
 	if (!sqActive)
 		return;
 
-	while (sqHackLen && (sqHackTime <= alTimeCount))
+	while (sqHackLen && (sqHackTime <= musicTimeCount))
 	{
 		w = *sqHackPtr++;
-		sqHackTime = alTimeCount + *sqHackPtr++;
+		sqHackTime = musicTimeCount + *sqHackPtr++;
 	asm	mov	dx,[w]
 	asm	mov	[a],dl
 	asm	mov	[v],dh
-		alOut(a,v);
+		if (MusicMode == smm_AdLib)
+		{
+			alOut(a,v);
+		}
+		else if (MusicMode == smm_Tandy)
+		{
+			outportb(0xc0,a);
+			if (v != 0x40)
+				outportb(0xc0,v);
+		}
 		sqHackLen -= 4;
 	}
-	alTimeCount++;
+	musicTimeCount++;
 	if (!sqHackLen)
 	{
 		sqHackPtr = (word far *)sqHack;
 		sqHackLen = sqHackSeqLen;
-		alTimeCount = sqHackTime = 0;
+		musicTimeCount = sqHackTime = 0;
 	}
 }
 
@@ -608,9 +619,9 @@ asm	out	dx,al
 
 	HackCount++;
 
-	if (MusicMode == smm_AdLib)
+	if (MusicMode != smm_Off)
 	{
-		SDL_ALService();
+		SDL_MusicService();
 		if (!(++count & 7))
 		{
 			LocalTime++;
@@ -724,7 +735,7 @@ SDL_SetTimerSpeed(void)
 {
 	word	rate;
 
-	if (MusicMode == smm_AdLib)
+	if (MusicMode != smm_Off)
 		rate = TickBase * 8;
 	else
 		rate = TickBase * 2;
@@ -792,9 +803,9 @@ SD_SetSoundMode(SDMode mode)
 boolean
 SD_SetMusicMode(SMMode mode)
 {
-	boolean	result;
+	boolean	result = false;
 
-	if (MusicMode == smm_AdLib)
+	if (MusicMode != smm_Off)
 	{
 		SD_MusicOff();
 	}
@@ -810,8 +821,8 @@ SD_SetMusicMode(SMMode mode)
 			result = true;
 		}
 		break;
-	default:
-		result = false;
+	case smm_Tandy:
+		result = true;
 		break;
 	}
 
@@ -860,7 +871,7 @@ SD_Startup(void)
 	t0OldService = getvect(8);	// Get old timer 0 ISR
 
 	setvect(8,SDL_t0Service);	// Set to my timer 0 ISR
-	LocalTime = TimeCount = alTimeCount = 0;
+	LocalTime = TimeCount = musicTimeCount = 0;
 
 	SD_SetSoundMode(sdm_Off);
 	SD_SetMusicMode(smm_Off);
@@ -1080,6 +1091,12 @@ SD_MusicOff(void)
 		for (i = 0;i < sqMaxTracks;i++)
 			alOut(alFreqH + i + 1,0);
 		break;
+	case smm_Tandy:
+		outportb(0xc0,0x9f);
+		outportb(0xc0,0xbf);
+		outportb(0xc0,0xdf);
+		outportb(0xc0,0xff);
+		break;
 	}
 	sqActive = false;
 }
@@ -1096,12 +1113,12 @@ SD_StartMusic(MusicGroup far *music)
 asm	pushf
 asm	cli
 
-	if (MusicMode == smm_AdLib)
+	if (MusicMode != smm_Off)
 	{
 		sqHackPtr = sqHack = music->values;
 		sqHackSeqLen = sqHackLen = music->length;
 		sqHackTime = 0;
-		alTimeCount = 0;
+		musicTimeCount = 0;
 		SD_MusicOn();
 	}
 

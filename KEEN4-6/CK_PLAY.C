@@ -2007,17 +2007,18 @@ void PollControls(void)
 void StopMusic(void)
 {
 	Sint16 i;
+	int start = MusicMode == smm_Tandy ? STARTTANDYMUSIC : STARTADLIBMUSIC;
 
 	SD_MusicOff();
 	for (i=0; i<LASTMUSIC; i++)
 	{
-		if (audiosegs[STARTMUSIC+i])
+		if (audiosegs[start+i])
 		{
 #ifdef FIX_MUSIC_MEMORY_ISSUES
 			//unlock any music blocks so that they can be purged
-			MM_SetLock(&(memptr)audiosegs[STARTMUSIC+i], false);
+			MM_SetLock(&(memptr)audiosegs[start+i], false);
 #endif
-			MM_SetPurge(&(memptr)audiosegs[STARTMUSIC+i], PURGE_FIRST);
+			MM_SetPurge(&(memptr)audiosegs[start+i], PURGE_FIRST);
 		}
 	}
 }
@@ -2104,6 +2105,7 @@ void StartMusic(Uint16 num)
 
 	Sint16 song;
 	boolean wasfaded;
+	int start = MusicMode == smm_Tandy ? STARTTANDYMUSIC : STARTADLIBMUSIC;
 
 	if (num >= ARRAYLENGTH(songs) && num != 0xFFFF)
 	{
@@ -2129,13 +2131,13 @@ void StartMusic(Uint16 num)
 	song = songs[num];
 #endif
 
-	if (song == -1 || MusicMode != smm_AdLib)
+	if (song == -1 || MusicMode == smm_Off)
 	{
 		return;
 	}
 
 	MM_BombOnError(false);
-	CA_CacheAudioChunk(STARTMUSIC+song);
+	CA_CacheAudioChunk(start+song);
 	MM_BombOnError(true);
 	if (mmerror)
 	{
@@ -2164,9 +2166,9 @@ void StartMusic(Uint16 num)
 #ifdef FIX_MUSIC_MEMORY_ISSUES
 		//The current music should be locked, so the memory manager will not
 		//mess with it when compressing memory blocks in MM_SortMem().
-		MM_SetLock(&(memptr)audiosegs[STARTMUSIC+song], true);
+		MM_SetLock(&(memptr)audiosegs[start+song], true);
 #endif
-		SD_StartMusic((MusicGroup far *)audiosegs[STARTMUSIC+song]);
+		SD_StartMusic((MusicGroup far *)audiosegs[start+song]);
 	}
 }
 

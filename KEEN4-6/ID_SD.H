@@ -49,7 +49,7 @@ typedef	enum	{
 					sdm_PC,sdm_AdLib,
 				}	SDMode;
 typedef	enum	{
-					smm_Off,smm_AdLib
+					smm_Off,smm_AdLib,smm_Tandy
 				}	SMMode;
 
 typedef	struct
