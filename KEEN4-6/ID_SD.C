@@ -483,9 +483,8 @@ SDL_MusicService(void)
 		}
 		else if (MusicMode == smm_Tandy)
 		{
-			outportb(0xc0,a);
-			if (v != 0x40)
-				outportb(0xc0,v);
+			if (a != 0x40)
+				outportb(0xc0,a);
 		}
 		sqHackLen -= 4;
 	}
