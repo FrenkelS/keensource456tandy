@@ -470,23 +470,31 @@ SDL_MusicService(void)
 	if (!sqActive)
 		return;
 
-	while (sqHackLen && (sqHackTime <= sqTimeCount))
+	if (MusicMode == smm_AdLib)
 	{
-		w = *sqHackPtr++;
-		sqHackTime = sqTimeCount + *sqHackPtr++;
-	asm	mov	dx,[w]
-	asm	mov	[a],dl
-	asm	mov	[v],dh
-		if (MusicMode == smm_AdLib)
+		while (sqHackLen && (sqHackTime <= sqTimeCount))
 		{
+			w = *sqHackPtr++;
+			sqHackTime = sqTimeCount + *sqHackPtr++;
+			asm	mov	dx,[w]
+			asm	mov	[a],dl
+			asm	mov	[v],dh
 			alOut(a,v);
+			sqHackLen -= 4;
 		}
-		else if (MusicMode == smm_Tandy)
+	}
+	else // smm_Tandy
+	{
+		while (sqHackLen && (sqHackTime <= sqTimeCount))
 		{
+			w = *sqHackPtr++;
+			sqHackTime = sqTimeCount + *sqHackPtr++;
+			asm	mov	dx,[w]
+			asm	mov	[a],dl
 			if (a != 0x40)
 				outportb(0xc0,a);
+			sqHackLen -= 4;
 		}
-		sqHackLen -= 4;
 	}
 	sqTimeCount++;
 	if (!sqHackLen)
