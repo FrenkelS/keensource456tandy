@@ -287,17 +287,17 @@ done:
 
 void CAL_Lzsa2Expand (byte huge *source, byte huge *dest)
 {
-	unsigned sourceseg,sourceoff,destseg,destoff;
+  unsigned sourceseg,sourceoff,destseg,destoff;
 
-	source++;	// normalize
-	source--;
-	dest++;
-	dest--;
+  source++;	// normalize
+  source--;
+  dest++;
+  dest--;
 
-	sourceseg = FP_SEG(source);
-	sourceoff = FP_OFF(source);
-	destseg = FP_SEG(dest);
-	destoff = FP_OFF(dest);
+  sourceseg = FP_SEG(source);
+  sourceoff = FP_OFF(source);
+  destseg = FP_SEG(dest);
+  destoff = FP_OFF(dest);
 
 asm	mov	si,[sourceoff]
 asm	mov	di,[destoff]
@@ -311,8 +311,8 @@ asm	pop	bp
 asm	mov	ax,ss
 asm	mov	ds,ax
 asm	mov	es,ax
-}
 
+}
 
 
 /*
@@ -589,9 +589,11 @@ void CAL_SetupGrFile (void)
 
 #if GRMODE == EGAGR
 	grstarts = (long _seg *)FP_SEG(&EGAhead);
-#elif GRMODE == CGAGR
+#endif
+#if GRMODE == CGAGR
 	grstarts = (long _seg *)FP_SEG(&CGAhead);
-#elif GRMODE == TGAGR
+#endif
+#if GRMODE == TGAGR
 	grstarts = (long _seg *)FP_SEG(&TGAhead);
 #endif
 
@@ -1486,10 +1488,13 @@ void CA_ClearMarks (void)
 ======================
 */
 
-void CA_FreeGraphics (void)
+void CA_SetGrPurge (void)
 {
 	int	i;
 
+//
+// free graphics
+//
 	for (i=0;i<NUMCHUNKS;i++)
 		if (grsegs[i])
 			MM_SetPurge (&(memptr)grsegs[i],3);
@@ -1538,7 +1543,7 @@ void CA_SetAllPurge (void)
 //
 // free graphics
 //
-	CA_FreeGraphics ();
+	CA_SetGrPurge ();
 }
 
 
