@@ -491,8 +491,9 @@ SDL_MusicService(void)
 			sqHackTime = sqTimeCount + *sqHackPtr++;
 			asm	mov	dx,[w]
 			asm	mov	[a],dl
-			if (a != 0x40)
-				outportb(0xc0,a);
+			asm	mov	[v],dh
+			outportb(0xc0,a);
+			outportb(0xc0,v);
 			sqHackLen -= 4;
 		}
 	}
