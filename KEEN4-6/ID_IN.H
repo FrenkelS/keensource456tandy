@@ -223,10 +223,10 @@ extern	void		IN_Startup(void),IN_Shutdown(void),
 								word miny,word maxy),
 					IN_StartDemoPlayback(byte _seg *buffer,word bufsize),
 					IN_StopDemo(void),IN_FreeDemoBuffer(void),
-					IN_Ack(void),IN_AckBack(void);
-extern	boolean		IN_UserInput(longword delay,boolean clear),
-					IN_IsUserInput(void),
+					IN_Ack(void),IN_AckBack(void),
 					IN_StartDemoRecord(word bufsize);
+extern	boolean		IN_UserInput(longword delay,boolean clear),
+					IN_IsUserInput(void);
 extern	byte		*IN_GetScanName(ScanCode);
 extern	char		IN_WaitForASCII(void);
 extern	ScanCode	IN_WaitForKey(void);

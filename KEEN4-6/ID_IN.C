@@ -905,22 +905,20 @@ IN_SetControlType(int player,ControlType type)
 ///////////////////////////////////////////////////////////////////////////
 //
 //	IN_StartDemoRecord() - Starts the demo recording, using a buffer the
-//		size passed. Returns if the buffer allocation was successful
+//		size passed.
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean
+void
 IN_StartDemoRecord(word bufsize)
 {
 	if (!bufsize)
-		return(false);
+		return;
 
 	MM_GetPtr((memptr *)&DemoBuffer,bufsize);
 	DemoMode = demo_Record;
 	DemoSize = bufsize & ~1;
 	DemoOffset = 0;
 	DemoBuffer[0] = DemoBuffer[1] = 0;
-
-	return(true);
 }
 
 ///////////////////////////////////////////////////////////////////////////
