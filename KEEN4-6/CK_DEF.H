@@ -431,7 +431,7 @@ void CenterActor(objtype *ob);
 void WorldScrollScreen(objtype *ob);
 void ScrollScreen(objtype *ob);
 void InitObjArray(void);
-Sint16 GetNewObj(boolean usedummy);
+void GetNewObj(boolean usedummy);
 void RemoveObj(objtype *ob);
 void GivePoints(Uint16 points);
 void StopMusic(void);

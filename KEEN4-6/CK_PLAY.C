@@ -1801,19 +1801,17 @@ void InitObjArray(void)
 = When the object list is full, the caller can either have it bomb out or
 = return a dummy object pointer that will never get used
 =
-= Returns -1 when list was full, otherwise returns 0.
-=
 =========================
 */
 
-Sint16 GetNewObj(boolean usedummy)
+void GetNewObj(boolean usedummy)
 {
 	if (!objfreelist)
 	{
 		if (usedummy)
 		{
 			new = &dummyobj;
-			return -1;
+			return;
 		}
 		Quit("GetNewObj: No free spots in objarray!");
 	}
@@ -1831,7 +1829,6 @@ Sint16 GetNewObj(boolean usedummy)
 	lastobj = new;
 
 	objectcount++;
-	return 0;
 }
 
 //===========================================================================
