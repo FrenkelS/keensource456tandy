@@ -872,7 +872,7 @@ stringptr	dw	?,?
 
 fontcolormask	dw	?			; font color expands into this
 
-BUFFWIDTH	=	103
+BUFFWIDTH	=	105
 BUFFHEIGHT	=   32			; must be twice as high as font for masked fonts
 
 databuffer	db	BUFFWIDTH*BUFFHEIGHT dup (?)
