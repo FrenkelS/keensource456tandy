@@ -755,10 +755,10 @@ SDL_SetTimerSpeed(void)
 //	SD_SetSoundMode() - Sets which sound hardware to use for sound effects
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean
+void
 SD_SetSoundMode(SDMode mode)
 {
-	boolean	result;
+	boolean	result = false;
 	word	tableoffset;
 
 	SD_StopSound();
@@ -780,9 +780,6 @@ SD_SetSoundMode(SDMode mode)
 			result = true;
 		}
 		break;
-	default:
-		result = false;
-		break;
 	}
 #endif
 
@@ -797,8 +794,6 @@ SD_SetSoundMode(SDMode mode)
 	}
 
 	SDL_SetTimerSpeed();
-
-	return(result);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -806,38 +801,20 @@ SD_SetSoundMode(SDMode mode)
 //	SD_SetMusicMode() - sets the device to use for background music
 //
 ///////////////////////////////////////////////////////////////////////////
-boolean
+void
 SD_SetMusicMode(SMMode mode)
 {
-	boolean	result = false;
-
 	if (MusicMode != smm_Off)
 	{
 		SD_MusicOff();
 	}
 
-	switch (mode)
+	if (mode != smm_AdLib || AdLibPresent)
 	{
-	case smm_Off:
-		result = true;
-		break;
-	case smm_AdLib:
-		if (AdLibPresent)
-		{
-			result = true;
-		}
-		break;
-	case smm_Tandy:
-		result = true;
-		break;
+		MusicMode = mode;
 	}
 
-	if (result)
-		MusicMode = mode;
-
 	SDL_SetTimerSpeed();
-
-	return(result);
 }
 
 ///////////////////////////////////////////////////////////////////////////

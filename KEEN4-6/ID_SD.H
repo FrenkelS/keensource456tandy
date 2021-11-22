@@ -182,8 +182,8 @@ extern	void	SD_Startup(void),
 				SD_WaitSoundDone(void),
 				SD_StartMusic(MusicGroup far *music),
 				SD_MusicOn(void),
-				SD_MusicOff(void);
-extern	boolean	SD_SetSoundMode(SDMode mode),
+				SD_MusicOff(void),
+				SD_SetSoundMode(SDMode mode),
 				SD_SetMusicMode(SMMode mode);
 extern	word	SD_SoundPlaying(void);
 
