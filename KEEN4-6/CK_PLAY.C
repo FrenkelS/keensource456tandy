@@ -797,6 +797,28 @@ void CheckKeys(void)
 		SD_MusicOn();
 	}
 
+//
+// Backspace to toggle score box
+//
+	if (LastScan == sc_BackSpace)
+	{
+		showscorebox ^= true;
+		if (!showscorebox && scoreobj->sprite)
+		{
+			RF_RemoveSprite(&scoreobj->sprite);
+		}
+		if (showscorebox)
+		{
+			scoreobj->temp2 = -1;
+			scoreobj->temp1 = -1;
+			scoreobj->temp3 = -1;
+			scoreobj->temp4 = -1;
+		}
+		IN_ClearKeysDown();
+		RF_ForceRefresh();
+		lasttimecount = TimeCount;	// BUG: should be the other way around
+	}
+
 #ifndef KEEN6
 //
 // F1 to enter help screens
