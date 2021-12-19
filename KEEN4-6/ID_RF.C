@@ -2539,7 +2539,7 @@ void RF_RemoveSprite (void **user)
 =
 = All routines will draw at the port at bufferofs, possibly copying from
 = the port at masterofs.  The EGA version then page flips, while the
-= CGA version updates the screen from the buffer port.
+= CGA and TGA versions update the screen from the buffer port.
 =
 = Screenpage is the currently displayed page, not the one being drawn
 = Otherpage is the page to be worked with now
@@ -2549,8 +2549,6 @@ void RF_RemoveSprite (void **user)
 
 void RF_Refresh (void)
 {
-	long newtime,oldtimecount;
-
 	RFL_AnimateTiles ();
 
 //
