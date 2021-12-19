@@ -2487,6 +2487,122 @@ void RF_Scroll (int x, int y)
 /*
 =====================
 =
+= RF_PlaceSprite  CGA and TGA
+=
+=====================
+*/
+
+void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
+	unsigned spritenumber, drawtype draw, int priority)
+{
+	spritelisttype	register *sprite,*next;
+	spritetabletype far *spr;
+	spritetype _seg	*block;
+	unsigned	shift,pixx;
+	char		str[80],str2[10];
+
+	if (!spritenumber || spritenumber == (unsigned)-1)
+	{
+		RF_RemoveSprite (user);
+		return;
+	}
+
+	sprite = (spritelisttype *)*user;
+
+	if	(sprite)
+	{
+	// sprite allready exists in the list, so we can use it's block
+
+	//
+	// post an erase block to erase the old position by copying
+	// screenx,screeny,width,height
+	//
+		if (!sprite->updatecount)		// may not have been drawn at all yet
+			memcpy (eraselistptr[0]++,sprite,sizeof(eraseblocktype));
+
+		if (priority != sprite->priority)
+		{
+		// sprite moved to another priority, so unlink the old one and
+		// relink it in the new priority
+
+			next = sprite->nextsprite;			// cut old links
+			if (next)
+				next->prevptr = sprite->prevptr;
+			*sprite->prevptr = next;
+			goto linknewspot;
+		}
+	}
+	else
+	{
+	// this is a brand new sprite, so allocate a block from the array
+
+		if (!spritefreeptr)
+			Quit ("RF_PlaceSprite: No free spots in spritearray!");
+
+		sprite = spritefreeptr;
+		spritefreeptr = spritefreeptr->nextsprite;
+
+linknewspot:
+		next = prioritystart[priority];		// stick it in new spot
+		if (next)
+			next->prevptr = &sprite->nextsprite;
+		sprite->nextsprite = next;
+		prioritystart[priority] = sprite;
+		sprite->prevptr = &prioritystart[priority];
+	}
+
+//
+// write the new info to the sprite
+//
+	spr = &spritetable[spritenumber-STARTSPRITES];
+	block = (spritetype _seg *)grsegs[spritenumber];
+
+	if (!block)
+	{
+		strcpy (str,"RF_PlaceSprite: Placed an uncached sprite!");
+		itoa (spritenumber,str2,10);
+		strcat (str,str2);
+		Quit (str);
+	}
+
+
+	globaly+=spr->orgy;
+	globalx+=spr->orgx;
+
+#if GRMODE == CGAGR
+	sprite->screenx = globalx >> G_CGASX_SHIFT;
+#elif GRMODE == TGAGR
+	sprite->screenx = globalx >> G_TGASX_SHIFT;
+#endif
+
+	sprite->screeny = globaly >> G_SY_SHIFT;
+	sprite->width = block->width[0];
+	sprite->height = spr->height;
+	sprite->grseg = spritenumber;
+	sprite->sourceofs = block->sourceoffset[0];
+	sprite->planesize = block->planesize[0];
+	sprite->draw = draw;
+	sprite->priority = priority;
+	sprite->tilex = sprite->screenx >> SX_T_SHIFT;
+	sprite->tiley = sprite->screeny >> SY_T_SHIFT;
+	sprite->tilewide = ( (sprite->screenx + sprite->width -1) >> SX_T_SHIFT )
+		- sprite->tilex + 1;
+	sprite->tilehigh = ( (sprite->screeny + sprite->height -1) >> SY_T_SHIFT )
+		- sprite->tiley + 1;
+
+	sprite->updatecount = 1;		// draw on next refresh
+
+// save the sprite pointer off in the user's pointer so it can be moved
+// again later
+
+	*user = sprite;
+}
+
+//===========================================================================
+
+/*
+=====================
+=
 = RF_RemoveSprite CGA and TGA
 =
 =====================
@@ -2531,6 +2647,112 @@ void RF_RemoveSprite (void **user)
 	*user = 0;
 }
 
+
+/*
+====================
+=
+= RFL_EraseBlocks CGA and TGA
+=
+= Write mode 1 should be set
+=
+====================
+*/
+
+void RFL_EraseBlocks (void)
+{
+	eraseblocktype	*block,*done;
+	int			screenxh,screenyh;
+	unsigned	pos,xtl,ytl,xth,yth,x,y;
+	byte		*updatespot;
+	unsigned	updatedelta;
+
+	block = &eraselist[0][0];
+
+	done = eraselistptr[0];
+
+	while (block != done)
+	{
+
+	//
+	// clip the block to the current screen view
+	//
+		block->screenx -= originxscreen;
+		block->screeny -= originyscreen;
+
+		if (block->screenx < 0)
+		{
+			block->width += block->screenx;
+			if (block->width<1)
+				goto next;
+			block->screenx = 0;
+		}
+
+		if (block->screeny < 0)
+		{
+			block->height += block->screeny;
+			if (block->height<1)
+				goto next;
+			block->screeny = 0;
+		}
+
+		screenxh = block->screenx + block->width;
+		screenyh = block->screeny + block->height;
+
+#if GRMODE == CGAGR
+		if (screenxh > CGAPORTSCREENWIDE)
+		{
+			block->width = CGAPORTSCREENWIDE-block->screenx;
+			screenxh = block->screenx + block->width;
+		}
+#elif GRMODE == TGAGR
+		if (screenxh > TGAPORTSCREENWIDE)
+		{
+			block->width = TGAPORTSCREENWIDE-block->screenx;
+			screenxh = block->screenx + block->width;
+		}
+#endif
+
+		if (screenyh > PORTSCREENHIGH)
+		{
+			block->height = PORTSCREENHIGH-block->screeny;
+			screenyh = block->screeny + block->height;
+		}
+
+		if (block->width<1 || block->height<1)
+			goto next;
+
+	//
+	// erase the block by copying from the master screen
+	//
+		pos = ylookup[block->screeny]+block->screenx;
+		block->width = (block->width + (pos&1) + 1)& ~1;
+		pos &= ~1;				// make sure a word copy gets used
+		VW_ScreenToScreen (masterofs+pos,bufferofs+pos,
+			block->width,block->height);
+
+	//
+	// put 2s in update where the block was, to force sprites to update
+	//
+		xtl = block->screenx >> SX_T_SHIFT;
+		xth = (block->screenx+block->width-1) >> SX_T_SHIFT;
+		ytl = block->screeny >> SY_T_SHIFT;
+		yth = (block->screeny+block->height-1) >> SY_T_SHIFT;
+
+		updatespot = updateptr + uwidthtable[ytl] + xtl;
+		updatedelta = UPDATEWIDE - (xth-xtl+1);
+
+		for (y=ytl;y<=yth;y++)
+		{
+			for (x=xtl;x<=xth;x++)
+				*updatespot++ = 2;
+			updatespot += updatedelta;		// down to next line
+		}
+
+next:
+		block++;
+	}
+	eraselistptr[0] = &eraselist[0][0];
+}
 
 /*
 =====================
@@ -2587,444 +2809,3 @@ void RF_Refresh (void)
 }
 
 #endif		// GRMODE == CGAGR || GRMODE == TGAGR
-
-
-/*
-=============================================================================
-
-					CGA specific routines
-
-=============================================================================
-*/
-
-#if GRMODE == CGAGR
-
-/*
-=====================
-=
-= RF_PlaceSprite  CGA
-=
-=====================
-*/
-
-void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
-	unsigned spritenumber, drawtype draw, int priority)
-{
-	spritelisttype	register *sprite,*next;
-	spritetabletype far *spr;
-	spritetype _seg	*block;
-	unsigned	shift,pixx;
-	char		str[80],str2[10];
-
-	if (!spritenumber || spritenumber == (unsigned)-1)
-	{
-		RF_RemoveSprite (user);
-		return;
-	}
-
-	sprite = (spritelisttype *)*user;
-
-	if	(sprite)
-	{
-	// sprite allready exists in the list, so we can use it's block
-
-	//
-	// post an erase block to erase the old position by copying
-	// screenx,screeny,width,height
-	//
-		if (!sprite->updatecount)		// may not have been drawn at all yet
-			memcpy (eraselistptr[0]++,sprite,sizeof(eraseblocktype));
-
-		if (priority != sprite->priority)
-		{
-		// sprite moved to another priority, so unlink the old one and
-		// relink it in the new priority
-
-			next = sprite->nextsprite;			// cut old links
-			if (next)
-				next->prevptr = sprite->prevptr;
-			*sprite->prevptr = next;
-			goto linknewspot;
-		}
-	}
-	else
-	{
-	// this is a brand new sprite, so allocate a block from the array
-
-		if (!spritefreeptr)
-			Quit ("RF_PlaceSprite: No free spots in spritearray!");
-
-		sprite = spritefreeptr;
-		spritefreeptr = spritefreeptr->nextsprite;
-
-linknewspot:
-		next = prioritystart[priority];		// stick it in new spot
-		if (next)
-			next->prevptr = &sprite->nextsprite;
-		sprite->nextsprite = next;
-		prioritystart[priority] = sprite;
-		sprite->prevptr = &prioritystart[priority];
-	}
-
-//
-// write the new info to the sprite
-//
-	spr = &spritetable[spritenumber-STARTSPRITES];
-	block = (spritetype _seg *)grsegs[spritenumber];
-
-	if (!block)
-	{
-		strcpy (str,"RF_PlaceSprite: Placed an uncached sprite!");
-		itoa (spritenumber,str2,10);
-		strcat (str,str2);
-		Quit (str);
-	}
-
-
-	globaly+=spr->orgy;
-	globalx+=spr->orgx;
-
-	sprite->screenx = globalx >> G_CGASX_SHIFT;
-	sprite->screeny = globaly >> G_SY_SHIFT;
-	sprite->width = block->width[0];
-	sprite->height = spr->height;
-	sprite->grseg = spritenumber;
-	sprite->sourceofs = block->sourceoffset[0];
-	sprite->planesize = block->planesize[0];
-	sprite->draw = draw;
-	sprite->priority = priority;
-	sprite->tilex = sprite->screenx >> SX_T_SHIFT;
-	sprite->tiley = sprite->screeny >> SY_T_SHIFT;
-	sprite->tilewide = ( (sprite->screenx + sprite->width -1) >> SX_T_SHIFT )
-		- sprite->tilex + 1;
-	sprite->tilehigh = ( (sprite->screeny + sprite->height -1) >> SY_T_SHIFT )
-		- sprite->tiley + 1;
-
-	sprite->updatecount = 1;		// draw on next refresh
-
-// save the sprite pointer off in the user's pointer so it can be moved
-// again later
-
-	*user = sprite;
-}
-
-
-/*
-====================
-=
-= RFL_EraseBlocks CGA
-=
-= Write mode 1 should be set
-=
-====================
-*/
-
-void RFL_EraseBlocks (void)
-{
-	eraseblocktype	*block,*done;
-	int			screenxh,screenyh;
-	unsigned	pos,xtl,ytl,xth,yth,x,y;
-	byte		*updatespot;
-	unsigned	updatedelta;
-
-	block = &eraselist[0][0];
-
-	done = eraselistptr[0];
-
-	while (block != done)
-	{
-
-	//
-	// clip the block to the current screen view
-	//
-		block->screenx -= originxscreen;
-		block->screeny -= originyscreen;
-
-		if (block->screenx < 0)
-		{
-			block->width += block->screenx;
-			if (block->width<1)
-				goto next;
-			block->screenx = 0;
-		}
-
-		if (block->screeny < 0)
-		{
-			block->height += block->screeny;
-			if (block->height<1)
-				goto next;
-			block->screeny = 0;
-		}
-
-		screenxh = block->screenx + block->width;
-		screenyh = block->screeny + block->height;
-
-		if (screenxh > CGAPORTSCREENWIDE)
-		{
-			block->width = CGAPORTSCREENWIDE-block->screenx;
-			screenxh = block->screenx + block->width;
-		}
-
-		if (screenyh > PORTSCREENHIGH)
-		{
-			block->height = PORTSCREENHIGH-block->screeny;
-			screenyh = block->screeny + block->height;
-		}
-
-		if (block->width<1 || block->height<1)
-			goto next;
-
-	//
-	// erase the block by copying from the master screen
-	//
-		pos = ylookup[block->screeny]+block->screenx;
-		block->width = (block->width + (pos&1) + 1)& ~1;
-		pos &= ~1;				// make sure a word copy gets used
-		VW_ScreenToScreen (masterofs+pos,bufferofs+pos,
-			block->width,block->height);
-
-	//
-	// put 2s in update where the block was, to force sprites to update
-	//
-		xtl = block->screenx >> SX_T_SHIFT;
-		xth = (block->screenx+block->width-1) >> SX_T_SHIFT;
-		ytl = block->screeny >> SY_T_SHIFT;
-		yth = (block->screeny+block->height-1) >> SY_T_SHIFT;
-
-		updatespot = updateptr + uwidthtable[ytl] + xtl;
-		updatedelta = UPDATEWIDE - (xth-xtl+1);
-
-		for (y=ytl;y<=yth;y++)
-		{
-			for (x=xtl;x<=xth;x++)
-				*updatespot++ = 2;
-			updatespot += updatedelta;		// down to next line
-		}
-
-next:
-		block++;
-	}
-	eraselistptr[0] = &eraselist[0][0];
-}
-
-#endif		// GRMODE == CGAGR
-
-/*
-=============================================================================
-
-					TGA specific routines
-
-=============================================================================
-*/
-
-#if GRMODE == TGAGR
-
-/*
-=====================
-=
-= RF_PlaceSprite  TGA
-=
-=====================
-*/
-
-void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
-	unsigned spritenumber, drawtype draw, int priority)
-{
-	spritelisttype	register *sprite,*next;
-	spritetabletype far *spr;
-	spritetype _seg	*block;
-	unsigned	shift,pixx;
-	char		str[80],str2[10];
-
-	if (!spritenumber || spritenumber == (unsigned)-1)
-	{
-		RF_RemoveSprite (user);
-		return;
-	}
-
-	sprite = (spritelisttype *)*user;
-
-	if	(sprite)
-	{
-	// sprite allready exists in the list, so we can use it's block
-
-	//
-	// post an erase block to erase the old position by copying
-	// screenx,screeny,width,height
-	//
-		if (!sprite->updatecount)		// may not have been drawn at all yet
-			memcpy (eraselistptr[0]++,sprite,sizeof(eraseblocktype));
-
-		if (priority != sprite->priority)
-		{
-		// sprite moved to another priority, so unlink the old one and
-		// relink it in the new priority
-
-			next = sprite->nextsprite;			// cut old links
-			if (next)
-				next->prevptr = sprite->prevptr;
-			*sprite->prevptr = next;
-			goto linknewspot;
-		}
-	}
-	else
-	{
-	// this is a brand new sprite, so allocate a block from the array
-
-		if (!spritefreeptr)
-			Quit ("RF_PlaceSprite: No free spots in spritearray!");
-
-		sprite = spritefreeptr;
-		spritefreeptr = spritefreeptr->nextsprite;
-
-linknewspot:
-		next = prioritystart[priority];		// stick it in new spot
-		if (next)
-			next->prevptr = &sprite->nextsprite;
-		sprite->nextsprite = next;
-		prioritystart[priority] = sprite;
-		sprite->prevptr = &prioritystart[priority];
-	}
-
-//
-// write the new info to the sprite
-//
-	spr = &spritetable[spritenumber-STARTSPRITES];
-	block = (spritetype _seg *)grsegs[spritenumber];
-
-	if (!block)
-	{
-		strcpy (str,"RF_PlaceSprite: Placed an uncached sprite!");
-		itoa (spritenumber,str2,10);
-		strcat (str,str2);
-		Quit (str);
-	}
-
-
-	globaly+=spr->orgy;
-	globalx+=spr->orgx;
-
-	sprite->screenx = globalx >> G_TGASX_SHIFT;
-	sprite->screeny = globaly >> G_SY_SHIFT;
-	sprite->width = block->width[0];
-	sprite->height = spr->height;
-	sprite->grseg = spritenumber;
-	sprite->sourceofs = block->sourceoffset[0];
-	sprite->planesize = block->planesize[0];
-	sprite->draw = draw;
-	sprite->priority = priority;
-	sprite->tilex = sprite->screenx >> SX_T_SHIFT;
-	sprite->tiley = sprite->screeny >> SY_T_SHIFT;
-	sprite->tilewide = ( (sprite->screenx + sprite->width -1) >> SX_T_SHIFT )
-		- sprite->tilex + 1;
-	sprite->tilehigh = ( (sprite->screeny + sprite->height -1) >> SY_T_SHIFT )
-		- sprite->tiley + 1;
-
-	sprite->updatecount = 1;		// draw on next refresh
-
-// save the sprite pointer off in the user's pointer so it can be moved
-// again later
-
-	*user = sprite;
-}
-
-
-/*
-====================
-=
-= RFL_EraseBlocks TGA
-=
-= Write mode 1 should be set
-=
-====================
-*/
-
-void RFL_EraseBlocks (void)
-{
-	eraseblocktype	*block,*done;
-	int			screenxh,screenyh;
-	unsigned	pos,xtl,ytl,xth,yth,x,y;
-	byte		*updatespot;
-	unsigned	updatedelta;
-
-	block = &eraselist[0][0];
-
-	done = eraselistptr[0];
-
-	while (block != done)
-	{
-
-	//
-	// clip the block to the current screen view
-	//
-		block->screenx -= originxscreen;
-		block->screeny -= originyscreen;
-
-		if (block->screenx < 0)
-		{
-			block->width += block->screenx;
-			if (block->width<1)
-				goto next;
-			block->screenx = 0;
-		}
-
-		if (block->screeny < 0)
-		{
-			block->height += block->screeny;
-			if (block->height<1)
-				goto next;
-			block->screeny = 0;
-		}
-
-		screenxh = block->screenx + block->width;
-		screenyh = block->screeny + block->height;
-
-		if (screenxh > TGAPORTSCREENWIDE)
-		{
-			block->width = TGAPORTSCREENWIDE-block->screenx;
-			screenxh = block->screenx + block->width;
-		}
-
-		if (screenyh > PORTSCREENHIGH)
-		{
-			block->height = PORTSCREENHIGH-block->screeny;
-			screenyh = block->screeny + block->height;
-		}
-
-		if (block->width<1 || block->height<1)
-			goto next;
-
-	//
-	// erase the block by copying from the master screen
-	//
-		pos = ylookup[block->screeny]+block->screenx;
-		block->width = (block->width + (pos&1) + 1)& ~1;
-		pos &= ~1;				// make sure a word copy gets used
-		VW_ScreenToScreen (masterofs+pos,bufferofs+pos,
-			block->width,block->height);
-
-	//
-	// put 2s in update where the block was, to force sprites to update
-	//
-		xtl = block->screenx >> SX_T_SHIFT;
-		xth = (block->screenx+block->width-1) >> SX_T_SHIFT;
-		ytl = block->screeny >> SY_T_SHIFT;
-		yth = (block->screeny+block->height-1) >> SY_T_SHIFT;
-
-		updatespot = updateptr + uwidthtable[ytl] + xtl;
-		updatedelta = UPDATEWIDE - (xth-xtl+1);
-
-		for (y=ytl;y<=yth;y++)
-		{
-			for (x=xtl;x<=xth;x++)
-				*updatespot++ = 2;
-			updatespot += updatedelta;		// down to next line
-		}
-
-next:
-		block++;
-	}
-	eraselistptr[0] = &eraselist[0][0];
-}
-
-#endif		// GRMODE == TGAGR
