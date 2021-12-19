@@ -84,9 +84,7 @@ unsigned	SX_T_SHIFT;		// screen x >> ?? = tile EGA = 1, CGA = 2, TGA = 3;
 #define	SY_T_SHIFT		4	// screen y >> ?? = tile
 
 
-#define	EGAPORTSCREENWIDE	42
-#define	CGAPORTSCREENWIDE	84
-#define	TGAPORTSCREENWIDE	168
+#define PORTSCREENWIDE		(PORTTILESWIDE*TILEWIDTH)
 #define	PORTSCREENHIGH		(PORTTILESHIGH*16)
 
 #define MAXSCROLLEDGES	6
@@ -2157,9 +2155,9 @@ void RFL_EraseBlocks (void)
 		screenxh = block->screenx + block->width;
 		screenyh = block->screeny + block->height;
 
-		if (screenxh > EGAPORTSCREENWIDE)
+		if (screenxh > PORTSCREENWIDE)
 		{
-			block->width = EGAPORTSCREENWIDE-block->screenx;
+			block->width = PORTSCREENWIDE-block->screenx;
 			screenxh = block->screenx + block->width;
 		}
 
@@ -2683,19 +2681,11 @@ void RFL_EraseBlocks (void)
 		screenxh = block->screenx + block->width;
 		screenyh = block->screeny + block->height;
 
-#if GRMODE == CGAGR
-		if (screenxh > CGAPORTSCREENWIDE)
+		if (screenxh > PORTSCREENWIDE)
 		{
-			block->width = CGAPORTSCREENWIDE-block->screenx;
+			block->width = PORTSCREENWIDE-block->screenx;
 			screenxh = block->screenx + block->width;
 		}
-#elif GRMODE == TGAGR
-		if (screenxh > TGAPORTSCREENWIDE)
-		{
-			block->width = TGAPORTSCREENWIDE-block->screenx;
-			screenxh = block->screenx + block->width;
-		}
-#endif
 
 		if (screenyh > PORTSCREENHIGH)
 		{
