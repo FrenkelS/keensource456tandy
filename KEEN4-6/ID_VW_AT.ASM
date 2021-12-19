@@ -224,8 +224,6 @@ maskroutines	dw	mask0,mask0,mask2E,mask2O,mask4E,mask4O
 				dw	mask18E,mask18O
 
 
-routinetouse	dw	?
-
 CODESEG
 
 PROC	VW_MaskBlock	segm:WORD, ofs:WORD, dest:WORD, wide:WORD, height:WORD, planesize:WORD
