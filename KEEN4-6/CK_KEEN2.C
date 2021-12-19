@@ -425,9 +425,9 @@ leading to up to three shifts in one frame.
 	}
 
 	if (changed)
-#if GRMODE == EGAGR
+#if GRMODE == EGAGR || GRMODE == TGAGR
 		RF_PlaceSprite(&ob->sprite, ob->x+4*PIXGLOBAL, ob->y+4*PIXGLOBAL, SCOREBOXSPR, 3);
-#elif GRMODE == CGAGR || GRMODE == TGAGR
+#elif GRMODE == CGAGR
 		RF_PlaceSprite(&ob->sprite, ob->x+8*PIXGLOBAL, ob->y+8*PIXGLOBAL, SCOREBOXSPR, 3);
 #endif
 }
