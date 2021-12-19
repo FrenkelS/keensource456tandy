@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is loosely based on:
@@ -555,7 +559,7 @@ void R_Mushroom(objtype *ob)
 			ob->yspeed = -40;
 		}
 	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -847,7 +851,7 @@ void R_Eggbird(objtype *ob)
 		ob->needtoclip = cl_fullclip;
 		ChangeState(ob, &s_eggbirdfly1);
 	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -864,7 +868,7 @@ void R_EggbirdDrop(objtype *ob)	//never actually used
 	{
 		ChangeState(ob, &s_eggbirdwalk1);
 	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -880,7 +884,7 @@ void R_Chip(objtype *ob)
 	if (ob->hitnorth)
 		ob->xspeed = ob->yspeed = 0;
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -922,7 +926,7 @@ void R_Eggbirdfly(objtype *ob)
 	if (!ob->hitsouth && !ob->hitnorth)
 		ob->temp1 = 0;
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -1217,5 +1221,5 @@ void R_Pest(objtype *ob)
 		ob->xspeed = 0;
 		ob->xdir = 1;
 	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }

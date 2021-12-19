@@ -502,50 +502,6 @@ ENDP
 
 ;============================================================================
 ;
-; VW_InverseMask
-;
-; Draws a masked block shape to the screen.  bufferofs is NOT accounted for.
-; The mask comes first, then the data.
-;
-; Mask blocks will allways be an even width because of the way IGRAB works
-;
-;============================================================================
-
-PROC	VW_InverseMask	segm:WORD, ofs:WORD, dest:WORD, wide:WORD, height:WORD
-PUBLIC	VW_InverseMask
-USES	SI,DI
-
-	mov	es, [screenseg]
-	mov	ax, [wide]
-	mov	dx, [linewidth]
-	sub	dx, ax;
-	mov	ds, [segm]
-	mov	si, [ofs]
-	mov	di, [dest]
-	mov	bx, [height]
-	shr	[wide], 1
-@@yloop:
-	mov	cx, [wide]
-@@xloop:
-	lodsw
-	not	ax
-	or	[es:di], ax
-	inc	di
-	inc	di
-	loop	@@xloop
-	add	di, dx
-	dec	bx
-	jnz	@@yloop
-
-	mov	ax,ss
-	mov	ds,ax					;restore turbo's data segment
-
-	ret
-ENDP
-
-
-;============================================================================
-;
 ; VW_ScreenToScreen
 ;
 ; Basic block copy routine.  Copies one block of screen memory to another,

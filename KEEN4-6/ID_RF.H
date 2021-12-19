@@ -85,11 +85,6 @@
 #define UPDATEWIDE			(PORTTILESWIDE+1)
 #define UPDATEHIGH			PORTTILESHIGH
 
-
-//===========================================================================
-
-typedef enum {spritedraw,maskdraw} drawtype;
-
 /*
 =============================================================================
 
@@ -159,7 +154,7 @@ void RF_MemToMap (unsigned far *source, unsigned plane,
 				  unsigned width, unsigned height);
 
 void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
-	unsigned spritenumber, drawtype draw, int priority);
+	unsigned spritenumber, int priority);
 void RF_RemoveSprite (void **user);
 
 void RF_CalcTics (void);

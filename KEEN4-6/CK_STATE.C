@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is loosely based on:
@@ -1758,7 +1762,7 @@ void C_Lethal(objtype *ob, objtype *hit)
 
 void R_Draw(objtype *ob)
 {
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 
@@ -1793,7 +1797,7 @@ void R_Walk(objtype *ob)
 		ob->nothink = US_RndT() >> 5;
 		ChangeState(ob, ob->state);
 	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 
@@ -1830,7 +1834,7 @@ void R_WalkNormal(objtype *ob)
 		ob->nothink = US_RndT() >> 5;
 		ChangeState(ob, ob->state);
 	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 
@@ -1873,7 +1877,7 @@ void R_Stunned(objtype *ob)
 			ChangeState(ob, ob->state->nextstate);
 	}
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 
 	starx = stary = 0;
 	switch (ob->temp4)
@@ -1957,7 +1961,7 @@ done:
 			ob->temp2 = 0;
 	}
 
-	RF_PlaceSprite((void **)&ob->temp3, ob->x+starx, ob->y+stary, ob->temp2+STUNSTARS1SPR, spritedraw, 3);
+	RF_PlaceSprite((void **)&ob->temp3, ob->x+starx, ob->y+stary, ob->temp2+STUNSTARS1SPR, 3);
 }
 
 //==========================================================================

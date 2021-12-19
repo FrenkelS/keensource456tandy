@@ -105,7 +105,6 @@ typedef	struct spriteliststruct
 	int			width,height;
 
 	unsigned	grseg,sourceofs,planesize;
-	drawtype	draw;
 	unsigned	tilex,tiley,tilewide,tilehigh;
 	int			priority,updatecount;
 	struct spriteliststruct **prevptr,*nextsprite;
@@ -1700,19 +1699,8 @@ redraw:
 
 			dest = bufferofs + ylookup[porty] + portx;
 
-			switch (sprite->draw)
-			{
-			case spritedraw:
-				VW_MaskBlock(grsegs[sprite->grseg], sourceofs,
-					dest,sprite->width,height,sprite->planesize);
-				break;
-
-			case maskdraw:
-				VW_InverseMask(grsegs[sprite->grseg], sourceofs,
-					dest,sprite->width,height);
-				break;
-
-			}
+			VW_MaskBlock(grsegs[sprite->grseg], sourceofs,
+				dest,sprite->width,height,sprite->planesize);
 #ifdef PROFILE
 			updatecount++;
 #endif
@@ -1951,7 +1939,7 @@ void RF_Scroll (int x, int y)
 */
 
 void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
-	unsigned spritenumber, drawtype draw, int priority)
+	unsigned spritenumber, int priority)
 {
 	spritelisttype	register *sprite,*next;
 	spritetabletype far *spr;
@@ -2043,7 +2031,6 @@ linknewspot:
 	sprite->grseg = spritenumber;
 	sprite->sourceofs = block->sourceoffset[shift];
 	sprite->planesize = block->planesize[shift];
-	sprite->draw = draw;
 	sprite->priority = priority;
 	sprite->tilex = sprite->screenx >> SX_T_SHIFT;
 	sprite->tiley = sprite->screeny >> SY_T_SHIFT;
@@ -2492,7 +2479,7 @@ void RF_Scroll (int x, int y)
 */
 
 void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
-	unsigned spritenumber, drawtype draw, int priority)
+	unsigned spritenumber, int priority)
 {
 	spritelisttype	register *sprite,*next;
 	spritetabletype far *spr;
@@ -2580,7 +2567,6 @@ linknewspot:
 	sprite->grseg = spritenumber;
 	sprite->sourceofs = block->sourceoffset[0];
 	sprite->planesize = block->planesize[0];
-	sprite->draw = draw;
 	sprite->priority = priority;
 	sprite->tilex = sprite->screenx >> SX_T_SHIFT;
 	sprite->tiley = sprite->screeny >> SY_T_SHIFT;

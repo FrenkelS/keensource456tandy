@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is loosely based on:
@@ -307,7 +311,7 @@ void R_EaterAir(objtype *ob)
 	if (ob->hitnorth)	//BUG? maybe this was supposed to check hitsouth as well?
 		ob->yspeed = 0;
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -478,7 +482,7 @@ void R_MimAir(objtype *ob)
 	if (ob->hitnorth || ob->hitsouth)
 		ob->yspeed = 0;
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -503,7 +507,7 @@ void R_MimBounce(objtype *ob)
 	if (ob->hitnorth)
 		ob->yspeed = 0;
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -834,7 +838,7 @@ void R_Fish(objtype *ob)	//for Dopefish and Schoolfish
 	if (!ob->hitsouth && !ob->hitnorth)
 		ob->temp1 = 0;
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -1028,7 +1032,7 @@ void R_Mshot(objtype *ob)
 	}
 	else
 	{
-		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 	}
 }
 
@@ -1265,7 +1269,7 @@ void T_DartShoot(objtype *ob)
 
 void R_DartThrower(objtype *ob)	//never used
 {
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*

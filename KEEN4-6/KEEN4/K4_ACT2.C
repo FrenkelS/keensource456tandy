@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is loosely based on:
@@ -329,7 +333,7 @@ void R_Cloud(objtype *ob)
 		ob->xspeed = 0;
 		ob->xdir = 1;
 	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -563,7 +567,7 @@ void FireReact(objtype *ob)
 		SD_PlaySound(SND_FIREBALLLAND);
 		ChangeState(ob, &s_fireland1);
 	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -589,7 +593,7 @@ void BerkeDrawReact(objtype *ob)
 		ob->temp2 = 8;
 	}
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y+ob->temp1, ob->shapenum, spritedraw, 0);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y+ob->temp1, ob->shapenum, 0);
 }
 
 /*
@@ -942,7 +946,7 @@ void R_Bounder(objtype *ob)
 		ob->xspeed = -ob->xspeed;
 	}
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -1094,7 +1098,7 @@ void LickAirReact(objtype *ob)
 	if (ob->hitnorth)
 		ChangeState(ob, &s_lick4);
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -1246,13 +1250,13 @@ void R_Platform(objtype *ob)
 	Uint16 frame;
 
 	//place platform sprite:
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 	
 	//place (or remove) thruster sprites:
 	frame = (lasttimecount >> 2) & 1;
 	if (ob->xdir == 1)
 	{
-		RF_PlaceSprite((void**)&ob->temp2, ob->x-1*PIXGLOBAL, ob->y+3*PIXGLOBAL, frame+PLATSIDETHRUST1SPR, spritedraw, 0);
+		RF_PlaceSprite((void**)&ob->temp2, ob->x-1*PIXGLOBAL, ob->y+3*PIXGLOBAL, frame+PLATSIDETHRUST1SPR, 0);
 		if (ob->temp3)
 			RF_RemoveSprite((void**)&ob->temp3);
 	}
@@ -1260,19 +1264,19 @@ void R_Platform(objtype *ob)
 	{
 		if (ob->temp2)
 			RF_RemoveSprite((void**)&ob->temp2);
-		RF_PlaceSprite((void**)&ob->temp3, ob->x+48*PIXGLOBAL, ob->y+5*PIXGLOBAL, frame+PLATSIDETHRUST1SPR, spritedraw, 1);
+		RF_PlaceSprite((void**)&ob->temp3, ob->x+48*PIXGLOBAL, ob->y+5*PIXGLOBAL, frame+PLATSIDETHRUST1SPR, 1);
 	}
 	else if (ob->ydir == -1)
 	{
-		RF_PlaceSprite((void**)&ob->temp2, ob->x+2*PIXGLOBAL, ob->y+9*PIXGLOBAL, frame+PLATLTHRUST1SPR, spritedraw, 0);
-		RF_PlaceSprite((void**)&ob->temp3, ob->x+46*PIXGLOBAL, ob->y+8*PIXGLOBAL, frame+PLATRTHRUST1SPR, spritedraw, 0);
+		RF_PlaceSprite((void**)&ob->temp2, ob->x+2*PIXGLOBAL, ob->y+9*PIXGLOBAL, frame+PLATLTHRUST1SPR, 0);
+		RF_PlaceSprite((void**)&ob->temp3, ob->x+46*PIXGLOBAL, ob->y+8*PIXGLOBAL, frame+PLATRTHRUST1SPR, 0);
 	}
 	else if (ob->ydir == 1)
 	{
 		if (frame)
 		{
-			RF_PlaceSprite((void**)&ob->temp2, ob->x+2*PIXGLOBAL, ob->y+9*PIXGLOBAL, frame+PLATLTHRUST1SPR, spritedraw, 0);
-			RF_PlaceSprite((void**)&ob->temp3, ob->x+46*PIXGLOBAL, ob->y+8*PIXGLOBAL, frame+PLATRTHRUST1SPR, spritedraw, 0);
+			RF_PlaceSprite((void**)&ob->temp2, ob->x+2*PIXGLOBAL, ob->y+9*PIXGLOBAL, frame+PLATLTHRUST1SPR, 0);
+			RF_PlaceSprite((void**)&ob->temp3, ob->x+46*PIXGLOBAL, ob->y+8*PIXGLOBAL, frame+PLATRTHRUST1SPR, 0);
 		}
 		else
 		{

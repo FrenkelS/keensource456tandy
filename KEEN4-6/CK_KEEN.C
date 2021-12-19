@@ -2109,7 +2109,7 @@ void CheckInTiles(objtype *ob)
 
 void KeenSimpleReact(objtype *ob)
 {
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 
@@ -2153,7 +2153,7 @@ void KeenStandReact(objtype *ob)
 		ClipToWalls(ob);
 	}
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -2203,7 +2203,7 @@ void KeenWalkReact(objtype *ob)
 		ob->shapenum = ob->xdir == 1? s_keenstand.rightshapenum : s_keenstand.leftshapenum;
 	}
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -2351,7 +2351,7 @@ void KeenAirReact(objtype *ob)
 		}
 	}
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 #ifdef KEEN5
@@ -2450,7 +2450,7 @@ void KeenPogoReact(objtype *ob)
 				else
 				{
 					BreakFuse(ob->tilemidx, ob->tilebottom);
-					RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+					RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 					return;
 				}
 			}
@@ -2482,7 +2482,7 @@ void KeenPogoReact(objtype *ob)
 		}
 	}
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*
@@ -2509,5 +2509,5 @@ void KeenPoleReact(objtype *ob)
 		ChangeState(ob, &s_keenlookdown);
 	}
 
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }

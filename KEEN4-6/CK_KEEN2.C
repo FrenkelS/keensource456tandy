@@ -426,9 +426,9 @@ leading to up to three shifts in one frame.
 
 	if (changed)
 #if GRMODE == EGAGR
-		RF_PlaceSprite(&ob->sprite, ob->x+4*PIXGLOBAL, ob->y+4*PIXGLOBAL, SCOREBOXSPR, spritedraw, 3);
+		RF_PlaceSprite(&ob->sprite, ob->x+4*PIXGLOBAL, ob->y+4*PIXGLOBAL, SCOREBOXSPR, 3);
 #elif GRMODE == CGAGR || GRMODE == TGAGR
-		RF_PlaceSprite(&ob->sprite, ob->x+8*PIXGLOBAL, ob->y+8*PIXGLOBAL, SCOREBOXSPR, spritedraw, 3);
+		RF_PlaceSprite(&ob->sprite, ob->x+8*PIXGLOBAL, ob->y+8*PIXGLOBAL, SCOREBOXSPR, 3);
 #endif
 }
 
@@ -446,7 +446,7 @@ void DrawDemoPlaque(objtype *ob)
 	{
 		ob->x = originxglobal;
 		ob->y = originyglobal;
-		RF_PlaceSprite(&ob->sprite, ob->x + 160*PIXGLOBAL - 32*PIXGLOBAL, ob->y + 8*PIXGLOBAL, DEMOPLAQUESPR, spritedraw, 3);
+		RF_PlaceSprite(&ob->sprite, ob->x + 160*PIXGLOBAL - 32*PIXGLOBAL, ob->y + 8*PIXGLOBAL, DEMOPLAQUESPR, 3);
 	}
 }
 
@@ -812,7 +812,7 @@ void Teleport(Uint16 tileX, Uint16 tileY)
 		}
 
 		ob->shapenum = ((TimeCount >> 3) % 3) + WORLDKEENU1SPR;
-		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 
 		tile = ((TimeCount >> 2) & TELEPORERTILEMASK) + TELEPORTERTILE1;
 		RF_MemToMap(&tile, 1, tileX, tileY, 1, 1);
@@ -846,7 +846,7 @@ void Teleport(Uint16 tileX, Uint16 tileY)
 		{
 			o->needtoreact = true;
 			o->active = ac_yes;
-			RF_PlaceSprite(&o->sprite, o->x, o->y, o->shapenum, spritedraw, o->priority);
+			RF_PlaceSprite(&o->sprite, o->x, o->y, o->shapenum, o->priority);
 		}
 	}
 	UpdateScore(scoreobj);
@@ -865,7 +865,7 @@ void Teleport(Uint16 tileX, Uint16 tileY)
 		ob->y += tics*2 + tics;
 
 		ob->shapenum = ((TimeCount >> 3) % 3) + WORLDKEEND1SPR;
-		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 
 		tile = ((TimeCount >> 2) & TELEPORERTILEMASK) + TELEPORTERTILE3;
 		RF_MemToMap(&tile, 1, tileX, tileY, 1, 1);
@@ -947,7 +947,7 @@ void T_Elevate(objtype *ob)
 	RF_Refresh();
 
 	ob->y -= TILEGLOBAL;
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 
 	//
 	// open the elevator door
@@ -974,7 +974,7 @@ void T_Elevate(objtype *ob)
 	{
 		ob->y += 8;	// move half a pixel every frame for 32 frames -> move down 16 pixels total
 		ob->shapenum = (y / 4) % 3 + WORLDKEEND1SPR;
-		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 		RF_Refresh();
 	}
 	ob->needtoclip = cl_midclip;	// redundant, but doesn't do any harm
@@ -1041,7 +1041,7 @@ void Elevator(Uint16 tileX, Uint16 tileY, Sint16 dir)
 		}
 
 		ob->shapenum = ((duration / 8) % 3) + WORLDKEENU1SPR;
-		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+		RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 	}
 
 	//
@@ -1574,7 +1574,7 @@ void R_Shot(objtype *ob)
 	{
 		ExplodeShot(ob);
 	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, spritedraw, ob->priority);
+	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }
 
 /*

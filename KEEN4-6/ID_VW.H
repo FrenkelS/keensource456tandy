@@ -283,8 +283,6 @@ void	VW_FadeIn(void);
 
 void VW_MaskBlock(memptr segm,unsigned ofs,unsigned dest,
 	unsigned wide,unsigned height,unsigned planesize);
-void VW_InverseMask(memptr segm,unsigned ofs,unsigned dest,
-	unsigned wide,unsigned height);
 void VW_MemToScreen(memptr source,unsigned dest,unsigned width,unsigned height);
 void VW_ScreenToMem(unsigned source,memptr dest,unsigned width,unsigned height);
 void VW_ScreenToScreen(unsigned source,unsigned dest,unsigned width,unsigned height);
