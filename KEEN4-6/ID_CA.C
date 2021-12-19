@@ -310,7 +310,6 @@ lzsa2_decompress_speed();
 asm	pop	bp
 asm	mov	ax,ss
 asm	mov	ds,ax
-asm	mov	es,ax
 
 }
 
