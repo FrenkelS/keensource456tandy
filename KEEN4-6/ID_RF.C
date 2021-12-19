@@ -1612,11 +1612,10 @@ void RFL_UpdateSprites (void)
 	unsigned dest;
 	byte		*updatespot,*baseupdatespot;
 	unsigned	updatedelta;
-	unsigned	updatecount;
 	unsigned	height,sourceofs;
 
 #ifdef PROFILE
-	updatecount = 0;
+	unsigned	updatecount = 0;
 #endif
 
 	for (priority=0;priority<PRIORITIES;priority++)
