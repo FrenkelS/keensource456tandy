@@ -215,13 +215,15 @@ ENDP
 
 DATASEG
 
-UNWOUNDMASKS	=	18
+UNWOUNDMASKS	=	20
 
 
-maskroutines	dw	mask0,mask0,mask2E,mask2O,mask4E,mask4O
-				dw	mask6E,mask6O,mask8E,mask8O,mask10E,mask10O
-				dw	mask12E,mask12O,mask14E,mask14O,mask16E,mask16O
-				dw	mask18E,mask18O
+maskroutines	dw	mask0,mask0
+				dw	mask4E,mask4O
+				dw	mask8E,mask8O
+				dw	mask12E,mask12O
+				dw	mask16E,mask16O
+				dw	mask20E,mask20O
 
 
 CODESEG
@@ -281,7 +283,8 @@ mask0:
 ;=================
 
 @@unwoundroutine:
-	shr	di,1					;we only have even width unwound routines
+	shr	di,1					;we only have multiple of 4 width unwound routines
+	shr	di,1
 	mov	cx,[dest]
 	shr	cx,1
 	rcl	di,1					;shift a 1 in if destination is odd
@@ -328,17 +331,6 @@ ENDM
 
 
 EVEN
-mask2E:
-	MASKWORD
-	SPRITELOOP	mask2E
-
-EVEN
-mask2O:
-	MASKBYTE
-	MASKBYTE
-	SPRITELOOP	mask2O
-
-EVEN
 mask4E:
 	MASKWORD
 	MASKWORD
@@ -350,21 +342,6 @@ mask4O:
 	MASKWORD
 	MASKBYTE
 	SPRITELOOP	mask4O
-
-EVEN
-mask6E:
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	SPRITELOOP	mask6E
-
-EVEN
-mask6O:
-	MASKBYTE
-	MASKWORD
-	MASKWORD
-	MASKBYTE
-	SPRITELOOP	mask6O
 
 EVEN
 mask8E:
@@ -382,25 +359,6 @@ mask8O:
 	MASKWORD
 	MASKBYTE
 	SPRITELOOP	mask8O
-
-EVEN
-mask10E:
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	SPRITELOOP	mask10E
-
-EVEN
-mask10O:
-	MASKBYTE
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKBYTE
-	SPRITELOOP	mask10O
 
 EVEN
 mask12E:
@@ -422,29 +380,6 @@ mask12O:
 	MASKWORD
 	MASKBYTE
 	SPRITELOOP	mask12O
-
-EVEN
-mask14E:
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	SPRITELOOP	mask14E
-
-EVEN
-mask14O:
-	MASKBYTE
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKBYTE
-	SPRITELOOP	mask14O
 
 EVEN
 mask16E:
@@ -472,7 +407,7 @@ mask16O:
 	SPRITELOOP	mask16O
 
 EVEN
-mask18E:
+mask20E:
 	MASKWORD
 	MASKWORD
 	MASKWORD
@@ -482,10 +417,11 @@ mask18E:
 	MASKWORD
 	MASKWORD
 	MASKWORD
-	SPRITELOOP	mask18E
+	MASKWORD
+	SPRITELOOP	mask20E
 
 EVEN
-mask18O:
+mask20O:
 	MASKBYTE
 	MASKWORD
 	MASKWORD
@@ -495,8 +431,9 @@ mask18O:
 	MASKWORD
 	MASKWORD
 	MASKWORD
+	MASKWORD
 	MASKBYTE
-	SPRITELOOP	mask18O
+	SPRITELOOP	mask20O
 
 
 ENDP
