@@ -885,13 +885,13 @@ void VW_TGAFullUpdate (void)
 {
 	displayofs = bufferofs+panadjust;
 
-asm	mov	ax,0xb800+20/4*160/0x10
+asm	mov	ax,0xb800+((200-11*16)/2)/4*160/0x10
 asm	mov	es,ax
 
 asm	mov	si,[displayofs]
 asm	xor	di,di
 
-asm	mov	bx,10*16/4				// pair of 4 scan lines to copy
+asm	mov	bx,11*16/4				// pair of 4 scan lines to copy
 asm	mov	dx,[linewidth]
 asm	sub	dx,160
 

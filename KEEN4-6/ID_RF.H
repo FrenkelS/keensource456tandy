@@ -79,7 +79,7 @@
 #define	PORTTILESHIGH		14		// non displayed port of this size
 #elif GRMODE == TGAGR
 #define	PORTTILESWIDE		21      // all drawing takes place inside a
-#define	PORTTILESHIGH		11		// non displayed port of this size
+#define	PORTTILESHIGH		12		// non displayed port of this size
 #endif
 
 #define UPDATEWIDE			(PORTTILESWIDE+1)

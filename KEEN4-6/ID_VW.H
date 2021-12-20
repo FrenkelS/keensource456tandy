@@ -52,7 +52,7 @@
 #endif
 
 #if GRMODE == TGAGR
-#define	SCREENWIDTH		186
+#define	SCREENWIDTH		170
 #define CHARWIDTH		4
 #define TILEWIDTH		8
 #define BYTEPIXELS		2
