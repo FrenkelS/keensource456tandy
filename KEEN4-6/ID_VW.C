@@ -921,7 +921,7 @@ asm	mov	cx,ax
 asm	rep	movsw
 asm	movsb
 asm	add	si,dx
-asm	add	di,0x2000-160		// go to the fourht bank
+asm	add	di,0x2000-160		// go to the fourth bank
 asm	movsb
 asm	mov	cx,ax
 asm	rep	movsw
@@ -950,7 +950,7 @@ asm	add	di,0x2000-160		// go to the third bank
 asm	mov	cx,ax
 asm	rep	movsw
 asm	add	si,dx
-asm	add	di,0x2000-160		// go to the forth bank
+asm	add	di,0x2000-160		// go to the fourth bank
 asm	mov	cx,ax
 asm	rep	movsw
 asm	add	si,dx
