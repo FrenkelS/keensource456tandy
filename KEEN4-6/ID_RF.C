@@ -1596,8 +1596,6 @@ unsigned RF_FindFreeBuffer (void)
 =
 = RFL_UpdateSprites
 =
-= NOTE: Implement vertical clipping!
-=
 ====================
 */
 
@@ -1609,7 +1607,8 @@ void RFL_UpdateSprites (void)
 	unsigned dest;
 	byte		*updatespot,*baseupdatespot;
 	unsigned	updatedelta;
-	unsigned	height,sourceofs;
+	unsigned	width,height,sourceofs;
+	boolean		clipvertically;
 
 #ifdef PROFILE
 	unsigned	updatecount = 0;
@@ -1682,8 +1681,23 @@ redraw:
 		//
 		// draw it!
 		//
+			width = sprite->width;
 			height = sprite->height;
 			sourceofs = sprite->sourceofs;
+			clipvertically = false;
+			if (portx<0)
+			{
+				width += portx;
+				sourceofs -= portx;
+				portx = 0;
+				clipvertically = true;
+			}
+			else if (portx+sprite->width>PORTSCREENWIDE)
+			{
+				width = PORTSCREENWIDE - portx;
+				clipvertically = true;
+			}
+
 			if (porty<0)
 			{
 				height += porty;					// clip top off
@@ -1697,8 +1711,17 @@ redraw:
 
 			dest = bufferofs + ylookup[porty] + portx;
 
-			VW_MaskBlock(grsegs[sprite->grseg], sourceofs,
-				dest,sprite->width,height,sprite->planesize);
+			if (clipvertically)
+			{
+				VW_MaskBlockClipped(grsegs[sprite->grseg], sourceofs,
+					dest,width,height,
+					sprite->planesize,sprite->width-width);
+			}
+			else
+			{
+				VW_MaskBlock(grsegs[sprite->grseg], sourceofs,
+					dest,sprite->width,height,sprite->planesize);
+			}
 #ifdef PROFILE
 			updatecount++;
 #endif
