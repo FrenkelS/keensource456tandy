@@ -922,7 +922,7 @@ void FinaleLayout(void)
 
 		do
 		{
-			VWB_DrawPic(298, 184, H_FLASHARROW1PIC);
+			VWB_DrawPic(296, 184, H_FLASHARROW1PIC);
 #if GRMODE == CGAGR
 			VW_UpdateScreen();
 #elif GRMODE == TGAGR
@@ -938,7 +938,7 @@ void FinaleLayout(void)
 				VW_WaitVBL(1);
 			}
 
-			VWB_DrawPic(298, 184, H_FLASHARROW2PIC);
+			VWB_DrawPic(296, 184, H_FLASHARROW2PIC);
 #if GRMODE == CGAGR
 			VW_UpdateScreen();
 #elif GRMODE == TGAGR
