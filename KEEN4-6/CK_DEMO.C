@@ -1230,7 +1230,7 @@ void Terminator(void)
 	pagefinished = false;
 	CA_SetAllPurge();
 	SetPaletteEx(colors[0]);	// all black
-	VW_ClearVideo(BLACK);
+	VW_ClearVideo();
 	VW_SetLineWidth(248);	// 1984 pixels total, we're using 992 per "page"
 
 	CA_CacheGrChunk(TITLEPICPIC);
@@ -1373,7 +1373,7 @@ l1:
 	//
 	// switch back to default graphics settings
 	//
-	VW_ClearVideo(BLACK);
+	VW_ClearVideo();
 	VW_SetLineWidth(SCREENWIDTH);
 	VW_SetDefaultColors();
 	RF_FixOfs();
@@ -1876,7 +1876,7 @@ void ScrollSWText(void)
 void StarWars(void)
 {
 	SetPaletteEx(colors[0]);	// all black
-	VW_ClearVideo(BLACK);
+	VW_ClearVideo();
 	VW_SetLineWidth(42);	// 336 pixels
 	VW_SetScreen(0, 0);
 	pageon = pageofs = 0;
@@ -1905,7 +1905,7 @@ void StarWars(void)
 	MM_FreePtr(&bittables);
 	MM_FreePtr(&sourcepic);
 
-	VW_ClearVideo(BLACK);
+	VW_ClearVideo();
 	VW_SetLineWidth(SCREENWIDTH);
 	VW_SetDefaultColors();
 	RF_FixOfs();

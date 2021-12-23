@@ -1775,7 +1775,7 @@ USL_SetUpCtlPanel(void)
 	fontnumber = 1;
 	US_SetPrintRoutines(VW_MeasurePropString,VWB_DrawPropString);
 	fontcolor = F_BLACK;
-	VW_ClearVideo(3);
+	VW_ClearVideo();
 	RF_FixOfs();
 	VW_InitDoubleBuffer();
 
@@ -1879,7 +1879,7 @@ USL_TearDownCtlPanel(void)
 
 	IN_ClearKeysDown();
 	SD_WaitSoundDone();
-	VW_ClearVideo(3);
+	VW_ClearVideo();
 	CA_DownLevel();
 	CA_LoadAllSounds();
 }

@@ -220,7 +220,7 @@ void InitGame(void)
 #elif GRMODE == EGAGR || GRMODE == TGAGR
 	VW_ColorBorder(CYAN);
 #endif
-	VW_ClearVideo(BLACK);
+	VW_ClearVideo();
 }
 
 //===========================================================================
@@ -248,7 +248,7 @@ void Quit(char *error)
 	// (i.e. VW_SetScreenMode has not been executed) - this may
 	// happen if the code runs into an error during InitGame
 	// (EMS/XMS errors, files not found etc.)
-	VW_ClearVideo(BLACK);
+	VW_ClearVideo();
 	VW_SetLineWidth(40);
 
 	ShutdownId();

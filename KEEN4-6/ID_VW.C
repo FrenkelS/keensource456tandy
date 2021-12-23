@@ -354,17 +354,11 @@ asm	out	dx,ax
 ====================
 */
 
-void	VW_ClearVideo (int color)
+void	VW_ClearVideo ()
 {
 #if GRMODE == EGAGR
 	EGAWRITEMODE(2);
 	EGAMAPMASK(15);
-
-	color = (color << 8) & color;	//BUG: color is always 0 after this
-#endif
-
-#if GRMODE == CGAGR || GRMODE == TGAGR
-	color = (color << 12) & (color << 8) & (color << 4) & color;	//BUG: color is always 0 after this
 #endif
 
 	VW_WaitVBL(1);
@@ -373,7 +367,7 @@ asm	mov	es, screenseg;
 asm	mov	di, displayofs;
 asm	and	di, not 1;
 asm	mov	cx, 8000h;
-asm	mov	ax, color;
+asm	xor	ax, ax;
 asm	rep stosw;
 
 #if GRMODE == EGAGR

@@ -714,17 +714,17 @@ Sint16 HelpMenu(void)
 				helpmenupos++;
 				break;
 			case sc_Enter:
-				VW_ClearVideo(BACKCOLOR);
+				VW_ClearVideo();
 				return helpmenupos;
 			case sc_Escape:
-				VW_ClearVideo(BACKCOLOR);
+				VW_ClearVideo();
 				return -1;
 			}
 		}
 		ydelta += cursor.y;
 		if (cursor.button0 || cursor.button1 || control.button0 || control.button1)
 		{
-			VW_ClearVideo(BACKCOLOR);
+			VW_ClearVideo();
 			return helpmenupos;
 		}
 		if (ydelta < -40)
@@ -775,7 +775,7 @@ void HelpScreens(void)
 
 	CA_UpLevel();
 	CA_SetGrPurge();
-	VW_ClearVideo(BACKCOLOR);
+	VW_ClearVideo();
 
 #if GRMODE == EGAGR
 	RF_FixOfs();
@@ -792,7 +792,7 @@ void HelpScreens(void)
 	{
 		pos = HelpMenu();
 
-		VW_ClearVideo(BACKCOLOR);
+		VW_ClearVideo();
 
 		if (pos == -1)
 		{
@@ -801,7 +801,7 @@ void HelpScreens(void)
 			bufferofs = oldbufferofs;
 			displayofs = olddisplayofs;
 			fontnumber = oldfontnumber;
-			VW_ClearVideo(BACKCOLOR);
+			VW_ClearVideo();
 			RF_FixOfs();
 #ifdef KEEN5
 			StopMusic();	// Note: it's safer to call StopMusic BEFORE CA_DownLevel
@@ -878,7 +878,7 @@ void FinaleLayout(void)
 	char _seg *textseg;
 	Sint16 i;
 
-	VW_ClearVideo(BACKCOLOR);
+	VW_ClearVideo();
 	RF_FixOfs();
 	CA_UpLevel();
 	CA_SetGrPurge();
@@ -968,7 +968,7 @@ nextpage:
 	CA_DownLevel();
 	IN_ClearKeysDown();
 #if GRMODE == EGAGR
-	VW_ClearVideo(BACKCOLOR);
+	VW_ClearVideo();
 	RF_FixOfs();
 #endif
 	CA_SetGrPurge();
