@@ -473,6 +473,9 @@ USL_DrawCtlPanel(void)
 
 	// Refresh the screen
 	VW_UpdateScreen();
+#if GRMODE == TGAGR
+	VW_TGABottomUpdate();
+#endif
 }
 
 static void
@@ -1775,7 +1778,6 @@ USL_SetUpCtlPanel(void)
 	fontnumber = 1;
 	US_SetPrintRoutines(VW_MeasurePropString,VWB_DrawPropString);
 	fontcolor = F_BLACK;
-	VW_ClearVideo();
 	RF_FixOfs();
 	VW_InitDoubleBuffer();
 
@@ -1879,7 +1881,10 @@ USL_TearDownCtlPanel(void)
 
 	IN_ClearKeysDown();
 	SD_WaitSoundDone();
-	VW_ClearVideo();
+
+	if (!ingame && loadedgame)
+		VW_ClearVideoBottom();
+
 	CA_DownLevel();
 	CA_LoadAllSounds();
 }

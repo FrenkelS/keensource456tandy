@@ -827,6 +827,7 @@ void CheckKeys(void)
 	{
 		StopMusic();
 		HelpScreens();
+		VW_ClearVideoBottom();
 		StartMusic(gamestate.mapon);
 		if (showscorebox)
 		{
@@ -849,6 +850,7 @@ void CheckKeys(void)
 			VW_FixRefreshBuffer();
 			StopMusic();
 			US_ControlPanel();
+			VW_ClearVideoBottom();
 			RF_FixOfs();
 			StartMusic(gamestate.mapon);
 			if (!showscorebox && scoreobj->sprite)

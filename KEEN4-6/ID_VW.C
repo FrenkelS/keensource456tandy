@@ -370,8 +370,52 @@ asm	mov	cx, 8000h;
 asm	xor	ax, ax;
 asm	rep stosw;
 
+	VW_ClearVideoBottom();
+
 #if GRMODE == EGAGR
 	EGAWRITEMODE(0);
+#endif
+}
+
+/*
+==========================
+=
+= VW_ClearVideoBottom
+=
+==========================
+*/
+
+void VW_ClearVideoBottom (void)
+{
+#if GRMODE == TGAGR
+asm	mov	ax,0xb800+(11*16)/4*160/0x10
+asm	mov	es,ax
+
+asm	xor	si,si
+asm	xor	di,di
+
+asm	xor	ax,ax
+asm	mov	bx,6				// pair of 4 scan lines to copy
+asm	mov	dx,80				// words accross screen
+copyfourlines:
+asm	mov	cx,dx
+asm	rep	stosw
+asm	add	di,0x2000-160		// go to the second bank
+asm	mov	cx,dx
+asm	rep	stosw
+asm	add	di,0x2000-160		// go to the third bank
+asm	mov	cx,dx
+asm	rep	stosw
+asm	add	di,0x2000-160		// go to the fourth bank
+asm	mov	cx,dx
+asm	rep	stosw
+asm	sub	di,0x6000			// go to the first bank
+
+asm	dec	bx
+asm	jnz	copyfourlines
+
+asm	mov	ax,ss
+asm	mov	es,ax
 #endif
 }
 
@@ -879,13 +923,13 @@ void VW_TGAFullUpdate (void)
 {
 	displayofs = bufferofs+panadjust;
 
-asm	mov	ax,0xb800+((200-11*16)/2)/4*160/0x10
+asm	mov	ax,0xb800
 asm	mov	es,ax
 
 asm	mov	si,[displayofs]
 asm	xor	di,di
 
-asm	mov	bx,11*16/4				// pair of 4 scan lines to copy
+asm	mov	bx,11*16/4			// pair of 4 scan lines to copy
 asm	mov	dx,[linewidth]
 asm	sub	dx,160
 
@@ -966,6 +1010,98 @@ asm	rep	stosw
 
 	updateptr = baseupdateptr;
 	*(unsigned *)(updateptr + UPDATEWIDE*PORTTILESHIGH) = UPDATETERMINATE;
+}
+
+/*
+==========================
+=
+= VW_TGABottomUpdate
+=
+==========================
+*/
+
+void VW_TGABottomUpdate (void)
+{
+	displayofs = bufferofs+panadjust+(11*16)*SCREENWIDTH;
+
+asm	mov	ax,0xb800+(11*16)/4*160/0x10
+asm	mov	es,ax
+
+asm	mov	si,[displayofs]
+asm	xor	di,di
+
+asm	mov	bx,6				// pair of 4 scan lines to copy
+asm	mov	dx,[linewidth]
+asm	sub	dx,160
+
+asm	mov	ds,[screenseg]
+asm	test	si,1
+asm	jz	evenblock
+
+//
+// odd source
+//
+asm	mov	ax,79				// words accross screen
+copyfourlineso:
+asm	movsb
+asm	mov	cx,ax
+asm	rep	movsw
+asm	movsb
+asm	add	si,dx
+asm	add	di,0x2000-160		// go to the second bank
+asm	movsb
+asm	mov	cx,ax
+asm	rep	movsw
+asm	movsb
+asm	add	si,dx
+asm	add	di,0x2000-160		// go to the third bank
+asm	movsb
+asm	mov	cx,ax
+asm	rep	movsw
+asm	movsb
+asm	add	si,dx
+asm	add	di,0x2000-160		// go to the fourth bank
+asm	movsb
+asm	mov	cx,ax
+asm	rep	movsw
+asm	movsb
+asm	add	si,dx
+asm	sub	di,0x6000			// go to the first bank
+
+asm	dec	bx
+asm	jnz	copyfourlineso
+asm	jmp	blitdone
+
+//
+// even source
+//
+evenblock:
+asm	mov	ax,80				// words accross screen
+copyfourlines:
+asm	mov	cx,ax
+asm	rep	movsw
+asm	add	si,dx
+asm	add	di,0x2000-160		// go to the second bank
+asm	mov	cx,ax
+asm	rep	movsw
+asm	add	si,dx
+asm	add	di,0x2000-160		// go to the third bank
+asm	mov	cx,ax
+asm	rep	movsw
+asm	add	si,dx
+asm	add	di,0x2000-160		// go to the fourth bank
+asm	mov	cx,ax
+asm	rep	movsw
+asm	add	si,dx
+asm	sub	di,0x6000			// go to the first bank
+
+asm	dec	bx
+asm	jnz	copyfourlines
+
+blitdone:
+asm	mov	ax,ss
+asm	mov	ds,ax
+asm	mov	es,ax
 }
 
 

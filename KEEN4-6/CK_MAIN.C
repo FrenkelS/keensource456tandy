@@ -220,7 +220,6 @@ void InitGame(void)
 #elif GRMODE == EGAGR || GRMODE == TGAGR
 	VW_ColorBorder(CYAN);
 #endif
-	VW_ClearVideo();
 }
 
 //===========================================================================

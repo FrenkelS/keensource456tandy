@@ -1931,8 +1931,11 @@ void ShowTitle(void)
 	panadjust = 0;
 	CA_CacheGrChunk(TITLEPICPIC);
 	VW_DrawPic(0, 0, TITLEPICPIC);
-#if GRMODE == CGAGR || GRMODE == TGAGR
+#if GRMODE == CGAGR
 	VW_UpdateScreen();
+#elif GRMODE == TGAGR
+	VW_UpdateScreen();
+	VW_TGABottomUpdate();
 #elif GRMODE == EGAGR
 	VW_SetScreen(displayofs, 0);
 	VW_ScreenToScreen(bufferofs, displayofs, 42, 224);
@@ -1959,6 +1962,9 @@ void ShowCredits(void)
 	CA_CacheGrChunk(SW_BACKGROUNDPIC);
 	VW_DrawPic(0, 0, SW_BACKGROUNDPIC);
 	VW_UpdateScreen();
+#if GRMODE == TGAGR
+	VW_TGABottomUpdate();
+#endif
 	IN_UserInput(6*TickBase, false);
 	CA_ClearMarks();
 	CheckLastScan();

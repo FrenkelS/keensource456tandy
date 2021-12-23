@@ -270,6 +270,7 @@ void 	VW_SetScreen (unsigned CRTC, unsigned pelpan);
 
 void	VW_SetScreenMode (int grmode);
 void	VW_ClearVideo ();
+void	VW_ClearVideoBottom ();
 void	VW_WaitVBL (int number);
 
 void	VW_ColorBorder (int color);
@@ -346,6 +347,7 @@ void VW_UpdateScreen (void);
 void VW_CGAFullUpdate (void);
 #elif GRMODE == TGAGR
 void VW_TGAFullUpdate (void);
+void VW_TGABottomUpdate (void);
 #endif
 
 //

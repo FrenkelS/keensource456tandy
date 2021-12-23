@@ -612,7 +612,7 @@ void DialogUpdate(void)
 
 void DialogFinish(void)
 {
-	//this is empty
+	VW_ClearVideoBottom();
 }
 
 //==========================================================================
