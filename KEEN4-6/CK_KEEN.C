@@ -44,8 +44,6 @@ Contains the following actor types (in this order):
 =============================================================================
 */
 
-Sint16 singlegravity;	// left over from Keen Dreams, not used in Keen 4-6
-
 Uint16 bounceangle [8][8] =
 {
 	{ 0,  0,  0,  0,  0,  0,  0,  0},

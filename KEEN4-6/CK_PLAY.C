@@ -47,13 +47,12 @@ Uint16 originxtilemax;
 Uint16 originytilemax;
 
 ControlInfo c;
-boolean button2, button3;	// never used
 
 objtype dummyobj;
 
 Sint16 invincible;
 
-boolean oldshooting, showscorebox, joypad;
+boolean oldshooting, showscorebox;
 
 Sint16 groundslam;
 
@@ -179,11 +178,9 @@ void TestSprites(void)
 	Uint8 _seg *block;
 	Uint16 size;
 	Uint16 scan;
-	Uint32 totalsize;
 
 	VW_FixRefreshBuffer();
 	US_CenterWindow(30, 17);
-	totalsize = 0;
 	US_CPrint("Sprite Test");
 	US_CPrint("-----------");
 	infoy = PrintY;
@@ -246,7 +243,6 @@ void TestSprites(void)
 		{
 			size = ((spritetype far *)block)->sourceoffset[3] + ((spritetype far *)block)->planesize[3]*5;
 			size = (size + 15) & ~15;	//round up to multiples of 16
-			totalsize += size;	//useless: the value stored in 'totalsize' is never used
 			US_PrintUnsigned(size);
 			US_Print("=");
 		}
@@ -1019,7 +1015,7 @@ void PrintNumbers(Sint16 x, Sint16 y, Sint16 maxlen, Sint16 basetile, Sint32 num
 void DrawStatusWindow(void)
 {
 	Sint16 off, x, y, w, h, i;
-	Uint16 width, height;
+	Uint16 height;
 
 	x = 64;
 	y = 16;
@@ -1054,7 +1050,7 @@ void DrawStatusWindow(void)
 #else
 	_fstrcpy(str, levelnames[gamestate.mapon]);
 #endif
-	SizeText(str, &width, &height);
+	SizeText(str, &height);
 	PrintY = (20-height)/2+40-2;
 	US_CPrint(str);
 

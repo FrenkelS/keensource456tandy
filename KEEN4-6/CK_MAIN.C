@@ -66,20 +66,19 @@ boolean storedemo, jerk;
 =
 = SizeText
 =
-= Calculates width and height of a string that contains line breaks
-= (Note: only the height is ever used, width is NOT calculated correctly)
+= Calculates height of a string that contains line breaks
 =
 =====================
 */
 
-void SizeText(char *text, Uint16 *width, Uint16 *height)
+void SizeText(char *text, Uint16 *height)
 {
 	register char *ptr;
 	char c;
 	Uint16 w, h;
 	char strbuf[80];
 
-	*width = *height = 0;
+	*height = 0;
 	ptr = &strbuf[0];
 	while ((c=*(text++)) != '\0')
 	{
@@ -88,10 +87,6 @@ void SizeText(char *text, Uint16 *width, Uint16 *height)
 		{
 			USL_MeasureString(strbuf, &w, &h);	// BUG: strbuf may not have a terminating '\0' at the end!
 			*height += h;
-			if (*width < w)
-			{
-				*width = w;
-			}
 			ptr = &strbuf[0];
 		}
 	}
@@ -521,9 +516,6 @@ void main(void)
 	if (US_ParmPresent("DEMO"))
 		storedemo = true;
 
-	if (US_ParmPresent("JOYPAD"))
-		joypad = true;	// Note: the joypad variable is never used
-	
 	InitGame();
 	CheckMemory();
 	if (NoWait || tedlevel)

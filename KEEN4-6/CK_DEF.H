@@ -354,7 +354,7 @@ typedef struct
 extern char str[80], str2[20];
 extern boolean storedemo;
 
-void SizeText(char *text, Uint16 *width, Uint16 *height);
+void SizeText(char *text, Uint16 *height);
 
 /*
 =============================================================================
@@ -416,10 +416,9 @@ extern gametype gamestate;
 extern objtype *new, *check, *player, *scoreobj;
 extern Uint16 originxtilemax, originytilemax;
 extern ControlInfo c;
-extern boolean button2, button3;	// never used
 extern objtype dummyobj;
 extern Sint16 invincible;
-extern boolean oldshooting, showscorebox, joypad;
+extern boolean oldshooting, showscorebox;
 extern Sint16 groundslam;
 extern boolean debugok;
 extern boolean jumpbutton, jumpheld, pogobutton, pogoheld, firebutton, fireheld, upheld;
@@ -625,7 +624,6 @@ extern Sint16 bonussprite[];
 
 extern Uint16 zeromap;
 
-extern Sint16 singlegravity;
 extern Sint16 jumptime;
 extern Sint32 leavepoletime;
 extern Sint16 moonok;

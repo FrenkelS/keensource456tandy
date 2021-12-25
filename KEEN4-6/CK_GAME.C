@@ -527,7 +527,7 @@ void SetupGameLevel(boolean loadnow)
 void DialogDraw(char *title, Uint16 numcache)
 {
 	Sint16 i;
-	Uint16 width, height;
+	Uint16 height;
 	Sint32 totalfree;
 
 	totalfree = MM_TotalFree();
@@ -566,7 +566,7 @@ void DialogDraw(char *title, Uint16 numcache)
 	CA_UnmarkGrChunk(KEENCOUNT1PIC);	//redundant
 	WindowW -= 48;
 	WindowX += 48;
-	SizeText(title, &width, &height);
+	SizeText(title, &height);
 	PrintY += (WindowH-height)/2 - 4;
 	US_CPrint(title);
 	VW_UpdateScreen();
@@ -697,10 +697,10 @@ void EndDemoRecord(void)
 
 void HandleDeath(void)
 {
-	Uint16 y, color, top, bottom, selection, w, h;
+	Uint16 y, color, top, bottom, selection, h;
 
 	_fstrcpy(str, levelnames[mapon]);
-	SizeText(str, &w, &h);
+	SizeText(str, &h);
 
 	memset(gamestate.keys, 0, sizeof(gamestate.keys));
 	gamestate.lives--;
