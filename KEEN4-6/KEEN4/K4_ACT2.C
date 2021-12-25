@@ -647,7 +647,6 @@ statetype s_footsmoke3 = {SMOKE3SPR, SMOKE3SPR, step, false, false, 12, 0, 0, NU
 statetype s_footsmoke4 = {SMOKE4SPR, SMOKE4SPR, step, false, false, 12, 0, 0, NULL, NULL, R_Draw, NULL};
 statetype s_inch1      = {INCHWORML1SPR, INCHWORMR1SPR, step, false, true, 30, 128, 0, InchThink, InchContact, R_Walk, &s_inch2};
 statetype s_inch2      = {INCHWORML2SPR, INCHWORMR2SPR, step, false, true, 30, 128, 0, InchThink, InchContact, R_Walk, &s_inch1};
-statetype s_footchange = { -1,  -1, step, false, false, 48, 0, 0, NULL, NULL, R_Draw, &s_footwait};	//never used!
 statetype s_footwait   = {FOOTSPR, FOOTSPR, think, false, false, 30000, 0, 0, NULL, FootContact, R_Draw, NULL};
 
 /*

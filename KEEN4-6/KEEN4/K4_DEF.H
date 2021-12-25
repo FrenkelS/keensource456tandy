@@ -85,8 +85,6 @@ void RescuedMember(void);
 
 extern statetype s_keenswimslow1;
 extern statetype s_keenswimslow2;
-extern statetype s_keenswim1;
-extern statetype s_keenswim2;
 extern statetype s_kbubble1;
 extern statetype s_kbubble2;
 extern statetype s_kbubble3;
@@ -94,7 +92,6 @@ extern statetype s_kbubble4;
 void SpawnSwimKeen(Sint16 x, Sint16 y);
 void SpawnKbubble(objtype *ob);
 void T_KeenSwimSlow(objtype *ob);
-void T_KeenSwim(objtype *ob);
 void C_KeenSwim(objtype *ob, objtype *hit);
 void R_KeenSwim(objtype *ob);
 
@@ -174,7 +171,6 @@ extern statetype s_eggbirdfly1;
 extern statetype s_eggbirdfly2;
 extern statetype s_eggbirdfly3;
 extern statetype s_eggbirdfly4;
-extern statetype s_eggbirddrop;
 extern statetype s_eggbirdstun;
 extern statetype s_eggbirdstun2;
 extern statetype s_eggbirdstun3;
@@ -189,7 +185,6 @@ void T_EggbirdFly(objtype *ob);
 void C_Eggbird(objtype *ob, objtype *hit);
 void C_EggbirdStun(objtype *ob, objtype *hit);
 void R_Eggbird(objtype *ob);
-void R_EggbirdDrop(objtype *ob);
 void R_Chip(objtype *ob);
 void R_Eggbirdfly(objtype *ob);
 
@@ -334,7 +329,6 @@ extern statetype s_footsmoke3;
 extern statetype s_footsmoke4;
 extern statetype s_inch1;
 extern statetype s_inch2;
-extern statetype s_footchange;	//never used!
 extern statetype s_footwait;
 void SpawnInchworm(Sint16 x, Sint16 y);
 void SpawnFoot(Sint16 x, Sint16 y);
@@ -506,7 +500,6 @@ extern statetype s_dartdown1;
 extern statetype s_dartdown2;
 void SpawnDartShooter(Sint16 x, Sint16 y, Sint16 dir);
 void T_DartShoot(objtype *ob);
-void R_DartThrower(objtype *ob);
 
 extern statetype s_scuba;
 void SpawnScuba(Sint16 x, Sint16 y);

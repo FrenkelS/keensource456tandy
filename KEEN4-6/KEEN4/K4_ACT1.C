@@ -588,7 +588,6 @@ statetype s_eggbirdfly1  = {BIRDFLY1SPR,   BIRDFLY1SPR,   slidethink, false, fal
 statetype s_eggbirdfly2  = {BIRDFLY2SPR,   BIRDFLY2SPR,   slidethink, false, false,   8,   0, 0, T_EggbirdFly, C_Eggbird, R_Eggbirdfly, &s_eggbirdfly3};
 statetype s_eggbirdfly3  = {BIRDFLY3SPR,   BIRDFLY3SPR,   slidethink, false, false,   8,   0, 0, T_EggbirdFly, C_Eggbird, R_Eggbirdfly, &s_eggbirdfly4};
 statetype s_eggbirdfly4  = {BIRDFLY4SPR,   BIRDFLY4SPR,   slidethink, false, false,   8,   0, 0, T_EggbirdFly, C_Eggbird, R_Eggbirdfly, &s_eggbirdfly1};
-statetype s_eggbirddrop  = {BIRDFLY4SPR,   BIRDFLY4SPR,   think,      false, false,   8, 128, 0, T_WeakProjectile, C_Eggbird, R_EggbirdDrop, NULL};
 statetype s_eggbirdstun  = {BIRDSTUNSPR,   BIRDSTUNSPR,   stepthink,  false, false, 240,   0, 0, T_Projectile, C_EggbirdStun, R_Draw, &s_eggbirdstun2};
 statetype s_eggbirdstun2 = {BIRDWALKL1SPR, BIRDWALKR1SPR, step,       false, true,   20,   0, 0, NULL, C_EggbirdStun, R_Draw, &s_eggbirdstun3};
 statetype s_eggbirdstun3 = {BIRDSTUNSPR,   BIRDSTUNSPR,   step,       false, true,   20,   0, 0, NULL, C_EggbirdStun, R_Draw, &s_eggbirdstun4};
@@ -850,23 +849,6 @@ void R_Eggbird(objtype *ob)
 		ob->yspeed = -16;
 		ob->needtoclip = cl_fullclip;
 		ChangeState(ob, &s_eggbirdfly1);
-	}
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
-}
-
-/*
-===========================
-=
-= R_EggbirdDrop
-=
-===========================
-*/
-
-void R_EggbirdDrop(objtype *ob)	//never actually used
-{
-	if (ob->hitnorth)
-	{
-		ChangeState(ob, &s_eggbirdwalk1);
 	}
 	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
 }

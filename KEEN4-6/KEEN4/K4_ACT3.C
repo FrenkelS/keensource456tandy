@@ -1260,19 +1260,6 @@ void T_DartShoot(objtype *ob)
 }
 
 /*
-===========================
-=
-= R_DartThrower
-=
-===========================
-*/
-
-void R_DartThrower(objtype *ob)	//never used
-{
-	RF_PlaceSprite(&ob->sprite, ob->x, ob->y, ob->shapenum, ob->priority);
-}
-
-/*
 =============================================================================
 
 						  SCUBA GEAR

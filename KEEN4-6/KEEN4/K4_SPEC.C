@@ -1026,8 +1026,6 @@ temp4 = counter for spawning bubbles
 
 statetype s_keenswimslow1 = {SCUBAKEENL1SPR, SCUBAKEENR1SPR, stepthink, false, false, 50, 0, 0, T_KeenSwimSlow, C_KeenSwim, R_KeenSwim, &s_keenswimslow2};
 statetype s_keenswimslow2 = {SCUBAKEENL2SPR, SCUBAKEENR2SPR, stepthink, false, false, 50, 0, 0, T_KeenSwimSlow, C_KeenSwim, R_KeenSwim, &s_keenswimslow1};
-statetype s_keenswim1     = {SCUBAKEENL1SPR, SCUBAKEENR1SPR, stepthink, false, false, 50, 0, 0, T_KeenSwim, C_KeenSwim, R_KeenSwim, &s_keenswimslow2};
-statetype s_keenswim2     = {SCUBAKEENL2SPR, SCUBAKEENR2SPR, stepthink, false, false, 50, 0, 0, T_KeenSwim, C_KeenSwim, R_KeenSwim, &s_keenswimslow1};
 //Note: the die states for swimming Keen are in CK_KEEN.C and K4_ACT3.C (dopefish section)
 
 statetype s_kbubble1  = {SMALLBUBBLE1SPR, SMALLBUBBLE1SPR, think, false, false, 20, 0, 24, T_Bubble, NULL, R_Draw, &s_kbubble1};
@@ -1186,51 +1184,6 @@ void T_KeenSwimSlow(objtype *ob)
 		xtry += ob->xspeed;
 		ytry += ob->yspeed;
 	}
-}
-
-/*
-===========================
-=
-= T_KeenSwim
-=
-===========================
-*/
-
-void T_KeenSwim(objtype *ob)	//never actually used
-{
-	ob->temp4 = ob->temp4 + tics;
-	if (ob->temp4 > 60)
-		SpawnKbubble(ob);
-
-	if (jumpbutton && !jumpheld)
-	{
-		jumpheld = true;
-		ob->xspeed = c.xaxis * 18;
-		if (c.yaxis)
-			ob->yspeed = c.yaxis * 18;
-
-		if (ob->state == &s_keenswim1)
-		{
-			ob->state = &s_keenswim2;
-		}
-		else
-		{
-			ob->state = &s_keenswim1;
-		}
-	}
-
-	xtry = xtry + ob->xspeed * tics;
-	ytry = ytry + ob->yspeed * tics;
-	if (xtry > 0)
-	{
-		ob->xdir = 1;
-	}
-	else if (xtry < 0)
-	{
-		ob->xdir = -1;
-	}
-
-	ytry = ytry + tics*4;
 }
 
 /*
