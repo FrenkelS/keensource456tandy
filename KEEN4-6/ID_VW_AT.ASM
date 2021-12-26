@@ -207,8 +207,6 @@ ENDP
 ; The mask comes first, then the data.  Seperate unwound routines are used
 ; to speed drawing.
 ;
-; Mask blocks will allways be an even width because of the way IGRAB works
-;
 ; DONE
 ;
 ;============================================================================
