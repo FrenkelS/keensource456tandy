@@ -647,13 +647,13 @@ US_UpdateTextScreen(void)
 	longword        totalmem;
 
 	// Show video card info
-#if GRMODE == CGAGR
+#if GRMODE == CGAGR || GRMODE == EGAGR
 	b = (grmode == CGAGR);
 	USL_Show(21,7,4,(videocard >= CGAcard) && (videocard <= VGAcard),b);
-#elif GRMODE == EGAGR
 	b = (grmode == EGAGR || grmode == VGAGR);
 	USL_Show(21,8,7,(videocard >= EGAcard) && (videocard <= VGAcard),b);
 #elif GRMODE == TGAGR
+	USL_Show(21,7,4,true,false);
 	USL_Show(21,9,5,true,true);
 #endif
 #if GRMODE == EGAGR
@@ -685,7 +685,7 @@ US_UpdateTextScreen(void)
 		for (w++;w--;screen += 2,oscreen += 2)
 			*screen = (*oscreen & 0xf0) | 0x0f;
 	}
-	USL_Show(21,17,5,true,true);
+	USL_Show(21,17,5,true,MusicMode == smm_Tandy);
 
 	// Show memory available/used
 	USL_ShowMem(63,15,mminfo.mainmem / 1024);
