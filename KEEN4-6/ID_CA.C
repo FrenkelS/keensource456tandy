@@ -279,13 +279,13 @@ done:
 /*
 ======================
 =
-= CAL_Lzsa2Expand
+= CAL_Zx0Expand
 =
 =
 ======================
 */
 
-void CAL_Lzsa2Expand (byte huge *source, byte huge *dest)
+void CAL_Zx0Expand (byte huge *source, byte huge *dest)
 {
   unsigned sourceseg,sourceoff,destseg,destoff;
 
@@ -303,11 +303,9 @@ asm	mov	si,[sourceoff]
 asm	mov	di,[destoff]
 asm	mov	es,[destseg]
 asm	mov	ds,[sourceseg]
-asm	push	bp
 
-lzsa2_decompress_speed();
+zx0_decompress();
 
-asm	pop	bp
 asm	mov	ax,ss
 asm	mov	ds,ax
 
@@ -630,7 +628,7 @@ void CAL_SetupGrFile (void)
 	CAL_GetGrChunkLength(STRUCTPIC);		// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
-	CAL_Lzsa2Expand (compseg, (byte huge *)pictable);
+	CAL_Zx0Expand (compseg, (byte huge *)pictable);
 	MM_FreePtr(&compseg);
 #endif
 
@@ -639,7 +637,7 @@ void CAL_SetupGrFile (void)
 	CAL_GetGrChunkLength(STRUCTPICM);		// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
-	CAL_Lzsa2Expand (compseg, (byte huge *)picmtable);
+	CAL_Zx0Expand (compseg, (byte huge *)picmtable);
 	MM_FreePtr(&compseg);
 #endif
 
@@ -648,7 +646,7 @@ void CAL_SetupGrFile (void)
 	CAL_GetGrChunkLength(STRUCTSPRITE);	// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
-	CAL_Lzsa2Expand (compseg, (byte huge *)spritetable);
+	CAL_Zx0Expand (compseg, (byte huge *)spritetable);
 	MM_FreePtr(&compseg);
 #endif
 
@@ -869,7 +867,7 @@ void CA_CacheAudioChunk (int chunk)
 	MM_GetPtr (&(memptr)audiosegs[chunk],expanded);
 	if (mmerror)
 		goto done;
-	CAL_Lzsa2Expand (source,audiosegs[chunk]);
+	CAL_Zx0Expand (source,audiosegs[chunk]);
 
 done:
 	if (compressed>BUFFERSIZE)
@@ -1070,7 +1068,7 @@ void CAL_CacheSprite (int chunk, byte far *compressed)
 //
 // expand the unshifted shape
 //
-	CAL_Lzsa2Expand (compressed, &dest->data[0]);
+	CAL_Zx0Expand (compressed, &dest->data[0]);
 
 #endif
 
@@ -1099,7 +1097,7 @@ void CAL_CacheSprite (int chunk, byte far *compressed)
 //
 // expand the unshifted shape
 //
-	CAL_Lzsa2Expand (compressed, &dest->data[0]);
+	CAL_Zx0Expand (compressed, &dest->data[0]);
 
 //
 // make the shifts!
@@ -1236,7 +1234,7 @@ void CAL_ExpandGrChunk (int chunk, byte far *source)
 		MM_GetPtr (&grsegs[chunk],expanded);
 		if (mmerror)
 			return;
-		CAL_Lzsa2Expand (source,grsegs[chunk]);
+		CAL_Zx0Expand (source,grsegs[chunk]);
 	}
 }
 
