@@ -285,6 +285,7 @@ ENDP
 
 ;===========================================================================
 
+IFE GRMODE-CGAGR OR GRMODE-EGAGR
 
 	MASM
 ;อออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
@@ -728,6 +729,8 @@ FoundDevice	PROC	near	; Caller:    AH = display #
 	ret
 
 FoundDevice	ENDP
+
+ENDIF
 
 IDEAL
 

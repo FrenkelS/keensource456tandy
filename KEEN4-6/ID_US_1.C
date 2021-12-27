@@ -297,7 +297,7 @@ rcfailed:
 		HighScoresDirty = true;
 	}
 
-	SD_Default(gotit? (hadAdLib==AdLibPresent) : false, sd,sm);
+	SD_Default(gotit && (hadAdLib==AdLibPresent), sd,sm);
 	IN_Default(gotit,ctl);
 }
 
@@ -647,12 +647,15 @@ US_UpdateTextScreen(void)
 	longword        totalmem;
 
 	// Show video card info
-	b = (grmode == CGAGR || grmode == TGAGR);
+#if GRMODE == CGAGR
+	b = (grmode == CGAGR);
 	USL_Show(21,7,4,(videocard >= CGAcard) && (videocard <= VGAcard),b);
+#elif GRMODE == EGAGR
 	b = (grmode == EGAGR || grmode == VGAGR);
 	USL_Show(21,8,7,(videocard >= EGAcard) && (videocard <= VGAcard),b);
-//	b = (grmode == VGAGR);
-//	USL_Show(21,9,4,videocard == VGAcard,b);
+#elif GRMODE == TGAGR
+	USL_Show(21,9,5,true,true);
+#endif
 #if GRMODE == EGAGR
 	if (compatability)
 		USL_ScreenDraw(5,10,"SVGA Compatibility Mode Enabled.",0x4f);
@@ -682,6 +685,7 @@ US_UpdateTextScreen(void)
 		for (w++;w--;screen += 2,oscreen += 2)
 			*screen = (*oscreen & 0xf0) | 0x0f;
 	}
+	USL_Show(21,17,5,true,true);
 
 	// Show memory available/used
 	USL_ShowMem(63,15,mminfo.mainmem / 1024);

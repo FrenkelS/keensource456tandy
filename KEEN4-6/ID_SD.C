@@ -905,7 +905,7 @@ SD_Default(boolean gotit,SDMode sd,SMMode sm)
 	{
 		switch (sm)
 		{
-		case sdm_AdLib:		// BUG: this should use smm_AdLib!
+		case smm_AdLib:
 			gotsm = AdLibPresent;
 			break;
 		}

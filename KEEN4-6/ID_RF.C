@@ -1993,7 +1993,7 @@ void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
 
 		if (priority != sprite->priority)
 		{
-		// sprite mvoed to another priority, so unlink the old one and
+		// sprite moved to another priority, so unlink the old one and
 		// relink it in the new priority
 
 			next = sprite->nextsprite;			// cut old links
@@ -2566,7 +2566,7 @@ linknewspot:
 
 	if (!block)
 	{
-		strcpy (str,"RF_PlaceSprite: Placed an uncached sprite!");
+		strcpy (str,"RF_PlaceSprite: Placed an uncached sprite:");
 		itoa (spritenumber,str2,10);
 		strcat (str,str2);
 		Quit (str);

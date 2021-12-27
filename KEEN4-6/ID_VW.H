@@ -173,8 +173,10 @@
 
 //===========================================================================
 
+#if GRMODE == CGAGR || GRMODE == EGAGR
 typedef enum {NOcard,MDAcard,CGAcard,EGAcard,MCGAcard,VGAcard,
 		  HGCcard=0x80,HGCPcard,HICcard} cardtype;
+#endif
 
 typedef struct
 {
@@ -211,7 +213,9 @@ typedef enum {CGAgr,EGAgr,VGAgr,TGAgr} grtype;
 
 //===========================================================================
 
+#if GRMODE == CGAGR || GRMODE == EGAGR
 extern	cardtype	videocard;		// set by VW_Startup
+#endif
 extern	grtype		grmode;			// CGAgr, EGAgr, VGAgr, TGAgr
 
 extern	unsigned	bufferofs;		// hidden port to draw to before displaying
@@ -254,7 +258,9 @@ extern	unsigned	bufferwidth,bufferheight,screenspot;	// used by font drawing stu
 void	VW_Startup (void);
 void	VW_Shutdown (void);
 
+#if GRMODE == CGAGR || GRMODE == EGAGR
 cardtype	VW_VideoID (void);
+#endif
 
 //
 // EGA hardware routines

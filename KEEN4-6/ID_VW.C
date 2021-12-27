@@ -46,7 +46,9 @@
 =============================================================================
 */
 
+#if GRMODE == CGAGR || GRMODE == EGAGR
 cardtype	videocard;		// set by VW_Startup
+#endif
 grtype		grmode;			// CGAgr, EGAgr, VGAgr, TGAgr
 
 unsigned	bufferofs;		// hidden area to draw to before displaying
@@ -103,7 +105,9 @@ unsigned	cursorspot;
 =======================
 */
 
+#if GRMODE == CGAGR || GRMODE == EGAGR
 static	char *ParmStrings[] = {"HIDDENCARD","NOPAN",""};
+#endif
 
 void	VW_Startup (void)
 {
@@ -111,6 +115,7 @@ void	VW_Startup (void)
 
 	asm	cld;
 
+#if GRMODE == CGAGR || GRMODE == EGAGR
 	videocard = 0;
 
 	for (i = 1;i < _argc;i++)
@@ -128,6 +133,7 @@ void	VW_Startup (void)
 
 	if (!videocard)
 		videocard = VW_VideoID ();
+#endif
 
 #if GRMODE == EGAGR
 	grmode = EGAGR;
@@ -149,10 +155,6 @@ void	VW_Startup (void)
 
 #if GRMODE == TGAGR
 	grmode = TGAGR;
-	if (videocard < CGAcard || videocard > VGAcard)
-		Quit ("Improper video card!  If you really have a Tandy card that I am not\n"
-			"detecting, use the -HIDDENCARD command line parameter!");
-
 	MM_GetPtr (&(memptr)screenseg,0x10000l);	// grab 64k for floating screen
 #endif
 
