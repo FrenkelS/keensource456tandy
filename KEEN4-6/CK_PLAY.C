@@ -1050,7 +1050,7 @@ void DrawStatusWindow(void)
 #else
 	_fstrcpy(str, levelnames[gamestate.mapon]);
 #endif
-	SizeText(str, &height);
+	height = SizeText(str);
 	PrintY = (20-height)/2+40-2;
 	US_CPrint(str);
 

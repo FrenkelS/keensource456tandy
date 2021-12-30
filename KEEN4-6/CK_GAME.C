@@ -566,7 +566,7 @@ void DialogDraw(char *title, Uint16 numcache)
 	CA_UnmarkGrChunk(KEENCOUNT1PIC);	//redundant
 	WindowW -= 48;
 	WindowX += 48;
-	SizeText(title, &height);
+	height = SizeText(title);
 	PrintY += (WindowH-height)/2 - 4;
 	US_CPrint(title);
 	VW_UpdateScreen();
@@ -700,7 +700,7 @@ void HandleDeath(void)
 	Uint16 y, color, top, bottom, selection, h;
 
 	_fstrcpy(str, levelnames[mapon]);
-	SizeText(str, &h);
+	h = SizeText(str);
 
 	memset(gamestate.keys, 0, sizeof(gamestate.keys));
 	gamestate.lives--;

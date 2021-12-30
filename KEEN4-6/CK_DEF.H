@@ -354,7 +354,7 @@ typedef struct
 extern char str[80], str2[20];
 extern boolean storedemo;
 
-void SizeText(char *text, Uint16 *height);
+Uint16 SizeText(char *text);
 
 /*
 =============================================================================

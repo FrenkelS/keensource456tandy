@@ -71,14 +71,14 @@ boolean storedemo, jerk;
 =====================
 */
 
-void SizeText(char *text, Uint16 *height)
+Uint16 SizeText(char *text)
 {
 	register char *ptr;
 	char c;
 	Uint16 w, h;
 	char strbuf[80];
+	Uint16 height = 0;
 
-	*height = 0;
 	ptr = &strbuf[0];
 	while ((c=*(text++)) != '\0')
 	{
@@ -86,10 +86,11 @@ void SizeText(char *text, Uint16 *height)
 		if (c == '\n' || !*text)
 		{
 			USL_MeasureString(strbuf, &w, &h);	// BUG: strbuf may not have a terminating '\0' at the end!
-			*height += h;
+			height += h;
 			ptr = &strbuf[0];
 		}
 	}
+	return height;
 }
 
 //===========================================================================
