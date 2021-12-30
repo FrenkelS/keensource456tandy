@@ -454,7 +454,7 @@ void VW_DrawPic(unsigned x, unsigned y, unsigned chunknum)
 
 #endif
 
-#if NUMPICM>0
+#if NUMPICM>0 && GRMODE == EGAGR
 
 void VW_ClipDrawMPic(unsigned x, int y, unsigned chunknum)
 {

@@ -325,7 +325,9 @@ void VW_DrawTile8(unsigned x, unsigned y, unsigned tile);
 #endif
 
 void VW_DrawPic(unsigned x, unsigned y, unsigned chunknum);
+#if GRMODE == EGAGR
 void VW_ClipDrawMPic(unsigned x, int y, unsigned chunknum);
+#endif
 
 //
 // pixel addressable routines

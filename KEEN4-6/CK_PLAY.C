@@ -1194,6 +1194,7 @@ void DrawStatusWindow(void)
 	}
 }
 
+#if GRMODE == EGAGR
 /*
 ==================
 =
@@ -1257,6 +1258,7 @@ void ScrollStatusWindow(void)
 	}
 	VW_UpdateScreen();
 }
+#endif
 
 /*
 ==================
