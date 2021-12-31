@@ -1014,7 +1014,7 @@ void PrintNumbers(Sint16 x, Sint16 y, Sint16 maxlen, Sint16 basetile, Sint32 num
 
 void DrawStatusWindow(void)
 {
-	Sint16 off, x, y, w, h, i;
+	Sint16 x, y, w, h, i;
 	Uint16 height;
 
 	x = 64;
@@ -1074,7 +1074,7 @@ void DrawStatusWindow(void)
 	WindowW = 64;
 	US_CPrint("RESCUED");
 	VWB_Bar(79, 95, 66, 10, NUMBERBACK);
-	for (i = 0; i < gamestate.rescued; i++, off+=8)
+	for (i = 0; i < gamestate.rescued; i++)
 	{
 		VWB_DrawTile8(i*8 + 80, 96, 40);
 	}

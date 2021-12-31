@@ -50,46 +50,6 @@ CODESEG
 
 ;============================================================================
 ;
-; VW_Plot (int x,y,color)
-;
-;============================================================================
-
-
-PROC	VW_Plot x:WORD, y:WORD, color:WORD
-PUBLIC	VW_Plot
-USES	SI,DI
-
-	mov	es,[screenseg]
-
-	mov	di,[bufferofs]
-	mov	bx,[y]
-	shl	bx,1
-	add	di,[ylookup+bx]
-	mov	bx,[x]
-	mov	ax,bx
-	shr	ax,1
-	shr	ax,1
-	add	di,ax				; di = byte on screen
-
-	and	bx,3
-	mov	ah,[plotpixels+bx]
-	mov	bx,[color]
-	mov	cl,[colorbyte+bx]
-	and	cl,ah
-	not	ah
-
-	mov	al,[es:di]
-	and	al,ah				; mask off other pixels
-	or	al,cl
-	stosb
-
-	ret
-
-ENDP
-
-
-;============================================================================
-;
 ; VW_Vlin (int yl,yh,x,color)
 ;
 ;============================================================================

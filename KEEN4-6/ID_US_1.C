@@ -182,7 +182,6 @@ asm     sti     // Let the keyboard interrupts come through
 		case 'a':
 		case 'A':
 			goto oh_kill_me;
-			break;
 		case key_Return:
 		case key_Space:
 		case 'r':
@@ -191,7 +190,6 @@ asm     sti     // Let the keyboard interrupts come through
 			VW_UpdateScreen();
 			US_RestoreWindow(&wr);
 			return(RETRY);
-			break;
 		}
 	}
 

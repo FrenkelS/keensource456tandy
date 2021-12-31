@@ -172,8 +172,10 @@ static  boolean USL_ConfigCustom(UserCall call,struct UserItem far *item),
 				USL_LoadCustom(UserCall call,struct UserItem far *item),
 				USL_SaveCustom(UserCall call,struct UserItem far *item),
 				USL_ScoreCustom(UserCall call,struct UserItem far *item),
+#if GRMODE == EGAGR
 				USL_CompCustom(UserCall call,struct UserItem far *item),
 				USL_SmoothCustom(UserCall call,struct UserItem far *item),
+#endif
 				USL_TwoCustom(UserCall call,struct UserItem far *item),
 				USL_PongCustom(UserCall call,struct UserItem far *item);
 
@@ -701,6 +703,7 @@ USL_ScoreCustom(UserCall call,UserItem far *item)
 	return(true);
 }
 
+#if GRMODE == EGAGR
 #pragma argsused
 static boolean
 USL_SmoothCustom(UserCall call,UserItem far *item)
@@ -728,6 +731,7 @@ USL_CompCustom(UserCall call,UserItem far *item)
 	USL_SetOptionsText();
 	return(true);
 }
+#endif
 
 #ifdef  KEEN
 #pragma argsused

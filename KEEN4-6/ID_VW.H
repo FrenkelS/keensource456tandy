@@ -335,7 +335,9 @@ void VW_ClipDrawMPic(unsigned x, int y, unsigned chunknum);
 void	VW_MeasurePropString (char far *string, word *width, word *height);
 
 void VW_DrawPropString (char far *string);
+#if GRMODE == EGAGR
 void VW_Plot(unsigned x, unsigned y, unsigned color);
+#endif
 void VW_Hlin(unsigned xl, unsigned xh, unsigned y, unsigned color);
 void VW_Vlin(unsigned yl, unsigned yh, unsigned x, unsigned color);
 void VW_Bar (unsigned x, unsigned y, unsigned width, unsigned height,

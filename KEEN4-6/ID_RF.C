@@ -197,7 +197,9 @@ byte		*updateptr,*baseupdateptr,						// current start of update window
 =============================================================================
 */
 
+#ifdef PROFILE
 static		char	scratch[20],str[80];
+#endif
 
 tiletype	allanims[MAXANIMTYPES];
 unsigned	numanimchains;
@@ -267,7 +269,9 @@ void RFL_UpdateSprites (void);
 =====================
 */
 
+#ifndef KEEN
 static	char *ParmStrings[] = {"comp",""};
+#endif
 
 void RF_Startup (void)
 {
@@ -753,7 +757,7 @@ void RFL_InitAnimList (void)
 
 void RFL_CheckForAnimTile (unsigned x, unsigned y)
 {
-	unsigned 	tile,offset,speed,lasttime,thistime,timemissed;
+	unsigned 	tile,offset;
 	unsigned	far *map;
 	animtiletype	*anim,*next;
 
@@ -2386,12 +2390,9 @@ void RF_NewPosition (unsigned x, unsigned y)
 
 void RF_Scroll (int x, int y)
 {
-	long		neworgx,neworgy;
-	int			i,deltax,deltay,absdx,absdy;
+	int			deltax,deltay,absdx,absdy;
 	int			oldxt,oldyt,move,yy;
-	unsigned	updatespot;
 	byte		*spotptr;
-	unsigned	oldoriginmap,oldscreen,newscreen,screencopy;
 	int			screenmove;
 
 	oldxt = originxtile;
@@ -2505,7 +2506,6 @@ void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
 	spritelisttype	register *sprite,*next;
 	spritetabletype far *spr;
 	spritetype _seg	*block;
-	unsigned	shift,pixx;
 	char		str[80],str2[10];
 
 	if (!spritenumber || spritenumber == (unsigned)-1)

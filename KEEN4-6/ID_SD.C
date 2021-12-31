@@ -106,7 +106,6 @@ static	byte			carriers[9] =  { 3, 4, 5,11,12,13,19,20,21},
 //	Sequencer variables
 static	boolean			sqActive;
 static	word			alFXReg;
-static	word			sqMode,sqFadeStep;
 static	word			far *sqHack,far *sqHackPtr,sqHackLen,sqHackSeqLen;
 static	long			sqHackTime;
 static	longword		sqTimeCount;

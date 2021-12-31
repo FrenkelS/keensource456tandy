@@ -160,7 +160,6 @@ INL_KeyService(void)
 static	boolean	special;
 		byte	k,c,
 				temp;
-		int	player;
 
 	k = inportb(0x60);	// Get the scan code
 

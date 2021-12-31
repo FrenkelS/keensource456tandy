@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is primarily based on:
@@ -106,7 +110,9 @@ void MM_SetPurge (memptr *baseptr, int purge);
 void MM_SetLock (memptr *baseptr, boolean locked);
 void MM_SortMem (void);
 
+#if GRMODE == EGAGR
 void MM_ShowMemory (void);
+#endif
 
 long MM_UnusedMemory (void);
 long MM_TotalFree (void);

@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is primarily based on:
@@ -511,7 +515,7 @@ void MML_UseSpace (unsigned segstart, unsigned seglength)
 
 void MML_ClearBlock (void)
 {
-	mmblocktype far *scan,far *last;
+	mmblocktype far *scan;
 
 	scan = mmhead->next;
 
@@ -549,7 +553,7 @@ void MM_Startup (void)
 	int i;
 	unsigned 	long length;
 	void far 	*start;
-	unsigned 	segstart,seglength,endfree;
+	unsigned 	segstart,seglength;
 
 	if (mmstarted)
 		MM_Shutdown ();
@@ -990,7 +994,7 @@ void MM_SortMem (void)
 
 
 //==========================================================================
-
+#if GRMODE == EGAGR
 /*
 =====================
 =
@@ -1055,7 +1059,7 @@ write (debughandle,scratch,strlen(scratch));
 	VW_SetLineWidth(64);
 	bufferofs = temp;
 }
-
+#endif
 //==========================================================================
 
 
