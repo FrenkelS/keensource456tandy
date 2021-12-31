@@ -177,7 +177,7 @@ UNWOUNDMASKS	=	20
 
 
 maskroutines	dw	mask0,mask0
-				dw	mask1,mask1
+				dw	woundroutine,woundroutine	;There are no sprites of width 1
 				dw	mask2E,mask2O
 				dw	mask3E,mask3O
 				dw	mask4E,mask4O
@@ -193,7 +193,7 @@ maskroutines	dw	mask0,mask0
 				dw	mask14E,mask14O
 				dw	mask15E,mask15O
 				dw	mask16E,mask16O
-				dw	mask17E,mask17O
+				dw	woundroutine,woundroutine	;There are no sprites of width 17
 				dw	mask18E,mask18O
 				dw	mask19E,mask19O
 				dw	mask20E,mask20O
@@ -223,10 +223,12 @@ USES	SI,DI
 ;
 ;==============
 
-	mov	[ss:linedelta],dx
 	mov	ds,[segm]
 	mov	si,[ofs]
 	mov	di,[dest]
+
+woundroutine:
+	mov	[ss:linedelta],dx
 	mov	dx,[height]				;scan lines to draw
 
 @@lineloopgen:
@@ -300,11 +302,6 @@ MACRO	SPRITELOOP	addr
 	ret
 ENDM
 
-
-EVEN
-mask1:
-	MASKBYTE
-	SPRITELOOP	mask1
 
 EVEN
 mask2E:
@@ -575,32 +572,6 @@ mask16O:
 	MASKWORD
 	MASKBYTE
 	SPRITELOOP	mask16O
-
-EVEN
-mask17E:
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKBYTE
-	SPRITELOOP	mask17E
-
-EVEN
-mask17O:
-	MASKBYTE
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	MASKWORD
-	SPRITELOOP	mask17O
 
 EVEN
 mask18E:
