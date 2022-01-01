@@ -149,6 +149,5 @@ extern	int		US_CheckParm(char *parm,char **strings),
 
 extern	boolean US_ParmPresent(char *arg);
 
-		void	USL_PrintInCenter(char *s,Rect r);
 		char 	*USL_GiveSaveName(word game);
 #endif

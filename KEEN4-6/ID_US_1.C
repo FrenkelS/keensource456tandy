@@ -826,40 +826,19 @@ US_PrintSigned(long n)
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      USL_PrintInCenter() - Prints a string in the center of the given rect
-//
-///////////////////////////////////////////////////////////////////////////
-void
-USL_PrintInCenter(char *s,Rect r)
-{
-	word    w,h,
-			rw,rh;
-
-	USL_MeasureString(s,&w,&h);
-	rw = r.lr.x - r.ul.x;
-	rh = r.lr.y - r.ul.y;
-
-	px = r.ul.x + ((rw - w) / 2);
-	py = r.ul.y + ((rh - h) / 2);
-	USL_DrawString(s);
-}
-
-///////////////////////////////////////////////////////////////////////////
-//
 //      US_PrintCentered() - Prints a string centered in the current window.
 //
 ///////////////////////////////////////////////////////////////////////////
 void
 US_PrintCentered(char *s)
 {
-	Rect    r;
+	word    w,h;
 
-	r.ul.x = WindowX;
-	r.ul.y = WindowY;
-	r.lr.x = r.ul.x + WindowW;
-	r.lr.y = r.ul.y + WindowH;
+	USL_MeasureString(s,&w,&h);
 
-	USL_PrintInCenter(s,r);
+	px = WindowX + ((WindowW - w) / 2);
+	py = WindowY + ((WindowH - h) / 2);
+	USL_DrawString(s);
 }
 
 ///////////////////////////////////////////////////////////////////////////

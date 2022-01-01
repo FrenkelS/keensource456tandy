@@ -93,10 +93,6 @@ typedef	struct
 		{
 			int	x,y;
 		} Point;
-typedef	struct
-		{
-			Point	ul,lr;
-		} Rect;
 
 #define	nil	((void *)0)
 
