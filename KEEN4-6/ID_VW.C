@@ -113,7 +113,7 @@ void	VW_Startup (void)
 {
 	int i,n;
 
-	asm	cld;
+	asm	cld;				// all string instructions assume forward
 
 #if GRMODE == CGAGR || GRMODE == EGAGR
 	videocard = 0;
