@@ -48,8 +48,8 @@
 #define NUMFONT      3
 #define NUMFONTM     0
 #define NUMPICM      3
-#define NUMTILE8     108	// BUG: only 104 tiles exist in EGAGRAPH!
-#define NUMTILE8M    36		// BUG: only 20 tiles exist in EGAGRAPH!
+#define NUMTILE8     104
+#define NUMTILE8M    20
 #define NUMTILE32    0
 #define NUMTILE32M   0
 
