@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -65,14 +65,14 @@ void FreeGraphics(void)
 	{
 		if (grsegs[i])
 		{
-			MM_SetPurge(&grsegs[i], PURGE_LAST);
+			MM_SetPurge(&grsegs[i], true);
 		}
 	}
 	for (i=STARTTILE16; i<STARTEXTERNS; i++)
 	{
 		if (grsegs[i])
 		{
-			MM_SetPurge(&grsegs[i], PURGE_LAST);
+			MM_SetPurge(&grsegs[i], true);
 		}
 	}
 }
@@ -544,7 +544,7 @@ void DialogDraw(char *title, Uint16 numcache)
 			CA_UnmarkGrChunk(i+KEENCOUNT1PIC);
 			if (grsegs[i+KEENCOUNT1PIC])
 			{
-				MM_SetPurge(&grsegs[i+KEENCOUNT1PIC], PURGE_FIRST);
+				MM_SetPurge(&grsegs[i+KEENCOUNT1PIC], true);
 			}
 			else
 			{

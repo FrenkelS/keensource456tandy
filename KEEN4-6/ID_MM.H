@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -106,7 +106,7 @@ void MM_MapEMS (void);
 void MM_GetPtr (memptr *baseptr,unsigned long size);
 void MM_FreePtr (memptr *baseptr);
 
-void MM_SetPurge (memptr *baseptr, int purge);
+void MM_SetPurge (memptr *baseptr, boolean purge);
 void MM_SetLock (memptr *baseptr, boolean locked);
 void MM_SortMem (void);
 

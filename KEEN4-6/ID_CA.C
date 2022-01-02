@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -824,7 +824,7 @@ void CA_CacheAudioChunk (int chunk)
 
 	if (audiosegs[chunk])
 	{
-		MM_SetPurge (&(memptr)audiosegs[chunk],0);
+		MM_SetPurge (&(memptr)audiosegs[chunk],false);
 		return;							// allready in memory
 	}
 
@@ -905,7 +905,7 @@ void CA_LoadAllSounds (void)
 
 	for (i=0;i<NUMSOUNDS;i++,start++)
 		if (audiosegs[start])
-			MM_SetPurge (&(memptr)audiosegs[start],3);		// make purgable
+			MM_SetPurge (&(memptr)audiosegs[start],true);	// make purgable
 
 cachein:
 
@@ -1259,7 +1259,7 @@ void CA_CacheGrChunk (int chunk)
 	grneeded[chunk] |= ca_levelbit;		// make sure it doesn't get removed
 	if (grsegs[chunk])
 	{
-		MM_SetPurge (&grsegs[chunk],0);
+		MM_SetPurge (&grsegs[chunk],false);
 		return;							// allready in memory
 	}
 
@@ -1327,7 +1327,7 @@ void CA_CacheMap (int mapnum)
 // free up memory from last map
 //
 	if (mapon>-1 && mapheaderseg[mapon])
-		MM_SetPurge (&(memptr)mapheaderseg[mapon],3);
+		MM_SetPurge (&(memptr)mapheaderseg[mapon],true);
 	for (plane=0;plane<MAPPLANES;plane++)
 		if (mapsegs[plane])
 			MM_FreePtr (&(memptr)mapsegs[plane]);
@@ -1350,7 +1350,7 @@ void CA_CacheMap (int mapnum)
 		CA_FarRead (maphandle,(memptr)mapheaderseg[mapnum],sizeof(maptype));
 	}
 	else
-		MM_SetPurge (&(memptr)mapheaderseg[mapnum],0);
+		MM_SetPurge (&(memptr)mapheaderseg[mapnum],false);
 
 //
 // load the planes in
@@ -1494,7 +1494,7 @@ void CA_SetGrPurge (void)
 //
 	for (i=0;i<NUMCHUNKS;i++)
 		if (grsegs[i])
-			MM_SetPurge (&(memptr)grsegs[i],3);
+			MM_SetPurge (&(memptr)grsegs[i],true);
 }
 
 
@@ -1524,7 +1524,7 @@ void CA_SetAllPurge (void)
 //
 	for (i=0;i<NUMMAPS;i++)
 		if (mapheaderseg[i])
-			MM_SetPurge (&(memptr)mapheaderseg[i],3);
+			MM_SetPurge (&(memptr)mapheaderseg[i],true);
 
 	for (i=0;i<3;i++)
 		if (mapsegs[i])
@@ -1535,7 +1535,7 @@ void CA_SetAllPurge (void)
 //
 	for (i=0;i<NUMSNDCHUNKS;i++)
 		if (audiosegs[i])
-			MM_SetPurge (&(memptr)audiosegs[i],3);
+			MM_SetPurge (&(memptr)audiosegs[i],true);
 
 //
 // free graphics
@@ -1574,15 +1574,15 @@ void CA_CacheMarks (char *title)
 	for (i=0;i<NUMCHUNKS;i++)
 		if (grneeded[i]&ca_levelbit)
 		{
-			if (grsegs[i])					// its allready in memory, make
-				MM_SetPurge(&grsegs[i],0);	// sure it stays there!
+			if (grsegs[i])						// its allready in memory, make
+				MM_SetPurge(&grsegs[i],false);	// sure it stays there!
 			else
 				numcache++;
 		}
 		else
 		{
 			if (grsegs[i])					// not needed, so make it purgeable
-				MM_SetPurge(&grsegs[i],3);
+				MM_SetPurge(&grsegs[i],true);
 		}
 
 	if (!numcache)			// nothing to cache!

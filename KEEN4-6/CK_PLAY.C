@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -2037,7 +2037,7 @@ void StopMusic(void)
 			//unlock any music blocks so that they can be purged
 			MM_SetLock(&(memptr)audiosegs[start+i], false);
 #endif
-			MM_SetPurge(&(memptr)audiosegs[start+i], PURGE_FIRST);
+			MM_SetPurge(&(memptr)audiosegs[start+i], true);
 		}
 	}
 }

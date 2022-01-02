@@ -1302,7 +1302,7 @@ void VW_FreeCursor (void)
 	if (cursornumber)
 	{
 		MM_SetLock (&grsegs[cursornumber],false);
-		MM_SetPurge (&grsegs[cursornumber],3);
+		MM_SetPurge (&grsegs[cursornumber],true);
 		MM_SetLock (&cursorsave,false);
 		MM_FreePtr (&cursorsave);
 		cursornumber = 0;

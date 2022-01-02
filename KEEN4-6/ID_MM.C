@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -43,8 +43,6 @@ WORK TO DO
 ----------
 MM_SizePtr to change the size of a given pointer
 
-Multiple purge levels utilized
-
 EMS / XMS unmanaged routines
 
 =============================================================================
@@ -65,8 +63,7 @@ EMS / XMS unmanaged routines
 */
 
 #define LOCKBIT		0x80	// if set in attributes, block cannot be moved
-#define PURGEBITS	3		// 0-3 level, 0= unpurgable, 3= purge first
-#define PURGEMASK	0xfffc
+#define PURGEBIT	1		// 0= unpurgable, 1= purge
 #define BASEATTRIBUTES	0	// unlocked, non purgable
 
 #define MAXUMBS		10
@@ -521,7 +518,7 @@ void MML_ClearBlock (void)
 
 	while (scan)
 	{
-		if (!(scan->attributes&LOCKBIT) && (scan->attributes&PURGEBITS) )
+		if (!(scan->attributes&LOCKBIT) && (scan->attributes&PURGEBIT) )
 		{
 			MM_FreePtr(scan->useptr);
 			return;
@@ -754,10 +751,10 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 			}
 
 			//
-			// if this block is purge level zero or locked, skip past it
+			// if this block is not purgeable or locked, skip past it
 			//
 			if ( (scan->attributes & LOCKBIT)
-				|| !(scan->attributes & PURGEBITS) )
+				|| !(scan->attributes & PURGEBIT) )
 			{
 				lastscan = scan;
 				startseg = lastscan->start + lastscan->length;
@@ -816,12 +813,12 @@ void MM_FreePtr (memptr *baseptr)
 =
 = MM_SetPurge
 =
-= Sets the purge level for a block (locked blocks cannot be made purgable)
+= Sets the purge attribute for a block (locked blocks cannot be made purgable)
 =
 =====================
 */
 
-void MM_SetPurge (memptr *baseptr, int purge)
+void MM_SetPurge (memptr *baseptr, boolean purge)
 {
 	mmblocktype far *start;
 
@@ -841,7 +838,7 @@ void MM_SetPurge (memptr *baseptr, int purge)
 
 	} while (1);
 
-	mmrover->attributes &= ~PURGEBITS;
+	mmrover->attributes &= ~PURGEBIT;
 	mmrover->attributes |= purge;
 }
 
@@ -940,7 +937,7 @@ void MM_SortMem (void)
 		}
 		else
 		{
-			if (scan->attributes & PURGEBITS)
+			if (scan->attributes & PURGEBIT)
 			{
 			//
 			// throw out the purgable block
@@ -1024,7 +1021,7 @@ void MM_ShowMemory (void)
 
 	while (scan)
 	{
-		if (scan->attributes & PURGEBITS)
+		if (scan->attributes & PURGEBIT)
 			color = 5;		// dark purple = purgable
 		else
 			color = 9;		// medium blue = non purgable
@@ -1113,7 +1110,7 @@ long MM_TotalFree (void)
 
 	while (scan->next)
 	{
-		if ((scan->attributes&PURGEBITS) && !(scan->attributes&LOCKBIT))
+		if ((scan->attributes&PURGEBIT) && !(scan->attributes&LOCKBIT))
 			free += scan->length;
 		free += scan->next->start - (scan->start + scan->length);
 		scan = scan->next;

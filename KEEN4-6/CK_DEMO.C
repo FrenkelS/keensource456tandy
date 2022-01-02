@@ -1367,8 +1367,8 @@ l1:
 	//
 	// free the remaining buffers
 	//
-	MM_SetPurge(&grsegs[BIGCOMMANDER], 3);
-	MM_SetPurge(&grsegs[BIGKEEN], 3);
+	MM_SetPurge(&grsegs[BIGCOMMANDER], true);
+	MM_SetPurge(&grsegs[BIGKEEN], true);
 
 	//
 	// switch back to default graphics settings

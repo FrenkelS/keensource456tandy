@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -63,15 +63,6 @@
 //HACK IMPORTS:
 void RFL_InitAnimList(void);
 void CA_SetGrPurge(void);
-
-/*
-Note:
-
-The ID software memory manager doesn't care about the different purge levels.
-Using PURGE_FIST is identical to using PURGE_LAST.
-*/
-#define PURGE_FIRST 3
-#define PURGE_LAST 1
 
 #define PLATFORMBLOCK 31
 #define DIRARROWSTART 91
