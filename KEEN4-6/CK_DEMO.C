@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -1929,6 +1929,7 @@ void StarWars(void)
 void ShowTitle(void)
 {
 	panadjust = 0;
+	CA_SetGrPurge();
 	CA_CacheGrChunk(TITLEPICPIC);
 	VW_DrawPic(0, 0, TITLEPICPIC);
 #if GRMODE == CGAGR
@@ -1959,6 +1960,7 @@ void ShowTitle(void)
 void ShowCredits(void)
 {
 	panadjust = 0;
+	CA_SetGrPurge();
 	CA_CacheGrChunk(SW_BACKGROUNDPIC);
 	VW_DrawPic(0, 0, SW_BACKGROUNDPIC);
 	VW_UpdateScreen();
