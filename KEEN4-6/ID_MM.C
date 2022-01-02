@@ -96,9 +96,6 @@ mminfotype	mminfo;
 memptr		bufferseg;
 boolean		mmerror;
 
-void		(* beforesort) (void);
-void		(* aftersort) (void);
-
 /*
 =============================================================================
 
@@ -131,11 +128,12 @@ unsigned	numUMBs,UMBbase[MAXUMBS];
 
 boolean		MML_CheckForEMS (void);
 void 		MML_ShutdownEMS (void);
-void 		MM_MapEMS (void);
+void 		MML_MapEMS (void);
 boolean 	MML_CheckForXMS (void);
 void 		MML_ShutdownXMS (void);
 void		MML_UseSpace (unsigned segstart, unsigned seglength);
 void 		MML_ClearBlock (void);
+void		MML_SortMem (void);
 
 //==========================================================================
 
@@ -292,7 +290,7 @@ ok:
 /*
 ====================
 =
-= MM_MapEMS
+= MML_MapEMS
 =
 = Maps the 64k of EMS used by memory manager into the page frame
 = for general use.  This only needs to be called if you are keeping
@@ -301,7 +299,7 @@ ok:
 ====================
 */
 
-void MM_MapEMS (void)
+void MML_MapEMS (void)
 {
 	char	str[80],str2[10];
 	unsigned	error;
@@ -324,7 +322,7 @@ void MM_MapEMS (void)
 
 error:
 	error = _AH;
-	strcpy (str,"MM_MapEMS: EMS error 0x");
+	strcpy (str,"MML_MapEMS: EMS error 0x");
 	itoa(error,str2,16);
 	strcpy (str,str2);
 	Quit (str);
@@ -620,7 +618,7 @@ void MM_Startup (void)
 	{
 		MML_SetupEMS();					// allocate space
 		MML_UseSpace (EMSpageframe,EMSpagesmapped*0x400);
-		MM_MapEMS();					// map in used pages
+		MML_MapEMS();					// map in used pages
 		mminfo.EMSmem = EMSpagesmapped*0x4000l;
 	}
 
@@ -718,7 +716,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 			endscan = mmrover;
 			break;
 		case 2:
-			MM_SortMem ();
+			MML_SortMem ();
 			lastscan = mmhead;
 			scan = mmhead->next;
 			endscan = NULL;
@@ -808,17 +806,7 @@ void MM_FreePtr (memptr *baseptr)
 }
 //==========================================================================
 
-/*
-=====================
-=
-= MM_SetPurge
-=
-= Sets the purge attribute for a block (locked blocks cannot be made purgable)
-=
-=====================
-*/
-
-void MM_SetPurge (memptr *baseptr, boolean purge)
+void MML_SetRover(memptr *baseptr)
 {
 	mmblocktype far *start;
 
@@ -834,10 +822,24 @@ void MM_SetPurge (memptr *baseptr, boolean purge)
 		if (!mmrover)
 			mmrover = mmhead;
 		else if (mmrover == start)
-			Quit ("MM_SetPurge: Block not found!");
+			Quit ("MML_SetRover: Block not found!");
 
 	} while (1);
+}
 
+/*
+=====================
+=
+= MM_SetPurge
+=
+= Sets the purge attribute for a block (locked blocks cannot be made purgable)
+=
+=====================
+*/
+
+void MM_SetPurge (memptr *baseptr, boolean purge)
+{
+	MML_SetRover(baseptr);
 	mmrover->attributes &= ~PURGEBIT;
 	mmrover->attributes |= purge;
 }
@@ -856,24 +858,7 @@ void MM_SetPurge (memptr *baseptr, boolean purge)
 
 void MM_SetLock (memptr *baseptr, boolean locked)
 {
-	mmblocktype far *start;
-
-	start = mmrover;
-
-	do
-	{
-		if (mmrover->useptr == baseptr)
-			break;
-
-		mmrover = mmrover->next;
-
-		if (!mmrover)
-			mmrover = mmhead;
-		else if (mmrover == start)
-			Quit ("MM_SetLock: Block not found!");
-
-	} while (1);
-
+	MML_SetRover(baseptr);
 	mmrover->attributes &= ~LOCKBIT;
 	mmrover->attributes |= locked*LOCKBIT;
 }
@@ -883,14 +868,14 @@ void MM_SetLock (memptr *baseptr, boolean locked)
 /*
 =====================
 =
-= MM_SortMem
+= MML_SortMem
 =
 = Throws out all purgable stuff and compresses movable blocks
 =
 =====================
 */
 
-void MM_SortMem (void)
+void MML_SortMem (void)
 {
 	mmblocktype far *scan,far *last,far *next;
 	unsigned	start,length,source,dest,oldborder;
@@ -918,9 +903,6 @@ void MM_SortMem (void)
 	SD_StopSound();
 	oldborder = bordercolor;
 	VW_ColorBorder (15);
-
-	if (beforesort)
-		beforesort();
 
 	scan = mmhead;
 
@@ -979,9 +961,6 @@ void MM_SortMem (void)
 	}
 
 	mmrover = mmhead;
-
-	if (aftersort)
-		aftersort();
 
 	VW_ColorBorder (oldborder);
 

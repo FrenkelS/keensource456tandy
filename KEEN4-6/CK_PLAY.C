@@ -2184,7 +2184,7 @@ void StartMusic(Uint16 num)
 	{
 #ifdef FIX_MUSIC_MEMORY_ISSUES
 		//The current music should be locked, so the memory manager will not
-		//mess with it when compressing memory blocks in MM_SortMem().
+		//mess with it when compressing memory blocks in MML_SortMem().
 		MM_SetLock(&(memptr)audiosegs[start+song], true);
 #endif
 		SD_StartMusic((MusicGroup far *)audiosegs[start+song]);

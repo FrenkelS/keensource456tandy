@@ -35,11 +35,7 @@
 
 #define	BUFFERSIZE		0x1000		// miscelanious, allways available buffer
 
-#ifdef CAT3D
-#define MAXBLOCKS		600
-#else
 #define MAXBLOCKS		1200
-#endif
 
 
 //--------
@@ -94,21 +90,16 @@ extern	mminfotype	mminfo;
 extern	memptr		bufferseg;
 extern	boolean		mmerror;
 
-extern	void		(* beforesort) (void);
-extern	void		(* aftersort) (void);
-
 //==========================================================================
 
 void MM_Startup (void);
 void MM_Shutdown (void);
-void MM_MapEMS (void);
 
 void MM_GetPtr (memptr *baseptr,unsigned long size);
 void MM_FreePtr (memptr *baseptr);
 
 void MM_SetPurge (memptr *baseptr, boolean purge);
 void MM_SetLock (memptr *baseptr, boolean locked);
-void MM_SortMem (void);
 
 #if GRMODE == EGAGR
 void MM_ShowMemory (void);
