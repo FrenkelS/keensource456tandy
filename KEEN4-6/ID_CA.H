@@ -111,7 +111,7 @@ extern	void	(*finishcachebox)	(void);
 
 // just for the score box reshifting
 
-void CAL_ShiftSprite (unsigned segment,unsigned source,unsigned dest,
+void CA_ShiftSprite (unsigned segment,unsigned source,unsigned dest,
 	unsigned width, unsigned height, unsigned pixshift);
 
 //===========================================================================

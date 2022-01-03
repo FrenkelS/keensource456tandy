@@ -253,13 +253,13 @@ void ShiftScore (void)
 	spr = &spritetable[SCOREBOXSPR-STARTSPRITES];
 	dest = (spritetype _seg *)grsegs[SCOREBOXSPR];
 
-	CAL_ShiftSprite (FP_SEG(dest),dest->sourceoffset[0],
+	CA_ShiftSprite (FP_SEG(dest),dest->sourceoffset[0],
 		dest->sourceoffset[1],spr->width,spr->height,2);
 
-	CAL_ShiftSprite (FP_SEG(dest),dest->sourceoffset[0],
+	CA_ShiftSprite (FP_SEG(dest),dest->sourceoffset[0],
 		dest->sourceoffset[2],spr->width,spr->height,4);
 
-	CAL_ShiftSprite (FP_SEG(dest),dest->sourceoffset[0],
+	CA_ShiftSprite (FP_SEG(dest),dest->sourceoffset[0],
 		dest->sourceoffset[3],spr->width,spr->height,6);
 }
 #endif

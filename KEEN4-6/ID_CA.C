@@ -934,7 +934,7 @@ cachein:
 /*
 ======================
 =
-= CAL_ShiftSprite
+= CA_ShiftSprite
 =
 = Make a shifted (one byte wider) copy of a sprite into another area
 =
@@ -943,7 +943,7 @@ cachein:
 
 unsigned	static	sheight,swidth;
 
-void CAL_ShiftSprite (unsigned segment,unsigned source,unsigned dest,
+void CA_ShiftSprite (unsigned segment,unsigned source,unsigned dest,
 	unsigned width, unsigned height, unsigned pixshift)
 {
 
@@ -1126,7 +1126,7 @@ void CAL_CacheSprite (int chunk, byte far *compressed)
 			dest->planesize[i] = bigplane;
 			dest->width[i] = spr->width+1;
 		}
-		CAL_ShiftSprite ((unsigned)grsegs[chunk],dest->sourceoffset[0],
+		CA_ShiftSprite ((unsigned)grsegs[chunk],dest->sourceoffset[0],
 			dest->sourceoffset[2],spr->width,spr->height,4);
 		break;
 
@@ -1138,19 +1138,19 @@ void CAL_CacheSprite (int chunk, byte far *compressed)
 		dest->sourceoffset[1] = shiftstarts[1];
 		dest->planesize[1] = bigplane;
 		dest->width[1] = spr->width+1;
-		CAL_ShiftSprite ((unsigned)grsegs[chunk],dest->sourceoffset[0],
+		CA_ShiftSprite ((unsigned)grsegs[chunk],dest->sourceoffset[0],
 			dest->sourceoffset[1],spr->width,spr->height,2);
 
 		dest->sourceoffset[2] = shiftstarts[2];
 		dest->planesize[2] = bigplane;
 		dest->width[2] = spr->width+1;
-		CAL_ShiftSprite ((unsigned)grsegs[chunk],dest->sourceoffset[0],
+		CA_ShiftSprite ((unsigned)grsegs[chunk],dest->sourceoffset[0],
 			dest->sourceoffset[2],spr->width,spr->height,4);
 
 		dest->sourceoffset[3] = shiftstarts[3];
 		dest->planesize[3] = bigplane;
 		dest->width[3] = spr->width+1;
-		CAL_ShiftSprite ((unsigned)grsegs[chunk],dest->sourceoffset[0],
+		CA_ShiftSprite ((unsigned)grsegs[chunk],dest->sourceoffset[0],
 			dest->sourceoffset[3],spr->width,spr->height,6);
 
 		break;
