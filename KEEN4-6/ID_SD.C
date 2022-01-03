@@ -57,9 +57,63 @@
 
 #define	SDL_SoundFinished()	{SoundNumber = SoundPriority = 0;}
 
+typedef	struct
+		{
+			longword	length;
+			word		priority;
+		} SoundCommon;
+
+//	PC Sound stuff
+#define	pcTimer		0x42
+#define	pcTAccess	0x43
+#define	pcSpeaker	0x61
+
+#define	pcSpkBits	3
+
+typedef	struct
+		{
+			SoundCommon	common;
+			byte		data[1];
+		} PCSound;
+
+// 	Registers for the AdLib card
+// Operator stuff
+#define	alChar		0x20
+#define	alScale		0x40
+#define	alAttack	0x60
+#define	alSus		0x80
+#define	alWave		0xe0
+// Channel stuff
+#define	alFreqL		0xa0
+#define	alFreqH		0xb0
+#define	alFeedCon	0xc0
+// Global stuff
+#define	alEffects	0xbd
+
+typedef	struct
+		{
+			byte	mChar,cChar,
+					mScale,cScale,
+					mAttack,cAttack,
+					mSus,cSus,
+					mWave,cWave,
+					nConn,
+
+					// These are only for Muse - these bytes are really unused
+					voice,
+					mode,
+					unused[3];
+		} Instrument;
+
+typedef	struct
+		{
+			SoundCommon	common;
+			Instrument	inst;
+			byte		block,
+						data[1];
+		} AdLibSound;
+
 // Macros for AdLib stuff
-#define	selreg(n)	outportb(0x388,n)
-#define	writereg(n)	outportb(0x389,n)
 #define	readstat()	inportb(0x388)
 
 //	Global variables
@@ -99,6 +153,11 @@ static	Instrument		alZeroInst;
 // This table maps channel numbers to carrier and modulator op cells
 static	byte			carriers[9] =  { 3, 4, 5,11,12,13,19,20,21},
 						modifiers[9] = { 0, 1, 2, 8, 9,10,16,17,18};
+
+//
+//	Sequencing stuff
+//
+#define	sqMaxTracks	10
 
 //	Sequencer variables
 static	boolean			sqActive;
@@ -175,9 +234,9 @@ asm	cli
 
 	(long)pcSound = 0;
 
-asm	in	al,0x61		  	// Turn the speaker off
+asm	in	al,pcSpeaker		  	// Turn the speaker off
 asm	and	al,0xfd			// ~2
-asm	out	0x61,al
+asm	out	pcSpeaker,al
 
 asm	popf
 }
@@ -208,21 +267,21 @@ SDL_PCService(void)
 			asm	mov	bx,[t]
 
 			asm	mov	al,0xb6			// Write to channel 2 (speaker) timer
-			asm	out	43h,al
+			asm	out	pcTAccess,al
 			asm	mov	al,bl
-			asm	out	42h,al			// Low byte
+			asm	out	pcTimer,al		// Low byte
 			asm	mov	al,bh
-			asm	out	42h,al			// High byte
+			asm	out	pcTimer,al		// High byte
 
-			asm	in	al,0x61			// Turn the speaker & gate on
-			asm	or	al,3
-			asm	out	0x61,al
+			asm	in	al,pcSpeaker	// Turn the speaker & gate on
+			asm	or	al,pcSpkBits
+			asm	out	pcSpeaker,al
 			}
 			else					// Time for some silence
 			{
-			asm	in	al,0x61		  	// Turn the speaker & gate off
-			asm	and	al,0xfc			// ~3
-			asm	out	0x61,al
+			asm	in	al,pcSpeaker	// Turn the speaker & gate off
+			asm	and	al,0xfc			// ~3 == ~pcSpkBits
+			asm	out	pcSpeaker,al
 			}
 
 		asm	popf

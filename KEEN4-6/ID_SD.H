@@ -52,98 +52,6 @@ typedef	enum	{
 					smm_Off,smm_AdLib,smm_Tandy
 				}	SMMode;
 
-typedef	struct
-		{
-			longword	length;
-			word		priority;
-		} SoundCommon;
-
-//	PC Sound stuff
-#define	pcTimer		0x42
-#define	pcTAccess	0x43
-#define	pcSpeaker	0x61
-
-#define	pcSpkBits	3
-
-typedef	struct
-		{
-			SoundCommon	common;
-			byte		data[1];
-		} PCSound;
-
-// 	Registers for the Sound Blaster card - needs to be offset by n0
-#define	sbReset		0x206
-#define	sbReadData	0x20a
-#define	sbWriteCmd	0x20c
-#define	sbWriteData	0x20c
-#define	sbWriteStat	0x20c
-#define	sbDataAvail	0x20e
-
-typedef	struct
-		{
-			SoundCommon	common;
-			word		hertz;
-			byte		bits,
-						reference,
-						data[1];
-		} SampledSound;
-
-// 	Registers for the AdLib card
-// Operator stuff
-#define	alChar		0x20
-#define	alScale		0x40
-#define	alAttack	0x60
-#define	alSus		0x80
-#define	alWave		0xe0
-// Channel stuff
-#define	alFreqL		0xa0
-#define	alFreqH		0xb0
-#define	alFeedCon	0xc0
-// Global stuff
-#define	alEffects	0xbd
-
-typedef	struct
-		{
-			byte	mChar,cChar,
-					mScale,cScale,
-					mAttack,cAttack,
-					mSus,cSus,
-					mWave,cWave,
-					nConn,
-
-					// These are only for Muse - these bytes are really unused
-					voice,
-					mode,
-					unused[3];
-		} Instrument;
-
-typedef	struct
-		{
-			SoundCommon	common;
-			Instrument	inst;
-			byte		block,
-						data[1];
-		} AdLibSound;
-
-//
-//	Sequencing stuff
-//
-#define	sqMaxTracks	10
-
-#define	sev_Null		0	// Does nothing
-#define	sev_NoteOff		1	// Turns a note off
-#define	sev_NoteOn		2	// Turns a note on
-#define	sev_NotePitch	3	// Sets the pitch of a currently playing note
-#define	sev_NewInst		4	// Installs a new instrument
-#define	sev_NewPerc		5	// Installs a new percussive instrument
-#define	sev_PercOn		6	// Turns a percussive note on
-#define	sev_PercOff		7	// Turns a percussive note off
-#define	sev_SeqEnd		-1	// Terminates a sequence
-
-// 	Flags for MusicGroup.flags
-#define	sf_Melodic		0
-#define	sf_Percussive	1
-
 #if 1
 typedef	struct
 		{
@@ -158,12 +66,6 @@ typedef	struct
 					offsets[1];
 		} MusicGroup;
 #endif
-
-#define	sqmode_Normal		0
-#define	sqmode_FadeIn		1
-#define	sqmode_FadeOut		2
-
-#define	sqMaxFade		64	// DEBUG
 
 
 // Global variables
