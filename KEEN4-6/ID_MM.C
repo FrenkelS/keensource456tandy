@@ -71,6 +71,9 @@ EMS / XMS unmanaged routines
 #define PURGEBIT	1		// 0= unpurgeable, 1= purge
 #define BASEATTRIBUTES	0	// unlocked, non purgeable
 
+#define ISLOCKED(x)		(x->attributes&LOCKBIT)
+#define ISPURGEABLE(x)	(x->attributes&PURGEBIT)
+
 #define MAXUMBS		10
 
 typedef struct mmblockstruct
@@ -559,7 +562,7 @@ void MML_ClearBlock (void)
 
 	while (scan)
 	{
-		if (!(scan->attributes&LOCKBIT) && (scan->attributes&PURGEBIT) )
+		if (!ISLOCKED(scan) && ISPURGEABLE(scan))
 		{
 			MM_FreePtr(scan->useptr);
 			return;
@@ -794,8 +797,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 			//
 			// if this block is not purgeable or locked, skip past it
 			//
-			if ( (scan->attributes & LOCKBIT)
-				|| !(scan->attributes & PURGEBIT) )
+			if (ISLOCKED(scan) || !ISPURGEABLE(scan))
 			{
 				lastscan = scan;
 				startseg = lastscan->start + lastscan->length;
@@ -953,50 +955,47 @@ void MML_SortMem (void)
 
 	while (scan)
 	{
-		if (scan->attributes & LOCKBIT)
+		if (ISLOCKED(scan))
 		{
 		//
 		// block is locked, so try to pile later blocks right after it
 		//
 			start = scan->start + scan->length;
 		}
+		else if (ISPURGEABLE(scan))
+		{
+		//
+		// throw out the purgeable block
+		//
+			next = scan->next;
+			FREEBLOCK(scan);
+			last->next = next;
+			scan = next;
+			continue;
+		}
 		else
 		{
-			if (scan->attributes & PURGEBIT)
+		//
+		// push the non purgeable block on top of the last moved block
+		//
+			if (scan->start != start)
 			{
-			//
-			// throw out the purgeable block
-			//
-				next = scan->next;
-				FREEBLOCK(scan);
-				last->next = next;
-				scan = next;
-				continue;
-			}
-			else
-			{
-			//
-			// push the non purgeable block on top of the last moved block
-			//
-				if (scan->start != start)
+				length = scan->length;
+				source = scan->start;
+				dest = start;
+				while (length > 0xf00)
 				{
-					length = scan->length;
-					source = scan->start;
-					dest = start;
-					while (length > 0xf00)
-					{
-						movedata(source,0,dest,0,0xf00*16);
-						length -= 0xf00;
-						source += 0xf00;
-						dest += 0xf00;
-					}
-					movedata(source,0,dest,0,length*16);
-
-					scan->start = start;
-					*(unsigned *)scan->useptr = start;
+					movedata(source,0,dest,0,0xf00*16);
+					length -= 0xf00;
+					source += 0xf00;
+					dest += 0xf00;
 				}
-				start = scan->start + scan->length;
+				movedata(source,0,dest,0,length*16);
+
+				scan->start = start;
+				*(unsigned *)scan->useptr = start;
 			}
+			start = scan->start + scan->length;
 		}
 
 		last = scan;
@@ -1043,11 +1042,11 @@ void MM_ShowMemory (void)
 
 	while (scan)
 	{
-		if (scan->attributes & PURGEBIT)
+		if (ISPURGEABLE(scan))
 			color = 5;		// dark purple = purgeable
 		else
 			color = 9;		// medium blue = non purgeable
-		if (scan->attributes & LOCKBIT)
+		if (ISLOCKED(scan))
 			color = 12;		// red = locked
 		if (scan->start<=end)
 			Quit ("MM_ShowMemory: Memory block order corrupted!");
@@ -1132,7 +1131,7 @@ long MM_TotalFree (void)
 
 	while (scan->next)
 	{
-		if ((scan->attributes&PURGEBIT) && !(scan->attributes&LOCKBIT))
+		if (ISPURGEABLE(scan) && !ISLOCKED(scan))
 			free += scan->length;
 		free += scan->next->start - (scan->start + scan->length);
 		scan = scan->next;
