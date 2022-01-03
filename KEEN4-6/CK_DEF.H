@@ -55,14 +55,8 @@
 
 #define ARRAYLENGTH(x) (sizeof(x)/sizeof(*(x)))
 
-#define CA_UnmarkGrChunk(num) (grneeded[num] &= ~ca_levelbit)
-
 #define SetPalette(pal) {_ES=FP_SEG(pal); _DX=FP_OFF(pal); _AX=0x1002; geninterrupt(0x10);}
 #define SetPaletteEx(pal) {(pal)[16] = bordercolor; SetPalette(pal);}
-
-//HACK IMPORTS:
-void RFL_InitAnimList(void);
-void CA_SetGrPurge(void);
 
 #define PLATFORMBLOCK 31
 #define DIRARROWSTART 91

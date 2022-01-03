@@ -141,6 +141,7 @@ void CA_SetAllPurge (void);
 void CA_ClearMarks (void);
 
 #define CA_MarkGrChunk(chunk)	grneeded[chunk]|=ca_levelbit
+#define CA_UnmarkGrChunk(chunk)	grneeded[chunk]&=~ca_levelbit
 
 void CA_CacheGrChunk (int chunk);
 void CA_CacheMap (int mapnum);

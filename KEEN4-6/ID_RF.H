@@ -142,6 +142,7 @@ void RF_Shutdown (void);
 void RF_FixOfs (void);
 void RF_NewMap (void);
 void RF_MarkTileGraphics (void);
+void RF_InitAnimList(void);
 void RF_SetScrollBlock (int x, int y, boolean horizontal);
 void RF_NewPosition (unsigned x, unsigned y);
 void RF_Scroll (int x, int y);
