@@ -502,11 +502,11 @@ void ScanInfoPlane(void)
 				break;
 
 			case 25:
-				RF_SetScrollBlock(x, y, 1);
+				RF_SetScrollBlockHorizontal(y);
 				break;
 
 			case 26:
-				RF_SetScrollBlock(x, y, 0);
+				RF_SetScrollBlockVertical(x);
 				break;
 
 			case 27:

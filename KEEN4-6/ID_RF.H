@@ -124,7 +124,7 @@ extern	byte		*baseupdateptr;
 
 extern unsigned	blockstarts[UPDATEWIDE*UPDATEHIGH];
 extern unsigned	updatemapofs[UPDATEWIDE*UPDATEHIGH];
-extern unsigned	uwidthtable[UPDATEHIGH];		// lookup instead of multiple
+extern unsigned	uwidthtable[UPDATEHIGH];		// lookup instead of multiply
 
 #define	UPDATETERMINATE	0x0301
 
@@ -142,8 +142,8 @@ void RF_Shutdown (void);
 void RF_FixOfs (void);
 void RF_NewMap (void);
 void RF_MarkTileGraphics (void);
-void RF_InitAnimList(void);
-void RF_SetScrollBlock (int x, int y, boolean horizontal);
+void RF_SetScrollBlockHorizontal (int y);
+void RF_SetScrollBlockVertical (int x);
 void RF_NewPosition (unsigned x, unsigned y);
 void RF_Scroll (int x, int y);
 
@@ -158,11 +158,10 @@ void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
 	unsigned spritenumber, int priority);
 void RF_RemoveSprite (void **user);
 
-void RF_CalcTics (void);
-
 void RF_Refresh (void);
 void RF_ForceRefresh (void);
 void RF_SetRefreshHook (void (*func) (void) );
 
+#if GRMODE == EGAGR
 unsigned RF_FindFreeBuffer (void);
-
+#endif

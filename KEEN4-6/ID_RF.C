@@ -235,6 +235,7 @@ int		hscrolledge[MAXSCROLLEDGES],vscrolledge[MAXSCROLLEDGES];
 =============================================================================
 */
 
+void RFL_InitAnimList (void);
 void RFL_NewTile (unsigned updateoffset);
 void RFL_MaskForegroundTiles (void);
 void RFL_UpdateTiles (void);
@@ -248,6 +249,7 @@ void RFL_AnimateTiles (void);
 void RFL_RemoveAnimsOnX (unsigned x);
 void RFL_RemoveAnimsOnY (unsigned y);
 void RFL_EraseBlocks (void);
+void RFL_CalcTics (void);
 void RFL_UpdateSprites (void);
 
 
@@ -387,7 +389,7 @@ void RF_FixOfs (void)
 =
 = RF_NewMap
 =
-= Makes some convienient calculations based on maphead->
+= Makes some convenient calculations based on maphead->
 =
 =====================
 */
@@ -438,12 +440,12 @@ void RF_NewMap (void)
 // clear out the lists
 //
 	RFL_InitSpriteList ();
-	RF_InitAnimList ();
+	RFL_InitAnimList ();
 	RFL_ClearScrollBlocks ();
-	RF_SetScrollBlock (0,MAPBORDER-1,true);
-	RF_SetScrollBlock (0,mapheight-MAPBORDER,true);
-	RF_SetScrollBlock (MAPBORDER-1,0,false);
-	RF_SetScrollBlock (mapwidth-MAPBORDER,0,false);
+	RF_SetScrollBlockHorizontal (MAPBORDER-1);
+	RF_SetScrollBlockHorizontal (mapheight-MAPBORDER);
+	RF_SetScrollBlockVertical (MAPBORDER-1);
+	RF_SetScrollBlockVertical (mapwidth-MAPBORDER);
 
 
 	lasttimecount = TimeCount;		// setup for adaptive timing
@@ -681,7 +683,7 @@ nextfront:
 /*
 =========================
 =
-= RF_InitAnimList
+= RFL_InitAnimList
 =
 = Call to clear out the entire animating tile list and return all of them to
 = the free list.
@@ -689,7 +691,7 @@ nextfront:
 =========================
 */
 
-void RF_InitAnimList (void)
+void RFL_InitAnimList (void)
 {
 	int	i;
 
@@ -1074,22 +1076,19 @@ void RFL_ClearScrollBlocks (void)
 =================
 */
 
-void RF_SetScrollBlock (int x, int y, boolean horizontal)
+void RF_SetScrollBlockHorizontal (int y)
 {
-	if (horizontal)
-	{
-		hscrolledge[hscrollblocks] = y;
-		if (hscrollblocks++ == MAXSCROLLEDGES)
-			Quit ("RF_SetScrollBlock: Too many horizontal scroll blocks");
-	}
-	else
-	{
-		vscrolledge[vscrollblocks] = x;
-		if (vscrollblocks++ == MAXSCROLLEDGES)
-			Quit ("RF_SetScrollBlock: Too many vertical scroll blocks");
-	}
+	hscrolledge[hscrollblocks] = y;
+	if (hscrollblocks++ == MAXSCROLLEDGES)
+		Quit ("RF_SetScrollBlockHorizontal: Too many scroll blocks");
 }
 
+void RF_SetScrollBlockVertical (int x)
+{
+	vscrolledge[vscrollblocks] = x;
+	if (vscrollblocks++ == MAXSCROLLEDGES)
+		Quit ("RF_SetScrollBlockVertical: Too many scroll blocks");
+}
 
 /*
 =================
@@ -1472,12 +1471,12 @@ void RFL_BoundNewOrigin (unsigned orgx,unsigned orgy)
 /*
 =====================
 =
-= RF_CalcTics
+= RFL_CalcTics
 =
 =====================
 */
 
-void RF_CalcTics (void)
+void RFL_CalcTics (void)
 {
 	long	newtime,oldtimecount;
 
@@ -1529,6 +1528,7 @@ void RF_CalcTics (void)
 
 //===========================================================================
 
+#if GRMODE == EGAGR
 /*
 =====================
 =
@@ -1560,6 +1560,7 @@ unsigned RF_FindFreeBuffer (void)
 
 	return 0;	// never get here...
 }
+#endif
 
 /*
 ====================
@@ -1736,7 +1737,7 @@ void RF_NewPosition (unsigned x, unsigned y)
 //
 // clear out all animating tiles
 //
-	RF_InitAnimList ();
+	RFL_InitAnimList ();
 
 //
 // set up the new update arrays at base position
@@ -2279,7 +2280,7 @@ asm	mov	[WORD PTR es:di],UPDATETERMINATE
 //
 // calculate tics since last refresh for adaptive timing
 //
-	RF_CalcTics ();
+	RFL_CalcTics ();
 }
 
 #endif		// GRMODE == EGAGR
@@ -2314,7 +2315,7 @@ void RF_NewPosition (unsigned x, unsigned y)
 //
 // clear out all animating tiles
 //
-	RF_InitAnimList ();
+	RFL_InitAnimList ();
 
 //
 // set up the new update arrays at base position
@@ -2769,7 +2770,7 @@ void RF_Refresh (void)
 //
 // calculate tics since last refresh for adaptive timing
 //
-	RF_CalcTics ();
+	RFL_CalcTics ();
 }
 
 #endif		// GRMODE == CGAGR || GRMODE == TGAGR
