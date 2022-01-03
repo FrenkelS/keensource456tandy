@@ -743,13 +743,13 @@ static  byte    colors[] = {4,6,13,15,15,15,15,15,15};
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      US_SetPrintRoutines() - Sets the routines used to measure and print
+//      USL_SetPrintRoutines() - Sets the routines used to measure and print
 //              from within the User Mgr. Primarily provided to allow switching
 //              between masked and non-masked fonts
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_SetPrintRoutines(void (*measure)(char far *,word *,word *),void (*print)(char far *))
+USL_SetPrintRoutines(void (*measure)(char far *,word *,word *),void (*print)(char far *))
 {
 	USL_MeasureString = measure;
 	USL_DrawString = print;

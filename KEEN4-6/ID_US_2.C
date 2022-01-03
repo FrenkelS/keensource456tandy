@@ -1773,7 +1773,7 @@ USL_SetUpCtlPanel(void)
 
 	// Do some other setup
 	fontnumber = 1;
-	US_SetPrintRoutines(VW_MeasurePropString,VWB_DrawPropString);
+	USL_SetPrintRoutines(VW_MeasurePropString,VWB_DrawPropString);
 	fontcolor = F_BLACK;
 	RF_FixOfs();
 	VW_InitDoubleBuffer();
