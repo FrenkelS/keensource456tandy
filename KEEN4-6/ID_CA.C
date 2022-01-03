@@ -81,7 +81,12 @@ void		_seg	*grsegs[NUMCHUNKS];
 byte		far	grneeded[NUMCHUNKS];
 byte		ca_levelbit,ca_levelnum;
 
-int			profilehandle,debughandle;
+#ifdef PROFILE
+int			profilehandle;
+#endif
+#if 0
+int			debughandle;
+#endif
 
 void	(*drawcachebox)		(char *title, unsigned numcache);
 void	(*updatecachebox)	(void);
@@ -152,6 +157,7 @@ long GRFILEPOS(int c)
 =============================================================================
 */
 
+#if 0
 /*
 ============================
 =
@@ -172,6 +178,7 @@ void CA_CloseDebug (void)
 {
 	close (debughandle);
 }
+#endif
 
 
 
@@ -1244,7 +1251,7 @@ void CAL_ExpandGrChunk (int chunk, byte far *source)
 =
 = CA_CacheGrChunk
 =
-= Makes sure a given chunk is in memory, loadiing it if needed
+= Makes sure a given chunk is in memory, loading it if needed
 =
 ======================
 */
@@ -1256,7 +1263,7 @@ void CA_CacheGrChunk (int chunk)
 	byte	far *source;
 	int		next;
 
-	grneeded[chunk] |= ca_levelbit;		// make sure it doesn't get removed
+	CA_MarkGrChunk(chunk);		// make sure it doesn't get removed
 	if (grsegs[chunk])
 	{
 		MM_SetPurge (&grsegs[chunk],false);
@@ -1471,7 +1478,7 @@ void CA_ClearMarks (void)
 	int i;
 
 	for (i=0;i<NUMCHUNKS;i++)
-		grneeded[i]&=~ca_levelbit;
+		CA_UnmarkGrChunk(i);
 }
 
 
@@ -1554,6 +1561,7 @@ void CA_SetAllPurge (void)
 =
 ======================
 */
+#define ISGRNEEDED(chunk)	(grneeded[chunk]&ca_levelbit)
 #define MAXEMPTYREAD	1024
 
 void CA_CacheMarks (char *title)
@@ -1572,9 +1580,9 @@ void CA_CacheMarks (char *title)
 // go through and make everything not needed purgeable
 //
 	for (i=0;i<NUMCHUNKS;i++)
-		if (grneeded[i]&ca_levelbit)
+		if (ISGRNEEDED(i))
 		{
-			if (grsegs[i])						// its already in memory, make
+			if (grsegs[i])						// it's already in memory, make
 				MM_SetPurge(&grsegs[i],false);	// sure it stays there!
 			else
 				numcache++;
@@ -1604,7 +1612,7 @@ void CA_CacheMarks (char *title)
 	bufferstart = bufferend = 0;		// nothing good in buffer now
 
 	for (i=0;i<NUMCHUNKS;i++)
-		if ( (grneeded[i]&ca_levelbit) && !grsegs[i])
+		if (ISGRNEEDED(i) && !grsegs[i])
 		{
 //
 // update thermometer
@@ -1638,7 +1646,7 @@ void CA_CacheMarks (char *title)
 					while ( next < NUMCHUNKS )
 					{
 						while (next < NUMCHUNKS &&
-						!(grneeded[next]&ca_levelbit && !grsegs[next]))
+						!(ISGRNEEDED(next) && !grsegs[next]))
 							next++;
 						if (next == NUMCHUNKS)
 							continue;
