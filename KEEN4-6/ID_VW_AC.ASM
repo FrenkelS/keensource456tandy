@@ -1091,7 +1091,7 @@ USES	SI,DI
 
 ;
 ; proportional spaceing, which clears the buffer ahead of it, so only
-; clear the first collumn
+; clear the first column
 ;
 	mov	al,0
 line	=	0
