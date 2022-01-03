@@ -269,31 +269,10 @@ void RFL_UpdateSprites (void);
 =====================
 */
 
-#ifndef KEEN
-static	char *ParmStrings[] = {"comp",""};
-#endif
-
 void RF_Startup (void)
 {
 	int i,x,y;
 	unsigned	*blockstart;
-
-#ifndef KEEN
-	//
-	// Keen 4-6 store the compatibility setting in the game's config file.
-	// The setting is loaded from that file AFTER RF_Startup is executed,
-	// making this check useless (unless the config file doesn't exist).
-	// Instead, US_Startup now checks for that parameter after the config
-	// file has been read.
-	//
-	if (grmode == EGAGR)
-		for (i = 1;i < _argc;i++)
-			if (US_CheckParm(_argv[i],ParmStrings) == 0)
-			{
-				compatibility = true;
-				break;
-			}
-#endif
 
 	for (i=0;i<PORTTILESHIGH;i++)
 		uwidthtable[i] = UPDATEWIDE*i;
