@@ -403,8 +403,9 @@ US_Startup(void)
 		switch (US_CheckParm(_argv[i],ParmStrings2))
 		{
 		case 0:
-			if (grmode == EGAGR)
-				compatibility = true;
+#if GRMODE == EGAGR
+			compatibility = true;
+#endif
 			break;
 		case 1:
 			compatibility = false;

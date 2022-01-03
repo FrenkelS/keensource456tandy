@@ -197,29 +197,18 @@ void VW_SetScreenMode (int grmode)
 	  case TEXTGR:  _AX = 3;
 		  geninterrupt (0x10);
 		  break;
+#if GRMODE == CGAGR
 	  case CGAGR: _AX = 4;
 		  geninterrupt (0x10);		// screenseg is actually a main mem buffer
 		  break;
+#elif GRMODE == TGAGR
 	  case TGAGR: _AX = 9;
 		  geninterrupt (0x10);		// screenseg is actually a main mem buffer
 		  break;
+#elif GRMODE == EGAGR
 	  case EGAGR: _AX = 0xd;
 		  geninterrupt (0x10);
 		  screenseg=0xa000;
-		  break;
-#ifdef VGAGAME
-	  case VGAGR:{
-		  char extern VGAPAL;	// deluxepaint vga pallet .OBJ file
-		  void far *vgapal = &VGAPAL;
-		  SetCool256 ();		// custom 256 color mode
-		  screenseg=0xa000;
-		  _ES = FP_SEG(vgapal);
-		  _DX = FP_OFF(vgapal);
-		  _BX = 0;
-		  _CX = 0x100;
-		  _AX = 0x1012;
-		  geninterrupt(0x10);			// set the deluxepaint pallet
-
 		  break;
 #endif
 	}

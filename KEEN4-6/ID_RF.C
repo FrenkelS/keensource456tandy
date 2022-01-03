@@ -282,60 +282,51 @@ void RF_Startup (void)
 	eraselistptr[0] = &eraselist[0][0];
 	eraselistptr[1] = &eraselist[1][0];
 
+#if GRMODE == EGAGR
+	SX_T_SHIFT = 1;
 
+	baseupdatestart[0] = &update[0][UPDATESPARESIZE];
+	baseupdatestart[1] = &update[1][UPDATESPARESIZE];
 
-	if (grmode == EGAGR)
-	{
-		SX_T_SHIFT = 1;
+	screenpage = 0;
+	otherpage = 1;
+	displayofs = screenstart[screenpage];
+	bufferofs = screenstart[otherpage];
+	masterofs = screenstart[2];
 
-		baseupdatestart[0] = &update[0][UPDATESPARESIZE];
-		baseupdatestart[1] = &update[1][UPDATESPARESIZE];
+	updateptr = baseupdatestart[otherpage];
 
-		screenpage = 0;
-		otherpage = 1;
-		displayofs = screenstart[screenpage];
-		bufferofs = screenstart[otherpage];
-		masterofs = screenstart[2];
+	blockstart = &blockstarts[0];
+	for (y=0;y<UPDATEHIGH;y++)
+		for (x=0;x<UPDATEWIDE;x++)
+			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
 
-		updateptr = baseupdatestart[otherpage];
+	xpanmask = 6;	// dont pan to odd pixels
+#elif GRMODE == CGAGR
+	SX_T_SHIFT = 2;
 
-		blockstart = &blockstarts[0];
-		for (y=0;y<UPDATEHIGH;y++)
-			for (x=0;x<UPDATEWIDE;x++)
-				*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
+	updateptr = baseupdateptr = &update[0][UPDATESPARESIZE];
 
-		xpanmask = 6;	// dont pan to odd pixels
-	}
+	bufferofs = 0;
+	masterofs = 0x8000;
 
-	else if (grmode == CGAGR)
-	{
-		SX_T_SHIFT = 2;
+	blockstart = &blockstarts[0];
+	for (y=0;y<UPDATEHIGH;y++)
+		for (x=0;x<UPDATEWIDE;x++)
+			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
+#elif GRMODE == TGAGR
+	SX_T_SHIFT = 3;
 
-		updateptr = baseupdateptr = &update[0][UPDATESPARESIZE];
+	updateptr = baseupdateptr = &update[0][UPDATESPARESIZE];
 
-		bufferofs = 0;
-		masterofs = 0x8000;
+	bufferofs = 0;
+	masterofs = 0x8000;
 
-		blockstart = &blockstarts[0];
-		for (y=0;y<UPDATEHIGH;y++)
-			for (x=0;x<UPDATEWIDE;x++)
-				*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
-	}
-
-	else if (grmode == TGAGR)
-	{
-		SX_T_SHIFT = 3;
-
-		updateptr = baseupdateptr = &update[0][UPDATESPARESIZE];
-
-		bufferofs = 0;
-		masterofs = 0x8000;
-
-		blockstart = &blockstarts[0];
-		for (y=0;y<UPDATEHIGH;y++)
-			for (x=0;x<UPDATEWIDE;x++)
-				*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
-	}
+	blockstart = &blockstarts[0];
+	for (y=0;y<UPDATEHIGH;y++)
+		for (x=0;x<UPDATEWIDE;x++)
+			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
+#endif
 }
 
 
@@ -374,22 +365,19 @@ void RF_FixOfs (void)
 	screenstart[1] = SCREENSPACE;
 	screenstart[2] = SCREENSPACE*2;
 
-	if (grmode == EGAGR)
-	{
-		screenpage = 0;
-		otherpage = 1;
-		panx = pany = pansx = pansy = panadjust = 0;
-		displayofs = screenstart[screenpage];
-		bufferofs = screenstart[otherpage];
-		masterofs = screenstart[2];
-		VW_SetScreen (displayofs,0);
-	}
-	else
-	{
-		panx = pany = pansx = pansy = panadjust = 0;
-		bufferofs = 0;
-		masterofs = 0x8000;
-	}
+	panx = pany = pansx = pansy = panadjust = 0;
+
+#if GRMODE == EGAGR
+	screenpage = 0;
+	otherpage = 1;
+	displayofs = screenstart[screenpage];
+	bufferofs = screenstart[otherpage];
+	masterofs = screenstart[2];
+	VW_SetScreen (displayofs,0);
+#elif GRMODE == CGAGR || GRMODE == TGAGR
+	bufferofs = 0;
+	masterofs = 0x8000;
+#endif
 }
 
 
