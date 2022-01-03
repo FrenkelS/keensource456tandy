@@ -85,8 +85,17 @@ void	VWL_MeasureString (char far *string, word *width, word *height,
 		fontstruct _seg *font);
 void 	VWL_DrawCursor (void);
 void 	VWL_EraseCursor (void);
+boolean	VWL_MarkUpdateBlock (int x1, int y1, int x2, int y2);
+void	VWL_Vlin(unsigned yl, unsigned yh, unsigned x, unsigned color);
+void	VWL_DrawTile8(unsigned x, unsigned y, unsigned tile);
+void	VWL_MemToScreen(memptr source,unsigned dest,unsigned width,unsigned height);
+void	VWL_ScreenToMem(unsigned source,memptr dest,unsigned width,unsigned height);
+void	VWL_DrawPropString (char far *string);
 void	VWL_UpdateScreenBlocks (void);
 
+#if GRMODE == CGAGR || GRMODE == EGAGR
+cardtype	VWL_VideoID (void);
+#endif
 
 int			bordercolor;
 int			cursorvisible;
@@ -132,7 +141,7 @@ void	VW_Startup (void)
 	}
 
 	if (!videocard)
-		videocard = VW_VideoID ();
+		videocard = VWL_VideoID ();
 #endif
 
 #if GRMODE == EGAGR
@@ -437,7 +446,7 @@ void VW_DrawPic(unsigned x, unsigned y, unsigned chunknum)
 	width = pictable[picnum].width;
 	height = pictable[picnum].height;
 
-	VW_MemToScreen(source,dest,width,height);
+	VWL_MemToScreen(source,dest,width,height);
 }
 
 
@@ -1217,7 +1226,7 @@ These only work in the context of the double buffered update routines
 void VWL_DrawCursor (void)
 {
 	cursorspot = bufferofs + ylookup[cursory+pansy]+(cursorx+pansx)/SCREENXDIV;
-	VW_ScreenToMem(cursorspot,cursorsave,cursorwidth,cursorheight);
+	VWL_ScreenToMem(cursorspot,cursorsave,cursorwidth,cursorheight);
 	VWB_DrawSprite(cursorx,cursory,cursornumber);
 }
 
@@ -1235,8 +1244,8 @@ void VWL_DrawCursor (void)
 
 void VWL_EraseCursor (void)
 {
-	VW_MemToScreen(cursorsave,cursorspot,cursorwidth,cursorheight);
-	VW_MarkUpdateBlock ((cursorx+pansx)&SCREENXMASK,cursory+pansy,
+	VWL_MemToScreen(cursorsave,cursorspot,cursorwidth,cursorheight);
+	VWL_MarkUpdateBlock ((cursorx+pansx)&SCREENXMASK,cursory+pansy,
 		( (cursorx+pansx)&SCREENXMASK)+cursorwidth*SCREENXDIV-1,
 		cursory+pansy+cursorheight-1);
 }
@@ -1346,15 +1355,15 @@ void VW_FixRefreshBuffer (void)
 /*
 =======================
 =
-= VW_MarkUpdateBlock
+= VWL_MarkUpdateBlock
 =
 = Takes a pixel bounded block and marks the tiles in bufferblocks
-= Returns 0 if the entire block is off the buffer screen
+= Returns false if the entire block is off the buffer screen
 =
 =======================
 */
 
-int VW_MarkUpdateBlock (int x1, int y1, int x2, int y2)
+boolean VWL_MarkUpdateBlock (int x1, int y1, int x2, int y2)
 {
 	int	x,y,xt1,yt1,xt2,yt2,nextline;
 	byte *mark;
@@ -1368,20 +1377,20 @@ int VW_MarkUpdateBlock (int x1, int y1, int x2, int y2)
 	if (xt1<0)
 		xt1=0;
 	else if (xt1>=UPDATEWIDE-1)
-		return 0;
+		return false;
 
 	if (yt1<0)
 		yt1=0;
 	else if (yt1>UPDATEHIGH)
-		return 0;
+		return false;
 
 	if (xt2<0)
-		return 0;
+		return false;
 	else if (xt2>=UPDATEWIDE-1)
 		xt2 = UPDATEWIDE-2;
 
 	if (yt2<0)
-		return 0;
+		return false;
 	else if (yt2>=UPDATEHIGH)
 		yt2 = UPDATEHIGH-1;
 
@@ -1396,7 +1405,7 @@ int VW_MarkUpdateBlock (int x1, int y1, int x2, int y2)
 		mark += nextline;
 	}
 
-	return 1;
+	return true;
 }
 
 
@@ -1435,9 +1444,30 @@ void VWB_DrawTile8 (int x, int y, int tile)
 {
 	x+=pansx;
 	y+=pansy;
-	if (VW_MarkUpdateBlock (x&SCREENXMASK,y,(x&SCREENXMASK)+7,y+7))
-		VW_DrawTile8 (x/SCREENXDIV,y,tile);
+	if (VWL_MarkUpdateBlock (x&SCREENXMASK,y,(x&SCREENXMASK)+7,y+7))
+		VWL_DrawTile8 (x/SCREENXDIV,y,tile);
 }
+
+#if GRMODE == EGAGR
+
+#define VWL_DrawTile8M(x,y,t) \
+	VW_MaskBlock(grsegs[STARTTILE8M],(t)*40,bufferofs+ylookup[y]+(x),1,8,8)
+
+#endif
+
+#if GRMODE == CGAGR
+
+#define VWL_DrawTile8M(x,y,t) \
+	VW_MaskBlock(grsegs[STARTTILE8M],(t)*32,bufferofs+ylookup[y]+(x),2,8,16)
+
+#endif
+
+#if GRMODE == TGAGR
+
+#define VWL_DrawTile8M(x,y,t) \
+	VW_MaskBlock(grsegs[STARTTILE8M],(t)*64,bufferofs+ylookup[y]+(x),4,8,32)
+	
+#endif
 
 void VWB_DrawTile8M (int x, int y, int tile)
 {
@@ -1446,8 +1476,8 @@ void VWB_DrawTile8M (int x, int y, int tile)
 	x+=pansx;
 	y+=pansy;
 	xb = x/SCREENXDIV; 			// use intermediate because VW_DT8M is macro
-	if (VW_MarkUpdateBlock (x&SCREENXMASK,y,(x&SCREENXMASK)+7,y+7))
-		VW_DrawTile8M (xb,y,tile);
+	if (VWL_MarkUpdateBlock (x&SCREENXMASK,y,(x&SCREENXMASK)+7,y+7))
+		VWL_DrawTile8M (xb,y,tile);
 }
 
 #if NUMPICS
@@ -1467,8 +1497,8 @@ void VWB_DrawPic (int x, int y, int chunknum)
 	width = pictable[picnum].width;
 	height = pictable[picnum].height;
 
-	if (VW_MarkUpdateBlock (x*SCREENXDIV,y,(x+width)*SCREENXDIV-1,y+height-1))
-		VW_MemToScreen(source,dest,width,height);
+	if (VWL_MarkUpdateBlock (x*SCREENXDIV,y,(x+width)*SCREENXDIV-1,y+height-1))
+		VWL_MemToScreen(source,dest,width,height);
 }
 #endif
 
@@ -1489,7 +1519,7 @@ void VWB_DrawMPic(int x, int y, int chunknum)
 	width = picmtable[picnum].width;
 	height = picmtable[picnum].height;
 
-	if (VW_MarkUpdateBlock (x*SCREENXDIV,y,(x+width)*SCREENXDIV-1,y+height-1))
+	if (VWL_MarkUpdateBlock (x*SCREENXDIV,y,(x+width)*SCREENXDIV-1,y+height-1))
 		VW_MaskBlock(source,0,dest,width,height,width*height);
 }
 #endif
@@ -1499,7 +1529,7 @@ void VWB_Bar (int x, int y, int width, int height, int color)
 {
 	x+=pansx;
 	y+=pansy;
-	if (VW_MarkUpdateBlock (x,y,x+width,y+height-1) )
+	if (VWL_MarkUpdateBlock (x,y,x+width,y+height-1) )
 		VW_Bar (x,y,width,height,color);
 }
 
@@ -1510,8 +1540,8 @@ void VWB_DrawPropString	 (char far *string)
 	int x,y;
 	x = px+pansx;
 	y = py+pansy;
-	VW_DrawPropString (string);
-	VW_MarkUpdateBlock(x,y,x+bufferwidth*8-1,y+bufferheight-1);
+	VWL_DrawPropString (string);
+	VWL_MarkUpdateBlock(x,y,x+bufferwidth*8-1,y+bufferheight-1);
 }
 #endif
 
@@ -1549,7 +1579,7 @@ void VWB_DrawSprite(int x, int y, int chunknum)
 	width = block->width[shift];
 	height = spr->height;
 
-	if (VW_MarkUpdateBlock (x&SCREENXMASK,y,(x&SCREENXMASK)+width*SCREENXDIV-1
+	if (VWL_MarkUpdateBlock (x&SCREENXMASK,y,(x&SCREENXMASK)+width*SCREENXDIV-1
 		,y+height-1))
 		VW_MaskBlock (block,block->sourceoffset[shift],dest,
 			width,height,block->planesize[shift]);
@@ -1561,7 +1591,7 @@ void VWB_Hlin (int x1, int x2, int y, int color)
 	x1+=pansx;
 	x2+=pansx;
 	y+=pansy;
-	if (VW_MarkUpdateBlock (x1,y,x2,y))
+	if (VWL_MarkUpdateBlock (x1,y,x2,y))
 		VW_Hlin(x1,x2,y,color);
 }
 
@@ -1570,8 +1600,8 @@ void VWB_Vlin (int y1, int y2, int x, int color)
 	x+=pansx;
 	y1+=pansy;
 	y2+=pansy;
-	if (VW_MarkUpdateBlock (x,y1,x,y2))
-		VW_Vlin(y1,y2,x,color);
+	if (VWL_MarkUpdateBlock (x,y1,x,y2))
+		VWL_Vlin(y1,y2,x,color);
 }
 
 

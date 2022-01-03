@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -258,10 +258,6 @@ extern	unsigned	bufferwidth,bufferheight,screenspot;	// used by font drawing stu
 void	VW_Startup (void);
 void	VW_Shutdown (void);
 
-#if GRMODE == CGAGR || GRMODE == EGAGR
-cardtype	VW_VideoID (void);
-#endif
-
 //
 // EGA hardware routines
 //
@@ -292,37 +288,12 @@ void VW_MaskBlock(memptr segm,unsigned ofs,unsigned dest,
 	unsigned wide,unsigned height,unsigned planesize);
 void VW_MaskBlockClipped(memptr segm,unsigned ofs,unsigned dest,
 	unsigned wide,unsigned height,unsigned planesize,unsigned spritewidthdelta);
-void VW_MemToScreen(memptr source,unsigned dest,unsigned width,unsigned height);
-void VW_ScreenToMem(unsigned source,memptr dest,unsigned width,unsigned height);
 void VW_ScreenToScreen(unsigned source,unsigned dest,unsigned width,unsigned height);
 
 
 //
 // block addressable routines
 //
-
-void VW_DrawTile8(unsigned x, unsigned y, unsigned tile);
-
-#if GRMODE == EGAGR
-
-#define VW_DrawTile8M(x,y,t) \
-	VW_MaskBlock(grsegs[STARTTILE8M],(t)*40,bufferofs+ylookup[y]+(x),1,8,8)
-
-#endif
-
-#if GRMODE == CGAGR
-
-#define VW_DrawTile8M(x,y,t) \
-	VW_MaskBlock(grsegs[STARTTILE8M],(t)*32,bufferofs+ylookup[y]+(x),2,8,16)
-
-#endif
-
-#if GRMODE == TGAGR
-
-#define VW_DrawTile8M(x,y,t) \
-	VW_MaskBlock(grsegs[STARTTILE8M],(t)*64,bufferofs+ylookup[y]+(x),4,8,32)
-	
-#endif
 
 void VW_DrawPic(unsigned x, unsigned y, unsigned chunknum);
 #if GRMODE == EGAGR
@@ -334,12 +305,10 @@ void VW_ClipDrawMPic(unsigned x, int y, unsigned chunknum);
 //
 void	VW_MeasurePropString (char far *string, word *width, word *height);
 
-void VW_DrawPropString (char far *string);
 #if GRMODE == EGAGR
 void VW_Plot(unsigned x, unsigned y, unsigned color);
 #endif
 void VW_Hlin(unsigned xl, unsigned xh, unsigned y, unsigned color);
-void VW_Vlin(unsigned yl, unsigned yh, unsigned x, unsigned color);
 void VW_Bar (unsigned x, unsigned y, unsigned width, unsigned height,
 	unsigned color);
 
@@ -351,7 +320,6 @@ void VW_Bar (unsigned x, unsigned y, unsigned width, unsigned height,
 
 void VW_InitDoubleBuffer (void);
 void VW_FixRefreshBuffer (void);
-int	 VW_MarkUpdateBlock (int x1, int y1, int x2, int y2);
 void VW_UpdateScreen (void);
 #if GRMODE == CGAGR
 void VW_CGAFullUpdate (void);

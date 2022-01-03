@@ -1,5 +1,5 @@
 ; Commander Keen 4 Tandy Version Source Code
-; Copyright (C) 2021 Frenkel Smeijers
+; Copyright (C) 2021-2022 Frenkel Smeijers
 ;
 ; This file is primarily based on:
 ; Reconstructed Commander Keen 4-6 Source Code
@@ -102,12 +102,12 @@ ENDP
 
 ;============================================================================
 ;
-; VW_Vlin (int yl,yh,x,color)
+; VWL_Vlin (int yl,yh,x,color)
 ;
 ;============================================================================
 
-PROC	VW_Vlin yl:WORD, yh:WORD, x:WORD, color:WORD
-PUBLIC	VW_Vlin
+PROC	VWL_Vlin yl:WORD, yh:WORD, x:WORD, color:WORD
+PUBLIC	VWL_Vlin
 USES	SI,DI
 
 	mov	es,[screenseg]
@@ -166,15 +166,15 @@ ENDP
 
 ;===================
 ;
-; VW_DrawTile8
+; VWL_DrawTile8
 ;
 ; xcoord in bytes (8 pixels), ycoord in pixels
 ; All Tile8s are in one grseg, so an offset is calculated inside it
 ;
 ;===================
 
-PROC	VW_DrawTile8	xcoord:WORD, ycoord:WORD, tile:WORD
-PUBLIC	VW_DrawTile8
+PROC	VWL_DrawTile8	xcoord:WORD, ycoord:WORD, tile:WORD
+PUBLIC	VWL_DrawTile8
 USES	SI,DI
 
 	mov	es,[screenseg]
@@ -579,7 +579,7 @@ ENDP
 
 ;============================================================================
 ;
-; VW_MemToScreen
+; VWL_MemToScreen
 ;
 ; Basic block drawing routine. Takes a block shape at segment pointer source
 ; with four planes of width by height data, and draws it to dest in the
@@ -596,8 +596,8 @@ memtoscreentable	dw	eventoeven,eventoodd,oddtoeven,oddtoodd
 CODESEG
 
 
-PROC	VW_MemToScreen	source:WORD, dest:WORD, wide:WORD, height:WORD
-PUBLIC	VW_MemToScreen
+PROC	VWL_MemToScreen	source:WORD, dest:WORD, wide:WORD, height:WORD
+PUBLIC	VWL_MemToScreen
 USES	SI,DI
 
 	mov	es,[screenseg]
@@ -755,16 +755,16 @@ ENDP
 
 ;===========================================================================
 ;
-; VW_ScreenToMem
+; VWL_ScreenToMem
 ;
 ; Copies a block of video memory to main memory, in order from planes 0-3.
-; This could be optimized along the lines of VW_MemToScreen to take advantage
+; This could be optimized along the lines of VWL_MemToScreen to take advantage
 ; of word copies, but this is an infrequently called routine.
 ;
 ;===========================================================================
 
-PROC	VW_ScreenToMem	source:WORD, dest:WORD, wide:WORD, height:WORD
-PUBLIC	VW_ScreenToMem
+PROC	VWL_ScreenToMem	source:WORD, dest:WORD, wide:WORD, height:WORD
+PUBLIC	VWL_ScreenToMem
 USES	SI,DI
 
 	mov	es,[dest]
@@ -1337,7 +1337,7 @@ ENDP
 
 ;==================
 ;
-; VW_DrawPropString
+; VWL_DrawPropString
 ;
 ; Draws a C string of characters at px/py and advances px
 ;
@@ -1347,8 +1347,8 @@ ENDP
 
 CODESEG
 
-PROC	VW_DrawPropString	string:DWORD
-PUBLIC	VW_DrawPropString
+PROC	VWL_DrawPropString	string:DWORD
+PUBLIC	VWL_DrawPropString
 USES	SI,DI
 
 ;

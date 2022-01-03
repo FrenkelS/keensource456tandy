@@ -1,5 +1,5 @@
 ; Commander Keen 4 Tandy Version Source Code
-; Copyright (C) 2021 Frenkel Smeijers
+; Copyright (C) 2021-2022 Frenkel Smeijers
 ;
 ; This file is primarily based on:
 ; Catacomb 3-D Source Code
@@ -290,7 +290,7 @@ IFE GRMODE-CGAGR OR GRMODE-EGAGR
 	MASM
 ;อออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 ;
-; Name:	VW_VideoID
+; Name:	VWL_VideoID
 ;
 ; Function:	Detects the presence of various video subsystems
 ;
@@ -391,8 +391,8 @@ Monoflag	DB	?
 NumberOfTests	EQU	($-TestSequence)/3
 
 
-PUBLIC	VW_VideoID
-VW_VideoID	PROC
+PUBLIC	VWL_VideoID
+VWL_VideoID	PROC
 
 	push	bp	; preserve caller registers
 	mov	bp,sp
@@ -449,7 +449,7 @@ VW_VideoID	PROC
 	pop	bp
 	ret
 
-VW_VideoID	ENDP
+VWL_VideoID	ENDP
 
 
 ;
