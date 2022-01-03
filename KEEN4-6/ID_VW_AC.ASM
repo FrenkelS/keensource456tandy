@@ -1,5 +1,5 @@
 ; Commander Keen 4 Tandy Version Source Code
-; Copyright (C) 2021 Frenkel Smeijers
+; Copyright (C) 2021-2022 Frenkel Smeijers
 ;
 ; This file is primarily based on:
 ; Reconstructed Commander Keen 4-6 Source Code
@@ -163,7 +163,7 @@ ENDP
 ; The mask comes first, then the data.  Seperate unwound routines are used
 ; to speed drawing.
 ;
-; Mask blocks will allways be an even width because of the way IGRAB works
+; Mask blocks will always be an even width because of the way IGRAB works
 ;
 ; DONE
 ;
@@ -488,7 +488,7 @@ USES	SI,DI
 	mov	ax,[wide]
 ;
 ; if the width, source, and dest are all even, use word moves
-; This is allways the case in the CGA refresh
+; This is always the case in the CGA refresh
 ;
 	test	ax,1
 	jnz	@@bytelineloop

@@ -1355,7 +1355,7 @@ void CA_CacheMap (int mapnum)
 //
 // load the planes in
 // If a plane's pointer still exists it will be overwritten (levels are
-// allways reloaded, never cached)
+// always reloaded, never cached)
 //
 
 	size = mapheaderseg[mapnum]->width * mapheaderseg[mapnum]->height * 2;

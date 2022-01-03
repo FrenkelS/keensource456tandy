@@ -36,7 +36,7 @@
 ; offset 0xffff causes an exception!  To work around this, write a single
 ; byte out to make the address even, so it wraps cleanly at the end.
 ;
-; All of these routines assume read/write mode 0, and will allways return
+; All of these routines assume read/write mode 0, and will always return
 ; in that state.
 ; The direction flag should be clear
 ; readmap/writemask is left in an undefined state

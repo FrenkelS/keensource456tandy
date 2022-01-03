@@ -1,5 +1,5 @@
 ; Commander Keen 4 Tandy Version Source Code
-; Copyright (C) 2021 Frenkel Smeijers
+; Copyright (C) 2021-2022 Frenkel Smeijers
 ;
 ; This file is primarily based on:
 ; Reconstructed Commander Keen 4-6 Source Code
@@ -733,7 +733,7 @@ USES	SI,DI
 	mov	ax,[wide]
 ;
 ; if the width, source, and dest are all even, use word moves
-; This is allways the case in the TGA refresh
+; This is always the case in the TGA refresh
 ;
 	test	ax,1
 	jnz	@@bytelineloop

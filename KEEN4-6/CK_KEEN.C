@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -267,7 +267,7 @@ player->temp4 =
 void SpawnKeen(Sint16 x, Sint16 y, Sint16 dir)
 {
 	player->obclass = keenobj;
-	player->active = ac_allways;
+	player->active = ac_always;
 	player->priority = 1;
 	player->x = CONVERT_TILE_TO_GLOBAL(x);
 	player->y = CONVERT_TILE_TO_GLOBAL(y) - 0xF1;	//TODO: weird
@@ -397,7 +397,7 @@ boolean CheckEnterHouse(objtype *ob)
 				GetNewObj(false);
 				new->x = ob->tilemidx - 2;
 				new->y = ob->tilebottom - 4;
-				new->active = ac_allways;
+				new->active = ac_always;
 				new->needtoclip = cl_noclip;
 				new->obclass = inertobj;
 				NewState(new, &s_carddoor);
@@ -1009,7 +1009,7 @@ void KeenKeyThink(objtype *ob)
 			map += mapwidth;
 	}
 	new->temp1 = h;
-	new->active = ac_allways;
+	new->active = ac_always;
 	new->needtoclip = cl_noclip;
 	new->obclass = inertobj;
 	NewState(new, &s_door1);

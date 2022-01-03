@@ -291,7 +291,7 @@ typedef struct statestruct
 typedef struct objstruct
 {
 	classtype obclass;
-	enum {ac_no, ac_yes, ac_allways, ac_removable} active;
+	enum {ac_no, ac_yes, ac_always, ac_removable} active;
 	boolean needtoreact;
 	enum {cl_noclip, cl_midclip, cl_fullclip} needtoclip;
 	Uint16 nothink;

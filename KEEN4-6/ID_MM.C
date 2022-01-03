@@ -569,7 +569,7 @@ void MM_Startup (void)
 // locked block of all memory until we punch out free space
 //
 	GETNEWBLOCK;
-	mmhead = mmnew;				// this will allways be the first node
+	mmhead = mmnew;				// this will always be the first node
 	mmnew->start = 0;
 	mmnew->length = 0xffff;
 	mmnew->attributes = LOCKBIT;

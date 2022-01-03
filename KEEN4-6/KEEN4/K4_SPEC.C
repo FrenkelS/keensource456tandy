@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -623,7 +623,7 @@ void ScanInfoPlane(void)
 
 	for (ob = player; ob; ob = ob->next)
 	{
-		if (ob->active != ac_allways)
+		if (ob->active != ac_always)
 			ob->active = ac_no;
 	}
 
@@ -1044,7 +1044,7 @@ statetype s_kbubble4  = {SMALLBUBBLE4SPR, SMALLBUBBLE4SPR, think, false, false, 
 void SpawnSwimKeen(Sint16 x, Sint16 y)
 {
 	player->obclass = keenobj;
-	player->active = ac_allways;
+	player->active = ac_always;
 	player->priority = 1;
 	player->x = CONVERT_TILE_TO_GLOBAL(x);
 	player->y = CONVERT_TILE_TO_GLOBAL(y);

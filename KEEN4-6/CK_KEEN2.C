@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -66,7 +66,7 @@ void SpawnScore(void)
 {
 	scoreobj->obclass = inertobj;
 	scoreobj->priority = 3;
-	scoreobj->active = ac_allways;
+	scoreobj->active = ac_always;
 	scoreobj->needtoclip = cl_noclip;
 	scoreobj->temp2 = -1;
 	scoreobj->temp1 = -1;
@@ -508,7 +508,7 @@ void SpawnWorldKeen(Sint16 x, Sint16 y)
 		player->obclass = keenobj;
 		player->x = gamestate.worldx;
 		player->y = gamestate.worldy;
-		player->active = ac_allways;
+		player->active = ac_always;
 		player->priority = 3;
 		player->xdir = 0;
 		player->ydir = 0;
@@ -540,7 +540,7 @@ void SpawnWorldKeen(Sint16 x, Sint16 y)
 		player->x = gamestate.worldx;
 		player->y = gamestate.worldy;
 	}
-	player->active = ac_allways;
+	player->active = ac_always;
 	player->priority = 1;
 	player->xdir = 0;
 	player->ydir = 0;
@@ -565,7 +565,7 @@ void SpawnWorldKeenPort(Uint16 tileX, Uint16 tileY)
 	player->obclass = keenobj;
 	player->x = CONVERT_TILE_TO_GLOBAL(tileX);
 	player->y = CONVERT_TILE_TO_GLOBAL(tileY);
-	player->active = ac_allways;
+	player->active = ac_always;
 	player->priority = 1;
 	player->xdir = 0;
 	player->ydir = 0;
@@ -1273,7 +1273,7 @@ void SpawnThrowFlag(Sint16 x, Sint16 y)
 	new->needtoclip = cl_noclip;
 	new->priority = 3;
 	new->obclass = flagobj;
-	new->active = ac_allways;
+	new->active = ac_always;
 	new->x = gamestate.worldx - 16*PIXGLOBAL;
 	new->y = gamestate.worldy - 16*PIXGLOBAL;
 #if defined KEEN4
@@ -1415,7 +1415,7 @@ void SpawnShot(Uint16 x, Uint16 y, Direction dir)
 	new->y = y;
 	new->priority = 0;
 	new->obclass = stunshotobj;
-	new->active = ac_allways;
+	new->active = ac_always;
 	SD_PlaySound(SND_KEENFIRE);
 	switch (dir)
 	{

@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -1059,7 +1059,7 @@ void SpawnMine(Sint16 x, Sint16 y, Sint16 dir)
 {
 	GetNewObj(false);
 	new->obclass = mineobj;
-	new->active = ac_allways;
+	new->active = ac_always;
 	new->priority = 0;
 	new->x = CONVERT_TILE_TO_GLOBAL(x);
 	new->y = CONVERT_TILE_TO_GLOBAL(y);

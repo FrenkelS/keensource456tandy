@@ -2252,7 +2252,7 @@ void PlayLoop(void)
 						RemoveObj(obj);
 						continue;
 					}
-					else if (obj->active != ac_allways)
+					else if (obj->active != ac_always)
 					{
 						if (US_RndT() < tics*2 || screenfaded || loadedgame)
 						{
