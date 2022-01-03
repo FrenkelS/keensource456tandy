@@ -270,7 +270,7 @@ USL_ReadConfig(void)
 		read(file,&ctl,sizeof(ctl));
 		read(file,&(KbdDefs[0]),sizeof(KbdDefs[0]));
 		read(file,&showscorebox,sizeof(showscorebox));
-		read(file,&compatability,sizeof(compatability));
+		read(file,&compatibility,sizeof(compatibility));
 		read(file,&QuietFX,sizeof(QuietFX));
 		read(file,&hadAdLib,sizeof(hadAdLib));
 		read(file,&jerk,sizeof(jerk));
@@ -324,7 +324,7 @@ USL_WriteConfig(void)
 		write(file,&(Controls[0]),sizeof(Controls[0]));
 		write(file,&(KbdDefs[0]),sizeof(KbdDefs[0]));
 		write(file,&showscorebox,sizeof(showscorebox));
-		write(file,&compatability,sizeof(compatability));
+		write(file,&compatibility,sizeof(compatibility));
 		write(file,&QuietFX,sizeof(QuietFX));
 		write(file,&AdLibPresent,sizeof(AdLibPresent));
 		write(file,&jerk,sizeof(jerk));
@@ -404,10 +404,10 @@ US_Startup(void)
 		{
 		case 0:
 			if (grmode == EGAGR)
-				compatability = true;
+				compatibility = true;
 			break;
 		case 1:
-			compatability = false;
+			compatibility = false;
 			break;
 		}
 	}
@@ -655,7 +655,7 @@ US_UpdateTextScreen(void)
 	USL_Show(21,9,5,true,true);
 #endif
 #if GRMODE == EGAGR
-	if (compatability)
+	if (compatibility)
 		USL_ScreenDraw(5,10,"SVGA Compatibility Mode Enabled.",0x4f);
 #endif
 

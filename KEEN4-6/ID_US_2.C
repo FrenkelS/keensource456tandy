@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -674,7 +674,7 @@ USL_SetOptionsText(void)
 	optionsi[1].text = oldshooting? "TWO-BUTTON FIRING (ON)" : "TWO-BUTTON FIRING (OFF)";
 #if GRMODE == EGAGR
 	optionsi[2].text = jerk? "FIX JERKY MOTION (ON)" : "FIX JERKY MOTION (OFF)";
-	optionsi[3].text = compatability? "SVGA COMPATIBILITY (ON)" : "SVGA COMPATIBILITY (OFF)";
+	optionsi[3].text = compatibility? "SVGA COMPATIBILITY (ON)" : "SVGA COMPATIBILITY (OFF)";
 #endif
 
 	keybi[2].flags &= ~ui_Disabled;
@@ -725,8 +725,8 @@ USL_CompCustom(UserCall call,UserItem far *item)
 	if (call != uic_SetupCard)
 		return(false);
 
-	compatability ^= true;
-	USL_CtlDialog(compatability? "SVGA compatibility now on" : "SVGA compatibility now off",
+	compatibility ^= true;
+	USL_CtlDialog(compatibility? "SVGA compatibility now on" : "SVGA compatibility now off",
 					"Press any key",nil);
 	USL_SetOptionsText();
 	return(true);

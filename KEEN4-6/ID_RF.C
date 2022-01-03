@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -147,7 +147,7 @@ typedef struct animtilestruct
 unsigned	tics;
 long		lasttimecount;
 
-boolean		compatability;			// crippled refresh for wierdo SVGAs
+boolean		compatibility;			// crippled refresh for wierdo SVGAs
 
 unsigned	mapwidth,mapheight,mapbyteswide,mapwordswide
 			,mapbytesextra,mapwordsextra;
@@ -280,7 +280,7 @@ void RF_Startup (void)
 
 #ifndef KEEN
 	//
-	// Keen 4-6 store the compatability setting in the game's config file.
+	// Keen 4-6 store the compatibility setting in the game's config file.
 	// The setting is loaded from that file AFTER RF_Startup is executed,
 	// making this check useless (unless the config file doesn't exist).
 	// Instead, US_Startup now checks for that parameter after the config
@@ -290,7 +290,7 @@ void RF_Startup (void)
 		for (i = 1;i < _argc;i++)
 			if (US_CheckParm(_argv[i],ParmStrings) == 0)
 			{
-				compatability = true;
+				compatibility = true;
 				break;
 			}
 #endif
@@ -1853,13 +1853,13 @@ void RF_Scroll (int x, int y)
 
 
 //
-// adjust screens and handle SVGA crippled compatability mode
+// adjust screens and handle SVGA crippled compatibility mode
 //
 	screenmove = deltay*16*SCREENWIDTH + deltax*TILEWIDTH;
 	for (i=0;i<3;i++)
 	{
 		screenstart[i]+= screenmove;
-		if (compatability && screenstart[i] > (0x10000l-SCREENSPACE) )
+		if (compatibility && screenstart[i] > (0x10000l-SCREENSPACE) )
 		{
 			//
 			// move the screen to the opposite end of the buffer
