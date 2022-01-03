@@ -1448,36 +1448,14 @@ void VWB_DrawTile8 (int x, int y, int tile)
 		VWL_DrawTile8 (x/SCREENXDIV,y,tile);
 }
 
-#if GRMODE == EGAGR
-
-#define VWL_DrawTile8M(x,y,t) \
-	VW_MaskBlock(grsegs[STARTTILE8M],(t)*40,bufferofs+ylookup[y]+(x),1,8,8)
-
-#endif
-
-#if GRMODE == CGAGR
-
-#define VWL_DrawTile8M(x,y,t) \
-	VW_MaskBlock(grsegs[STARTTILE8M],(t)*32,bufferofs+ylookup[y]+(x),2,8,16)
-
-#endif
-
-#if GRMODE == TGAGR
-
-#define VWL_DrawTile8M(x,y,t) \
-	VW_MaskBlock(grsegs[STARTTILE8M],(t)*64,bufferofs+ylookup[y]+(x),4,8,32)
-	
-#endif
-
 void VWB_DrawTile8M (int x, int y, int tile)
 {
-	int xb;
-
 	x+=pansx;
 	y+=pansy;
-	xb = x/SCREENXDIV; 			// use intermediate because VW_DT8M is macro
 	if (VWL_MarkUpdateBlock (x&SCREENXMASK,y,(x&SCREENXMASK)+7,y+7))
-		VWL_DrawTile8M (xb,y,tile);
+		VW_MaskBlock(grsegs[STARTTILE8M],tile*CHARWIDTH*CHARHEIGHT*PLANES,
+			bufferofs+ylookup[y]+(x/SCREENXDIV),
+			CHARWIDTH,CHARHEIGHT,CHARWIDTH*CHARHEIGHT);
 }
 
 #if NUMPICS

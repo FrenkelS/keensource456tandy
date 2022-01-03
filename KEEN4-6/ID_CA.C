@@ -1090,10 +1090,10 @@ void CAL_CacheSprite (int chunk, byte far *compressed)
 	bigplane = (spr->width+1)*spr->height;
 
 	shiftstarts[0] = MAXSHIFTS*6;	// start data after 3 unsigned tables
-	shiftstarts[1] = shiftstarts[0] + smallplane*5;	// 5 planes in a sprite
-	shiftstarts[2] = shiftstarts[1] + bigplane*5;
-	shiftstarts[3] = shiftstarts[2] + bigplane*5;
-	shiftstarts[4] = shiftstarts[3] + bigplane*5;	// nothing ever put here
+	shiftstarts[1] = shiftstarts[0] + smallplane*PLANES;	// 5 planes in a sprite
+	shiftstarts[2] = shiftstarts[1] + bigplane*PLANES;
+	shiftstarts[3] = shiftstarts[2] + bigplane*PLANES;
+	shiftstarts[4] = shiftstarts[3] + bigplane*PLANES;	// nothing ever put here
 
 	expanded = shiftstarts[spr->shifts];
 	MM_GetPtr (&grsegs[chunk],expanded);

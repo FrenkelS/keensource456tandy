@@ -44,11 +44,14 @@
 
 #define	G_P_SHIFT		4	// global >> ?? = pixels
 
+#define CHARHEIGHT 8
+
 #if GRMODE == EGAGR
 #define	SCREENWIDTH		64
 #define CHARWIDTH		1
 #define TILEWIDTH		2
 #define BYTEPIXELS		8
+#define PLANES			5
 #endif
 
 #if GRMODE == TGAGR
@@ -56,6 +59,7 @@
 #define CHARWIDTH		4
 #define TILEWIDTH		8
 #define BYTEPIXELS		2
+#define PLANES			2
 #endif
 
 #if GRMODE == CGAGR
@@ -63,6 +67,7 @@
 #define CHARWIDTH		2
 #define TILEWIDTH		4
 #define BYTEPIXELS		4
+#define PLANES			2
 #endif
 
 #define VIRTUALHEIGHT	300
