@@ -177,7 +177,6 @@ void 		MML_ShutdownEMS (void);
 void 		MML_MapEMS (void);
 boolean 	MML_CheckForXMS (void);
 void 		MML_ShutdownXMS (void);
-void		MML_UseSpace (unsigned segstart, unsigned seglength);
 void 		MML_ClearBlock (void);
 void		MML_SortMem (void);
 
@@ -445,7 +444,7 @@ asm	{
 	mov	[base],bx
 	mov	[size],dx
 	}
-	MML_UseSpace (base,size);
+	MM_UseSpace (base,size);
 	mminfo.XMSmem += size*16;
 	UMBbase[numUMBs] = base;
 	numUMBs++;
@@ -484,7 +483,7 @@ asm	call	[DWORD PTR XMSaddr]
 /*
 ======================
 =
-= MML_UseSpace
+= MM_UseSpace
 =
 = Marks a range of paragraphs as usable by the memory manager
 = This is used to mark space for the near heap, far heap, ems page frame,
@@ -493,7 +492,7 @@ asm	call	[DWORD PTR XMSaddr]
 ======================
 */
 
-void MML_UseSpace (unsigned segstart, unsigned seglength)
+void MM_UseSpace (unsigned segstart, unsigned seglength)
 {
 	mmblocktype far *scan,far *last;
 	unsigned	oldend;
@@ -517,7 +516,7 @@ void MML_UseSpace (unsigned segstart, unsigned seglength)
 	oldend = scan->start + scan->length;
 	extra = oldend - (segstart+seglength);
 	if (extra < 0)
-		Quit ("MML_UseSpace: Segment spans two blocks!");
+		Quit ("MM_UseSpace: Segment spans two blocks!");
 
 	if (segstart == scan->start)
 	{
@@ -633,7 +632,7 @@ void MM_Startup (void)
 	length -= SAVENEARHEAP;
 	seglength = length / 16;			// now in paragraphs
 	segstart = FP_SEG(start)+(FP_OFF(start)+15)/16;
-	MML_UseSpace (segstart,seglength);
+	MM_UseSpace (segstart,seglength);
 	mminfo.nearheap = length;
 
 //
@@ -645,7 +644,7 @@ void MM_Startup (void)
 	length -= SAVEFARHEAP;
 	seglength = length / 16;			// now in paragraphs
 	segstart = FP_SEG(start)+(FP_OFF(start)+15)/16;
-	MML_UseSpace (segstart,seglength);
+	MM_UseSpace (segstart,seglength);
 	mminfo.farheap = length;
 	mminfo.mainmem = mminfo.nearheap + mminfo.farheap;
 
@@ -663,7 +662,7 @@ void MM_Startup (void)
 	if (MML_CheckForEMS())
 	{
 		MML_SetupEMS();					// allocate space
-		MML_UseSpace (EMSpageframe,EMSpagesmapped*0x400);
+		MM_UseSpace (EMSpageframe,EMSpagesmapped*0x400);
 		MML_MapEMS();					// map in used pages
 		mminfo.EMSmem = EMSpagesmapped*0x4000l;
 	}
@@ -886,7 +885,7 @@ void MM_SetPurge (memptr *baseptr, boolean purge)
 {
 	MML_SetRover(baseptr);
 	mmrover->attributes &= ~PURGEBIT;
-	mmrover->attributes |= purge;
+	mmrover->attributes |= purge*PURGEBIT;
 }
 
 //==========================================================================

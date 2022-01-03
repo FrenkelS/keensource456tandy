@@ -132,7 +132,6 @@ void ShutdownId(void)
 void InitGame(void)
 {
 	static char *ParmStrings[] = {"JERK", ""};
-	void MML_UseSpace (Uint16 segstart, Uint16 seglength);
 
 	Uint16 segstart,seglength;
 	Sint16 i;
@@ -208,7 +207,7 @@ void InitGame(void)
 		segstart++;
 		seglength--;
 	}
-	MML_UseSpace (segstart,seglength);
+	MM_UseSpace (segstart,seglength);
 
 	VW_SetScreenMode(GRMODE);
 #if GRMODE == CGAGR

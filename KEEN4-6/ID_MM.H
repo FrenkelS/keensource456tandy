@@ -49,6 +49,8 @@ extern	boolean		mmerror;
 
 //==========================================================================
 
+void MM_UseSpace (unsigned segstart, unsigned seglength);
+
 void MM_Startup (void);
 void MM_Shutdown (void);
 
