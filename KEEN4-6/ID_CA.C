@@ -905,7 +905,7 @@ void CA_LoadAllSounds (void)
 
 	for (i=0;i<NUMSOUNDS;i++,start++)
 		if (audiosegs[start])
-			MM_SetPurge (&(memptr)audiosegs[start],true);	// make purgable
+			MM_SetPurge (&(memptr)audiosegs[start],true);	// make purgeable
 
 cachein:
 
@@ -1418,7 +1418,7 @@ void CA_CacheMap (int mapnum)
 = CA_UpLevel
 =
 = Goes up a bit level in the needed lists and clears it out.
-= Everything is made purgable
+= Everything is made purgeable
 =
 ======================
 */
@@ -1503,7 +1503,7 @@ void CA_SetGrPurge (void)
 =
 = CA_SetAllPurge
 =
-= Make everything possible purgable
+= Make everything possible purgeable
 =
 ======================
 */
@@ -1569,7 +1569,7 @@ void CA_CacheMarks (char *title)
 
 	numcache = 0;
 //
-// go through and make everything not needed purgable
+// go through and make everything not needed purgeable
 //
 	for (i=0;i<NUMCHUNKS;i++)
 		if (grneeded[i]&ca_levelbit)

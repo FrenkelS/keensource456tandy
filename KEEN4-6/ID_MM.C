@@ -63,8 +63,8 @@ EMS / XMS unmanaged routines
 */
 
 #define LOCKBIT		0x80	// if set in attributes, block cannot be moved
-#define PURGEBIT	1		// 0= unpurgable, 1= purge
-#define BASEATTRIBUTES	0	// unlocked, non purgable
+#define PURGEBIT	1		// 0= unpurgeable, 1= purge
+#define BASEATTRIBUTES	0	// unlocked, non purgeable
 
 #define MAXUMBS		10
 
@@ -503,7 +503,7 @@ void MML_UseSpace (unsigned segstart, unsigned seglength)
 =
 = MML_ClearBlock
 =
-= We are out of blocks, so free a purgable block
+= We are out of blocks, so free a purgeable block
 =
 ====================
 */
@@ -524,7 +524,7 @@ void MML_ClearBlock (void)
 		scan = scan->next;
 	}
 
-	Quit ("MM_ClearBlock: No purgable blocks!");
+	Quit ("MM_ClearBlock: No purgeable blocks!");
 }
 
 
@@ -675,7 +675,7 @@ void MM_Shutdown (void)
 =
 = MM_GetPtr
 =
-= Allocates an unlocked, unpurgable block
+= Allocates an unlocked, unpurgeable block
 =
 ====================
 */
@@ -739,7 +739,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 				mmnew->start = *(unsigned *)baseptr = startseg;
 				mmnew->next = scan;
 				while ( purge != scan)
-				{	// free the purgable block
+				{	// free the purgeable block
 					next = purge->next;
 					FREEBLOCK(purge);
 					purge = next;		// purge another if not at scan
@@ -776,7 +776,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 =
 = MM_FreePtr
 =
-= Allocates an unlocked, unpurgable block
+= Allocates an unlocked, unpurgeable block
 =
 ====================
 */
@@ -832,7 +832,7 @@ void MML_SetRover(memptr *baseptr)
 =
 = MM_SetPurge
 =
-= Sets the purge attribute for a block (locked blocks cannot be made purgable)
+= Sets the purge attribute for a block (locked blocks cannot be made purgeable)
 =
 =====================
 */
@@ -870,7 +870,7 @@ void MM_SetLock (memptr *baseptr, boolean locked)
 =
 = MML_SortMem
 =
-= Throws out all purgable stuff and compresses movable blocks
+= Throws out all purgeable stuff and compresses movable blocks
 =
 =====================
 */
@@ -922,7 +922,7 @@ void MML_SortMem (void)
 			if (scan->attributes & PURGEBIT)
 			{
 			//
-			// throw out the purgable block
+			// throw out the purgeable block
 			//
 				next = scan->next;
 				FREEBLOCK(scan);
@@ -933,7 +933,7 @@ void MML_SortMem (void)
 			else
 			{
 			//
-			// push the non purgable block on top of the last moved block
+			// push the non purgeable block on top of the last moved block
 			//
 				if (scan->start != start)
 				{
@@ -1001,9 +1001,9 @@ void MM_ShowMemory (void)
 	while (scan)
 	{
 		if (scan->attributes & PURGEBIT)
-			color = 5;		// dark purple = purgable
+			color = 5;		// dark purple = purgeable
 		else
-			color = 9;		// medium blue = non purgable
+			color = 9;		// medium blue = non purgeable
 		if (scan->attributes & LOCKBIT)
 			color = 12;		// red = locked
 		if (scan->start<=end)

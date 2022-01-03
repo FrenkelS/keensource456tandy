@@ -853,7 +853,7 @@ void CantSwim(void)
 {
 	SD_WaitSoundDone();
 	CA_UpLevel();	// kinda useless without CA_CacheMarks or CA_SetGrPurge
-	// BUG: haven't made anything purgable here, caching the pic may cause an "out of memory" crash
+	// BUG: haven't made anything purgeable here, caching the pic may cause an "out of memory" crash
 	CA_CacheGrChunk(KEENTALK1PIC);
 
 	US_CenterWindow(26, 8);
@@ -867,7 +867,7 @@ void CantSwim(void)
 	IN_Ack();
 	CA_DownLevel();
 
-	//Note: scorebox sprite has not been re-cached here (didn't use CA_CacheMarks or anything else that would have made the sprite purgable)
+	//Note: scorebox sprite has not been re-cached here (didn't use CA_CacheMarks or anything else that would have made the sprite purgeable)
 }
 
 //============================================================================
