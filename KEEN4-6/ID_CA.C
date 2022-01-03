@@ -825,7 +825,7 @@ void CA_CacheAudioChunk (int chunk)
 	if (audiosegs[chunk])
 	{
 		MM_SetPurge (&(memptr)audiosegs[chunk],false);
-		return;							// allready in memory
+		return;							// already in memory
 	}
 
 //
@@ -1260,7 +1260,7 @@ void CA_CacheGrChunk (int chunk)
 	if (grsegs[chunk])
 	{
 		MM_SetPurge (&grsegs[chunk],false);
-		return;							// allready in memory
+		return;							// already in memory
 	}
 
 //
@@ -1574,7 +1574,7 @@ void CA_CacheMarks (char *title)
 	for (i=0;i<NUMCHUNKS;i++)
 		if (grneeded[i]&ca_levelbit)
 		{
-			if (grsegs[i])						// its allready in memory, make
+			if (grsegs[i])						// its already in memory, make
 				MM_SetPurge(&grsegs[i],false);	// sure it stays there!
 			else
 				numcache++;
@@ -1628,7 +1628,7 @@ void CA_CacheMarks (char *title)
 				if (bufferstart<=pos
 				&& bufferend>= endpos)
 				{
-				// data is allready in buffer
+				// data is already in buffer
 					source = (byte _seg *)bufferseg+(pos-bufferstart);
 				}
 				else

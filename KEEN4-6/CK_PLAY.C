@@ -1844,7 +1844,7 @@ void GetNewObj(boolean usedummy)
 	{
 		lastobj->next = new;
 	}
-	new->prev = lastobj;	// new->next is allready NULL from memset
+	new->prev = lastobj;	// new->next is already NULL from memset
 
 	new->active = ac_yes;
 	new->needtoclip = cl_midclip;

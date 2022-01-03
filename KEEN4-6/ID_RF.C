@@ -1949,7 +1949,7 @@ void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
 
 	if	(sprite)
 	{
-	// sprite allready exists in the list, so we can use it's block
+	// sprite already exists in the list, so we can use it's block
 
 	//
 	// post an erase block to both pages by copying screenx,screeny,width,height
@@ -2485,7 +2485,7 @@ void RF_PlaceSprite (void **user,unsigned globalx,unsigned globaly,
 
 	if	(sprite)
 	{
-	// sprite allready exists in the list, so we can use it's block
+	// sprite already exists in the list, so we can use it's block
 
 	//
 	// post an erase block to erase the old position by copying
