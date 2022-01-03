@@ -1,5 +1,5 @@
 ; Commander Keen 4 Tandy Version Source Code
-; Copyright (C) 2021 Frenkel Smeijers
+; Copyright (C) 2021-2022 Frenkel Smeijers
 ;
 ; This file is primarily based on:
 ; Catacomb 3-D Source Code
@@ -475,16 +475,6 @@ ENDM
 	mov	ds,ax
 	ret
 ENDP
-
-ENDIF
-
-IFE GRMODE-VGAGR
-;============================================================================
-;
-; VGA refresh routines
-;
-;============================================================================
-
 
 ENDIF
 

@@ -39,14 +39,10 @@
 
 //      Special imports
 extern  boolean         showscorebox;
-#ifdef  KEEN
 extern	boolean		jerk;
 extern  boolean         oldshooting;
 extern  ScanCode        firescan;
 void	USL_CheckSavedGames(void);
-#else
-		ScanCode        firescan;
-#endif
 
 //      Global variables
 		boolean         ingame,abortgame,loadedgame;
@@ -733,7 +729,6 @@ USL_CompCustom(UserCall call,UserItem far *item)
 }
 #endif
 
-#ifdef  KEEN
 #pragma argsused
 static boolean
 USL_TwoCustom(UserCall call,UserItem far *item)
@@ -747,7 +742,6 @@ USL_TwoCustom(UserCall call,UserItem far *item)
 	USL_SetOptionsText();
 	return(true);
 }
-#endif
 
 static boolean
 USL_ConfigCustom(UserCall call,UserItem far *item)
@@ -1116,7 +1110,6 @@ USL_JoyGCustom(UserCall call,UserItem far *item)
 			fontcolor = HiliteColor;
 			px = CtlPanelSX + 8;
 			py = CtlPanelSX + 8;
-			fontcolor = HiliteColor;	// redundant...
 			IN_ClearKeysDown();
 			if (  USL_CGGet(0, "JUMP")
 				&& USL_CGGet(1, "POGO")

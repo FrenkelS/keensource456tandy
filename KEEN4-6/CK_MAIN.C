@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -418,13 +418,6 @@ void DemoLoop(void)
 				continue;	// don't show title screen, go directly to GameLoop();
 			}
 			ShowTitle();
-			///////////////
-			// this is completely useless:
-			if (playstate == ex_resetgame || playstate == ex_loadedgame)
-			{
-				continue;
-			}
-			///////////////
 		}
 	}
 }

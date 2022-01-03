@@ -2362,10 +2362,8 @@ void PlayLoop(void)
 			WorldScrollScreen(player);
 		}
 		UpdateScore(scoreobj);
-		if (loadedgame)
-		{
-			loadedgame = false;
-		}
+
+		loadedgame = false;
 
 //
 // update the screen and calculate the number of tics it took to execute

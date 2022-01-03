@@ -116,8 +116,6 @@ extern	void		(*USL_ResetGame)(void);
 extern	SaveGame	Games[MaxSaveGames];
 extern	HighScore	Scores[];
 
-#define	US_HomeWindow()	{PrintX = WindowX; PrintY = WindowY;}
-
 extern	void	US_Startup(void),
 				US_Setup(void),
 				US_Shutdown(void),
@@ -129,16 +127,11 @@ extern	void	US_Startup(void),
 				US_UpdateTextScreen(void),
 				US_FinishTextScreen(void),
 				US_ControlPanel(void),
-				US_DrawWindow(word x,word y,word w,word h),
 				US_CenterWindow(word,word),
-				US_SaveWindow(WindowRec *win),
-				US_RestoreWindow(WindowRec *win),
-				US_ClearWindow(void),
 				US_SetPrintRoutines(void (*measure)(char far *,word *,word *),
 									void (*print)(char far *)),
 				US_PrintCentered(char *s),
 				US_CPrint(char *s),
-				US_CPrintLine(char *s),
 				US_Print(char *s),
 				US_PrintUnsigned(longword n),
 				US_PrintSigned(long n);

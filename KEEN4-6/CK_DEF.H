@@ -510,7 +510,6 @@ extern statetype sc_badstate;
 =============================================================================
 */
 
-extern Uint16 bounceangle[8][8];
 #ifndef KEEN4
 extern arrowdirtype arrowflip[];
 #endif

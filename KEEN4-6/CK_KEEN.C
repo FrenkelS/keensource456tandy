@@ -44,18 +44,6 @@ Contains the following actor types (in this order):
 =============================================================================
 */
 
-Uint16 bounceangle [8][8] =
-{
-	{ 0,  0,  0,  0,  0,  0,  0,  0},
-	{ 7,  6,  5,  4,  3,  2,  1,  0},
-	{ 5,  4,  3,  2,  1,  0, 15, 14},
-	{ 5,  4,  3,  2,  1,  0, 15, 14},
-	{ 3,  2,  1,  0, 15, 14, 13, 12},
-	{ 9,  8,  7,  6,  5,  4,  3,  2},
-	{ 9,  8,  7,  6,  5,  4,  3,  2},
-	{11, 10,  9,  8,  7,  6,  5,  4}
-};
-
 #ifndef KEEN4
 arrowdirtype arrowflip[] = {arrow_South, arrow_West, arrow_North, arrow_East, arrow_SouthWest, arrow_NorthWest, arrow_NorthEast, arrow_SouthEast};
 #endif

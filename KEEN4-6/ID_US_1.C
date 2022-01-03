@@ -61,13 +61,9 @@
 
 //      Special imports
 extern  boolean         showscorebox;
-#ifdef  KEEN
 extern	boolean		jerk;
 extern  boolean         oldshooting;
 extern  ScanCode        firescan;
-#else
-		ScanCode        firescan;
-#endif
 
 //      Global variables
 		char            *abortprogram;
@@ -117,6 +113,9 @@ static  boolean         US_Started;
 					};
 
 //      Internal routines
+void	USL_ClearWindow(void);
+void	USL_SaveWindow(WindowRec *win);
+void	USL_RestoreWindow(WindowRec *win);
 
 //      Public routines
 
@@ -165,7 +164,7 @@ static  WindowRec       wr;
 
 	// DEBUG - handle screen cleanup
 
-	US_SaveWindow(&wr);
+	USL_SaveWindow(&wr);
 	US_CenterWindow(30,3);
 	US_CPrint(s);
 	US_CPrint("(R)etry or (A)bort?");
@@ -186,9 +185,9 @@ asm     sti     // Let the keyboard interrupts come through
 		case key_Space:
 		case 'r':
 		case 'R':
-			US_ClearWindow();
+			USL_ClearWindow();
 			VW_UpdateScreen();
-			US_RestoreWindow(&wr);
+			USL_RestoreWindow(&wr);
 			return(RETRY);
 		}
 	}
@@ -576,13 +575,8 @@ US_TextScreen(void)
 		if (n == 0)
 		{
 			tedlevelnum = atoi(_argv[i + 1]);
-			if (tedlevelnum >= 0)
-			{
-				tedlevel = true;
-				return;
-			}
-			else
-				break;
+			tedlevel = true;
+			return;
 		}
 		else if (n == 1)
 		{
@@ -844,19 +838,19 @@ US_PrintCentered(char *s)
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      US_CPrintLine() - Prints a string centered on the current line and
+//      USL_CPrintLine() - Prints a string centered on the current line and
 //              advances to the next line. Newlines are not supported.
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_CPrintLine(char *s)
+USL_CPrintLine(char *s)
 {
 	word    w,h;
 
 	USL_MeasureString(s,&w,&h);
 
 	if (w > WindowW)
-		Quit("US_CPrintLine() - String exceeds width");
+		Quit("USL_CPrintLine() - String exceeds width");
 	px = WindowX + ((WindowW - w) / 2);
 	py = PrintY;
 	USL_DrawString(s);
@@ -881,7 +875,7 @@ US_CPrint(char *s)
 			se++;
 		*se = '\0';
 
-		US_CPrintLine(s);
+		USL_CPrintLine(s);
 
 		s = se;
 		if (c)
@@ -894,12 +888,12 @@ US_CPrint(char *s)
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      US_ClearWindow() - Clears the current window to white and homes the
+//      USL_ClearWindow() - Clears the current window to white and homes the
 //              cursor
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_ClearWindow(void)
+USL_ClearWindow(void)
 {
 	VWB_Bar(WindowX,WindowY,WindowW,WindowH,WHITE);
 	PrintX = WindowX;
@@ -908,11 +902,11 @@ US_ClearWindow(void)
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      US_DrawWindow() - Draws a frame and sets the current window parms
+//      USL_DrawWindow() - Draws a frame and sets the current window parms
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_DrawWindow(word x,word y,word w,word h)
+USL_DrawWindow(word x,word y,word w,word h)
 {
 	word    i,
 			sx,sy,sw,sh;
@@ -930,7 +924,7 @@ US_DrawWindow(word x,word y,word w,word h)
 	sw = (w + 1) * 8;
 	sh = (h + 1) * 8;
 
-	US_ClearWindow();
+	USL_ClearWindow();
 
 	VWB_DrawTile8M(sx,sy,0),VWB_DrawTile8M(sx,sy + sh,6);
 	for (i = sx + 8;i <= sx + sw - 8;i += 8)
@@ -950,17 +944,17 @@ US_DrawWindow(word x,word y,word w,word h)
 void
 US_CenterWindow(word w,word h)
 {
-	US_DrawWindow(((MaxX / 8) - w) / 2,((MaxY / 8) - h) / 2,w,h);
+	USL_DrawWindow(((MaxX / 8) - w) / 2,((MaxY / 8) - h) / 2,w,h);
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      US_SaveWindow() - Saves the current window parms into a record for
+//      USL_SaveWindow() - Saves the current window parms into a record for
 //              later restoration
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_SaveWindow(WindowRec *win)
+USL_SaveWindow(WindowRec *win)
 {
 	win->x = WindowX;
 	win->y = WindowY;
@@ -973,12 +967,12 @@ US_SaveWindow(WindowRec *win)
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//      US_RestoreWindow() - Sets the current window parms to those held in the
+//      USL_RestoreWindow() - Sets the current window parms to those held in the
 //              record
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-US_RestoreWindow(WindowRec *win)
+USL_RestoreWindow(WindowRec *win)
 {
 	WindowX = win->x;
 	WindowY = win->y;
