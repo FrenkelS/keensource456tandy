@@ -50,11 +50,8 @@
 
 #include <dos.h>
 
-#ifdef	_MUSE_      // Will be defined in ID_Types.h
-#include "ID_SD.h"
-#else
 #include "ID_HEADS.H"
-#endif
+
 #pragma	hdrstop
 #pragma	warn	-pia
 
@@ -152,11 +149,7 @@ SDL_SetIntsPerSec(word ints)
 //	SDL_PCPlaySound() - Plays the specified sound on the PC speaker
 //
 ///////////////////////////////////////////////////////////////////////////
-#ifdef	_MUSE_
-void
-#else
 static void
-#endif
 SDL_PCPlaySound(PCSound far *sound)
 {
 asm	pushf
@@ -174,11 +167,7 @@ asm	popf
 //	SDL_PCStopSound() - Stops the current sound playing on the PC Speaker
 //
 ///////////////////////////////////////////////////////////////////////////
-#ifdef	_MUSE_
-void
-#else
 static void
-#endif
 SDL_PCStopSound(void)
 {
 asm	pushf
@@ -344,11 +333,7 @@ asm	in	al, dx
 //		AdLib card
 //
 ///////////////////////////////////////////////////////////////////////////
-#ifdef	_MUSE_
-void
-#else
 static void
-#endif
 SDL_ALStopSound(void)
 {
 asm	pushf
@@ -400,11 +385,7 @@ SDL_AlSetFXInst(Instrument far *inst)
 //	SDL_ALPlaySound() - Plays the specified sound on the AdLib card
 //
 ///////////////////////////////////////////////////////////////////////////
-#ifdef	_MUSE_
-void
-#else
 static void
-#endif
 SDL_ALPlaySound(AdLibSound far *sound)
 {
 	Instrument	far *inst;
@@ -762,7 +743,6 @@ SD_SetSoundMode(SDMode mode)
 
 	SD_StopSound();
 
-#ifndef	_MUSE_
 	switch (mode)
 	{
 	case sdm_Off:
@@ -780,15 +760,12 @@ SD_SetSoundMode(SDMode mode)
 		}
 		break;
 	}
-#endif
 
 	if (result && (mode != SoundMode))
 	{
 		SDL_ShutDevice();
 		SoundMode = mode;
-#ifndef	_MUSE_
 		SoundTable = (word *)(&audiosegs[tableoffset]);
-#endif
 		SDL_StartDevice();
 	}
 
@@ -834,7 +811,7 @@ SD_Startup(void)
 		return;
 
 	alNoCheck = false;
-#ifndef	_MUSE_
+
 	for (i = 1;i < _argc;i++)
 	{
 		switch (US_CheckParm(_argv[i],ParmStrings))
@@ -848,7 +825,6 @@ SD_Startup(void)
 			break;
 		}
 	}
-#endif
 
 	t0OldService = getvect(8);	// Get old timer 0 ISR
 

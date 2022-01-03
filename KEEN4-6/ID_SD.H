@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -186,12 +186,5 @@ extern	void	SD_Startup(void),
 				SD_SetSoundMode(SDMode mode),
 				SD_SetMusicMode(SMMode mode);
 extern	word	SD_SoundPlaying(void);
-
-#ifdef	_MUSE_	// MUSE Goes directly to the lower level routines
-extern	void	SDL_PCPlaySound(PCSound far *sound),
-				SDL_PCStopSound(void),
-				SDL_ALPlaySound(AdLibSound far *sound),
-				SDL_ALStopSound(void);
-#endif
 
 #endif
