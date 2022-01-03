@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -47,6 +47,17 @@
 #pragma	hdrstop
 
 #define	KeyInt	9	// The keyboard ISR number
+
+#define	INL_ClearKey(code)	{Keyboard[code] = false;\
+							if (code == LastScan) LastScan = sc_None;}
+
+// 	Stuff for the mouse
+#define	MReset		0
+#define	MButtons	3
+#define	MDelta		11
+
+#define	MouseInt	0x33
+#define	Mouse(x)	_AX = x,geninterrupt(MouseInt)
 
 // Stuff for the joystick
 #define	JoyScaleMax		32768
@@ -142,6 +153,8 @@ static	Direction	DirTable[] =		// Quick lookup for total direction
 						dir_West,		dir_None,	dir_East,
 						dir_SouthWest,	dir_South,	dir_SouthEast
 					};
+
+void	INL_SetControlType(int,ControlType);
 
 static	void interrupt	(*OldKeyVect)(void);
 
@@ -647,7 +660,7 @@ IN_Default(boolean gotit,ControlType in)
 	|| 	((in == ctrl_Mouse) && !MousePresent)
 	)
 		in = ctrl_Keyboard1;
-	IN_SetControlType(0,in);
+	INL_SetControlType(0,in);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -890,12 +903,12 @@ register	KeyboardDef	*def;
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//	IN_SetControlType() - Sets the control type to be used by the specified
+//	INL_SetControlType() - Sets the control type to be used by the specified
 //		player
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-IN_SetControlType(int player,ControlType type)
+INL_SetControlType(int player,ControlType type)
 {
 	// DEBUG - check that requested type is present?
 	Controls[player] = type;
@@ -1015,11 +1028,11 @@ IN_WaitForASCII(void)
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//	IN_AckBack() - Waits for either an ASCII keypress or a button press
+//	INL_AckBack() - Waits for either an ASCII keypress or a button press
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-IN_AckBack(void)
+INL_AckBack(void)
 {
 	word	i;
 
@@ -1049,13 +1062,13 @@ IN_AckBack(void)
 		}
 	}
 
-	IN_ClearKey(LastScan);
+	INL_ClearKey(LastScan);
 	LastScan = sc_None;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //
-//	IN_Ack() - Clears user input & then calls IN_AckBack()
+//	IN_Ack() - Clears user input & then calls INL_AckBack()
 //
 ///////////////////////////////////////////////////////////////////////////
 void
@@ -1063,7 +1076,7 @@ IN_Ack(void)
 {
 	word	i;
 
-	IN_ClearKey(LastScan);
+	INL_ClearKey(LastScan);
 	LastScan = sc_None;
 
 	if (MousePresent)
@@ -1074,7 +1087,7 @@ IN_Ack(void)
 			while (IN_GetJoyButtonsDB(i))
 				;
 
-	IN_AckBack();
+	INL_AckBack();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1122,7 +1135,7 @@ IN_UserInput(longword delay,boolean clear)
 		if (IN_IsUserInput())
 		{
 			if (clear)
-				IN_AckBack();
+				INL_AckBack();
 			return(true);
 		}
 	} while (TimeCount - lasttime < delay);

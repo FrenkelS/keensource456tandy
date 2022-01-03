@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -82,7 +82,7 @@ typedef	byte		ScanCode;
 #define	sc_F9			0x43
 #define	sc_F10			0x44
 #define	sc_F11			0x57
-#define	sc_F12			0x59	// BUG: F12 uses scan code 0x58!
+#define	sc_F12			0x58
 
 #define	sc_A			0x1e
 #define	sc_B			0x30
@@ -130,14 +130,6 @@ typedef	byte		ScanCode;
 #define	key_BackSpace	0x08
 #define	key_Tab			0x09
 #define	key_Delete		0x7f
-
-// 	Stuff for the mouse
-#define	MReset		0
-#define	MButtons	3
-#define	MDelta		11
-
-#define	MouseInt	0x33
-#define	Mouse(x)	_AX = x,geninterrupt(MouseInt)
 
 typedef	enum		{
 						demo_Off,demo_Record,demo_Playback,demo_PlayDone
@@ -208,8 +200,6 @@ extern	word		DemoOffset,DemoSize;
 
 // Function prototypes
 #define	IN_KeyDown(code)	(Keyboard[(code)])
-#define	IN_ClearKey(code)	{Keyboard[code] = false;\
-							if (code == LastScan) LastScan = sc_None;}
 
 // DEBUG - put names in prototypes
 extern	void		IN_Startup(void),IN_Shutdown(void),
@@ -217,13 +207,12 @@ extern	void		IN_Startup(void),IN_Shutdown(void),
 					IN_ClearKeysDown(void),
 					IN_ReadCursor(CursorInfo *),
 					IN_ReadControl(int,ControlInfo *),
-					IN_SetControlType(int,ControlType),
 					IN_GetJoyAbs(word joy,word *xp,word *yp),
 					IN_SetupJoy(word joy,word minx,word maxx,
 								word miny,word maxy),
 					IN_StartDemoPlayback(byte _seg *buffer,word bufsize),
 					IN_StopDemo(void),IN_FreeDemoBuffer(void),
-					IN_Ack(void),IN_AckBack(void),
+					IN_Ack(void),
 					IN_StartDemoRecord(word bufsize);
 extern	boolean		IN_UserInput(longword delay,boolean clear),
 					IN_IsUserInput(void);
