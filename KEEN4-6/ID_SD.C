@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -46,7 +46,7 @@
 //				(Use SM_SetMusicMode() to set)
 //
 
-#pragma hdrstop		// Wierdo thing with MUSE
+#pragma hdrstop		// Weirdo thing with MUSE
 
 #include <dos.h>
 

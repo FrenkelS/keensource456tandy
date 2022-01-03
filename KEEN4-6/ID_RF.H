@@ -94,7 +94,7 @@
 */
 
 
-extern	boolean		compatibility;			// crippled refresh for wierdo SVGAs
+extern	boolean		compatibility;			// crippled refresh for weirdo SVGAs
 
 extern	unsigned	tics;
 extern	long		lasttimecount;

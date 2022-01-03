@@ -147,7 +147,7 @@ typedef struct animtilestruct
 unsigned	tics;
 long		lasttimecount;
 
-boolean		compatibility;			// crippled refresh for wierdo SVGAs
+boolean		compatibility;			// crippled refresh for weirdo SVGAs
 
 unsigned	mapwidth,mapheight,mapbyteswide,mapwordswide
 			,mapbytesextra,mapwordsextra;
