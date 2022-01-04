@@ -160,7 +160,7 @@ ENDP
 ; VW_MaskBlock
 ;
 ; Draws a masked block shape to the screen.  bufferofs is NOT accounted for.
-; The mask comes first, then the data.  Seperate unwound routines are used
+; The mask comes first, then the data.  Separate unwound routines are used
 ; to speed drawing.
 ;
 ; Mask blocks will always be an even width because of the way IGRAB works
@@ -625,7 +625,7 @@ EVEN
 
 eventoodd:
 	mov	di,[dest]				;start at same place in all planes
-	dec	ax						;one word has to be handled seperately
+	dec	ax						;one word has to be handled separately
 EVEN
 @@lineloopEO:
 	movsb

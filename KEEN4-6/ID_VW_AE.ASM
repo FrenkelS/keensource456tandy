@@ -690,7 +690,7 @@ oddtoeven:
 ;==============
 
 eventoodd:
-	dec	[wide]					;one word has to be handled seperately
+	dec	[wide]					;one word has to be handled separately
 EOplaneloop:
 	mov	dx,SC_INDEX
 	WORDOUT
