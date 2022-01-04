@@ -149,7 +149,7 @@ asm	mov	ds,ax
 
 #elif GRMODE == CGAGR
 
-void MemDrawChar (int char8,byte far *dest,unsigned width,unsigned planesize)
+void MemDrawChar (int char8,byte far *dest,unsigned width)
 {
 asm	mov	si,[char8]
 asm	shl	si,1
@@ -183,20 +183,15 @@ asm	movsw
 
 asm	mov	ax,ss
 asm	mov	ds,ax
-
-	planesize++;		// shut the compiler up
 }
 
 #elif GRMODE == TGAGR
 
-void MemDrawChar (int char8,byte far *dest,unsigned width,unsigned planesize)
+void MemDrawChar (int char8,byte far *dest,unsigned width)
 {
 asm	mov	si,[char8]
-asm	shl	si,1
-asm	shl	si,1
-asm	shl	si,1
-asm	shl	si,1
-asm	shl	si,1		// index into char 8 segment
+asm	mov	cl,5
+asm	shl	si,cl		// index into char 8 segment
 
 asm	mov	ds,[WORD PTR grsegs+STARTTILE8*2]
 asm	mov	es,[WORD PTR dest+2]
@@ -232,8 +227,6 @@ asm	movsw
 
 asm	mov	ax,ss
 asm	mov	ds,ax
-
-	planesize++;		// shut the compiler up
 }
 #endif
 
@@ -313,12 +306,20 @@ void UpdateScore(objtype *ob)
 		// erase leading spaces
 		length = strlen(str);
 		for (i=9;i>length;i--)
+#if GRMODE == EGAGR
 			MemDrawChar (41,dest+=CHARWIDTH,width,planesize);
+#elif GRMODE == CGAGR || GRMODE == TGAGR
+			MemDrawChar (41,dest+=CHARWIDTH,width);
+#endif
 
 		// draw digits
 		ch = str;
 		while (*ch)
+#if GRMODE == EGAGR
 			MemDrawChar (*ch++ - '0'+42,dest+=CHARWIDTH,width,planesize);
+#elif GRMODE == CGAGR || GRMODE == TGAGR
+			MemDrawChar (*ch++ - '0'+42,dest+=CHARWIDTH,width);
+#endif
 
 #if GRMODE == EGAGR
 		ShiftScore ();
@@ -350,12 +351,20 @@ void UpdateScore(objtype *ob)
 		// erase leading spaces
 		length = strlen(str);
 		for (i=2;i>length;i--)
+#if GRMODE == EGAGR
 			MemDrawChar (41,dest+=CHARWIDTH,width,planesize);
+#elif GRMODE == CGAGR || GRMODE == TGAGR
+			MemDrawChar (41,dest+=CHARWIDTH,width);
+#endif
 
 		// draw digits
 		ch = str;
 		while (*ch)
+#if GRMODE == EGAGR
 			MemDrawChar (*ch++ - '0'+42,dest+=CHARWIDTH,width,planesize);
+#elif GRMODE == CGAGR || GRMODE == TGAGR
+			MemDrawChar (*ch++ - '0'+42,dest+=CHARWIDTH,width);
+#endif
 
 #if GRMODE == EGAGR
 		ShiftScore ();
@@ -385,12 +394,20 @@ void UpdateScore(objtype *ob)
 		// erase leading spaces
 		length = strlen(str);
 		for (i=2;i>length;i--)
+#if GRMODE == EGAGR
 			MemDrawChar (41,dest+=CHARWIDTH,width,planesize);
+#elif GRMODE == CGAGR || GRMODE == TGAGR
+			MemDrawChar (41,dest+=CHARWIDTH,width);
+#endif
 
 		// draw digits
 		ch = str;
 		while (*ch)
+#if GRMODE == EGAGR
 			MemDrawChar (*ch++ - '0'+42,dest+=CHARWIDTH,width,planesize);
+#elif GRMODE == CGAGR || GRMODE == TGAGR
+			MemDrawChar (*ch++ - '0'+42,dest+=CHARWIDTH,width);
+#endif
 
 #if GRMODE == EGAGR
 		ShiftScore ();
