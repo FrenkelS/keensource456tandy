@@ -171,6 +171,8 @@ ENDP
 ;
 ;============================================================================
 
+IF 1 eq 1
+
 DATASEG
 
 UNWOUNDMASKS	=	20
@@ -659,6 +661,50 @@ mask20O:
 
 
 ENDP
+
+
+ELSE
+
+
+CODESEG
+
+PROC	VW_MaskBlock	segm:WORD, ofs:WORD, dest:WORD, wide:WORD, height:WORD, planesize:WORD
+PUBLIC	VW_MaskBlock
+USES	SI,DI
+
+	mov	es,[screenseg]
+
+	mov	ax,[linewidth]
+	sub	ax,[wide]
+	mov	[ss:linedelta],ax
+	
+	mov	bx,[planesize]
+
+	mov	ds,[segm]
+	mov	si,[ofs]
+	mov	di,[dest]
+
+	mov	dx,[height]
+
+@@lineloopgen:
+	mov	cx,[wide]
+@@byteloop:
+	mov	al,[es:di]
+	and	al,[si]
+	or	al,[bx+si]
+	inc	si
+	stosb
+	loop	@@byteloop
+
+	add	di,[ss:linedelta]
+	dec	dx
+	jnz	@@lineloopgen
+
+	mov	ax,ss
+	mov	ds,ax
+	ret
+ENDP
+ENDIF
 
 
 ;============================================================================
