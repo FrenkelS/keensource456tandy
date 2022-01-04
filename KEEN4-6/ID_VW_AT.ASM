@@ -127,11 +127,8 @@ USES	SI,DI
 	sub	bx,4
 
 	mov	si,[tile]
-	shl	si,1
-	shl	si,1
-	shl	si,1
-	shl	si,1
-	shl	si,1
+	mov	cl,5
+	shl	si,cl
 
 	mov	ds,[grsegs+STARTTILE8*2] ; segment for all tile8s
 
@@ -171,7 +168,7 @@ ENDP
 ;
 ;============================================================================
 
-IF 1 eq 1
+IF 1 eq 0
 
 DATASEG
 
