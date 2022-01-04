@@ -87,7 +87,7 @@ TILEWIDTH	=	8
 ; spot to 1 in both update pages, forcing the tile to be copied to the
 ; view pages the next two refreshes
 ;
-; Called to draw newlly scrolled on strips and animating tiles
+; Called to draw newly scrolled on strips and animating tiles
 ;
 ;=================
 
@@ -223,7 +223,7 @@ TILEWIDTH	=	4
 ; spot to 1 in both update pages, forcing the tile to be copied to the
 ; view pages the next two refreshes
 ;
-; Called to draw newlly scrolled on strips and animating tiles
+; Called to draw newly scrolled on strips and animating tiles
 ;
 ;=================
 
@@ -347,7 +347,7 @@ TILEWIDTH	=	2
 ; spot to 1 in both update pages, forcing the tile to be copied to the
 ; view pages the next two refreshes
 ;
-; Called to draw newlly scrolled on strips and animating tiles
+; Called to draw newly scrolled on strips and animating tiles
 ;
 ; Assumes write mode 0
 ;
