@@ -1184,63 +1184,77 @@ void RF_SetRefreshHook (void (*func) (void) )
 =================
 */
 
-void	RFL_NewRow (int dir)
+void	RFL_NewRowTop (void)
 {
-	unsigned count,updatespot,updatestep;
-	int		x,y,xstep,ystep;
+	unsigned count,updatespot;
+	int		x;
 
-	switch (dir)
+	updatespot = 0;
+	x = originxtile;
+	count = PORTTILESWIDE;
+
+	while (count--)
 	{
-	case 0:		// top row
-		updatespot = 0;
-		updatestep = 1;
-		x = originxtile;
-		y = originytile;
-		xstep = 1;
-		ystep = 0;
-		count = PORTTILESWIDE;
-		break;
-
-	case 1:		// right row
-		updatespot = PORTTILESWIDE-1;
-		updatestep = UPDATEWIDE;
-		x = originxtile + PORTTILESWIDE-1;
-		y = originytile;
-		xstep = 0;
-		ystep = 1;
-		count = PORTTILESHIGH;
-		break;
-
-	case 2:		// bottom row
-		updatespot = UPDATEWIDE*(PORTTILESHIGH-1);
-		updatestep = 1;
-		x = originxtile;
-		y = originytile + PORTTILESHIGH-1;
-		xstep = 1;
-		ystep = 0;
-		count = PORTTILESWIDE;
-		break;
-
-	case 3:		// left row
-		updatespot = 0;
-		updatestep = UPDATEWIDE;
-		x = originxtile;
-		y = originytile;
-		xstep = 0;
-		ystep = 1;
-		count = PORTTILESHIGH;
-		break;
-	default:
-		Quit ("RFL_NewRow: Bad dir!");
+		RFL_NewTile(updatespot);
+		RFL_CheckForAnimTile (x,originytile);
+		updatespot++;
+		x++;
 	}
+}
+
+void	RFL_NewRowBottom (void)
+{
+	unsigned count,updatespot;
+	int		x,y;
+
+	updatespot = UPDATEWIDE*(PORTTILESHIGH-1);
+	x = originxtile;
+	y = originytile + PORTTILESHIGH-1;
+	count = PORTTILESWIDE;
 
 	while (count--)
 	{
 		RFL_NewTile(updatespot);
 		RFL_CheckForAnimTile (x,y);
-		updatespot+=updatestep;
-		x+=xstep;
-		y+=ystep;
+		updatespot++;
+		x++;
+	}
+}
+
+void	RFL_NewRowRight (void)
+{
+	unsigned count,updatespot;
+	int		x,y;
+
+	updatespot = PORTTILESWIDE-1;
+	x = originxtile + PORTTILESWIDE-1;
+	y = originytile;
+	count = PORTTILESHIGH;
+
+	while (count--)
+	{
+		RFL_NewTile(updatespot);
+		RFL_CheckForAnimTile (x,y);
+		updatespot+=UPDATEWIDE;
+		y++;
+	}
+}
+
+void	RFL_NewRowLeft (void)
+{
+	unsigned count,updatespot;
+	int		y;
+
+	updatespot = 0;
+	y = originytile;
+	count = PORTTILESHIGH;
+
+	while (count--)
+	{
+		RFL_NewTile(updatespot);
+		RFL_CheckForAnimTile (originxtile,y);
+		updatespot+=UPDATEWIDE;
+		y++;
 	}
 }
 
@@ -1869,12 +1883,12 @@ void RF_Scroll (int x, int y)
 	{
 		if (deltax==1)
 		{
-			RFL_NewRow (1);			// new right row
+			RFL_NewRowRight ();
 			RFL_RemoveAnimsOnX (originxtile-1);
 		}
 		else
 		{
-			RFL_NewRow (3);			// new left row
+			RFL_NewRowLeft ();
 			RFL_RemoveAnimsOnX (originxtile+PORTTILESWIDE);
 		}
 
@@ -1895,13 +1909,13 @@ void RF_Scroll (int x, int y)
 		if (deltay==1)
 		{
 			updatespot = UPDATEWIDE*(PORTTILESHIGH-1);
-			RFL_NewRow (2);			// new bottom row
+			RFL_NewRowBottom ();
 			RFL_RemoveAnimsOnY (originytile-1);
 		}
 		else
 		{
 			updatespot = 0;
-			RFL_NewRow (0);			// new top row
+			RFL_NewRowTop ();
 			RFL_RemoveAnimsOnY (originytile+PORTTILESHIGH);
 		}
 
@@ -2414,12 +2428,12 @@ void RF_Scroll (int x, int y)
 	{
 		if (deltax==1)
 		{
-			RFL_NewRow (1);			// new right row
+			RFL_NewRowRight ();
 			RFL_RemoveAnimsOnX (originxtile-1);
 		}
 		else
 		{
-			RFL_NewRow (3);			// new left row
+			RFL_NewRowLeft ();
 			RFL_RemoveAnimsOnX (originxtile+PORTTILESWIDE);
 		}
 
@@ -2437,13 +2451,13 @@ void RF_Scroll (int x, int y)
 	{
 		if (deltay==1)
 		{
-			RFL_NewRow (2);			// new bottom row
+			RFL_NewRowBottom ();
 			*(updateptr+UPDATEWIDE*(PORTTILESHIGH-1)+PORTTILESWIDE) = 0;
 			RFL_RemoveAnimsOnY (originytile-1);
 		}
 		else
 		{
-			RFL_NewRow (0);			// new top row
+			RFL_NewRowTop ();
 			*(updateptr+PORTTILESWIDE) = 0;
 			RFL_RemoveAnimsOnY (originytile+PORTTILESHIGH);
 		}
