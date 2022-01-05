@@ -241,7 +241,7 @@ void TestSprites(void)
 		}
 		else
 		{
-			size = ((spritetype far *)block)->sourceoffset[3] + ((spritetype far *)block)->planesize[3]*PLANES;
+			size = ((spritetype far *)block)->sourceoffset[MAXSHIFTS-1] + ((spritetype far *)block)->planesize[MAXSHIFTS-1]*PLANES;
 			size = (size + 15) & ~15;	//round up to multiples of 16
 			US_PrintUnsigned(size);
 			US_Print("=");
