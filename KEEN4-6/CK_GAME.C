@@ -487,7 +487,7 @@ void SetupGameLevel(boolean loadnow)
 	{
 		if (scorescreenkludge)
 		{
-			CA_CacheMarks(NULL);
+			CA_CacheMarks("High Scores");
 		}
 		else if (DemoMode)
 		{
