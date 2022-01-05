@@ -30,7 +30,7 @@
 
 #define __ID_CA__
 
-#define	BUFFERSIZE		0x1000		// miscelanious, always available buffer
+#define	BUFFERSIZE		0x1000		// miscellaneous, always available buffer
 
 //==========================================================================
 
