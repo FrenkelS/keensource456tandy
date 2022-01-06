@@ -641,7 +641,11 @@ void StartDemoRecord(void)
 		level = atoi(str);
 		if (level >= 0 && level <= 21)
 		{
-			gamestate.mapon = level;
+			if (gamestate.mapon != level)
+			{
+				gamestate.mapon = level;
+				CA_SetGrPurge();
+			}
 			playstate = ex_warped;
 			IN_StartDemoRecord(0x1000);
 		}

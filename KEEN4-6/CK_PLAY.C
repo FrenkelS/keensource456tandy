@@ -689,7 +689,11 @@ boolean DebugKeys(void)
 			level = atoi(str);
 			if (level > 0 && level <= 18)
 			{
-				gamestate.mapon = level;
+				if (gamestate.mapon != level)
+				{
+					gamestate.mapon = level;
+					CA_SetGrPurge();
+				}
 				playstate = ex_warped;
 			}
 		}
