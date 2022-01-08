@@ -172,7 +172,6 @@ void 		MML_ShutdownEMS (void);
 void 		MML_MapEMS (void);
 boolean 	MML_CheckForXMS (void);
 void 		MML_ShutdownXMS (void);
-void 		MML_ClearBlock (void);
 void		MML_SortMem (void);
 
 //==========================================================================
@@ -542,38 +541,6 @@ void MM_UseSpace (unsigned segstart, unsigned seglength)
 //==========================================================================
 
 /*
-====================
-=
-= MML_ClearBlock
-=
-= We are out of blocks, so free a purgeable block
-=
-====================
-*/
-
-void MML_ClearBlock (void)
-{
-	int scan;
-
-	scan = mmblocks[0].next;
-
-	while (scan != MAXBLOCKS)
-	{
-		if (!ISLOCKED(scan) && ISPURGEABLE(scan))
-		{
-			MM_FreePtr(mmblocks[scan].useptr);
-			return;
-		}
-		scan = mmblocks[scan].next;
-	}
-
-	Quit ("MML_ClearBlock: No purgeable blocks!");
-}
-
-
-//==========================================================================
-
-/*
 ===================
 =
 = MM_Startup
@@ -731,7 +698,25 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 	// GETNEWBLOCK
 	// fill in start and next after a spot is found
 	if (mmfree == MAXBLOCKS)
-		MML_ClearBlock();
+	{
+		// ClearBlock
+		// We are out of blocks, so free a purgeable block
+		scan = mmblocks[0].next;
+
+		while (scan != MAXBLOCKS)
+		{
+			if (!ISLOCKED(scan) && ISPURGEABLE(scan))
+			{
+				MM_FreePtr(mmblocks[scan].useptr);
+				break;
+			}
+			scan = mmblocks[scan].next;
+		}
+
+		if (scan == MAXBLOCKS)
+			Quit ("MM_GetPtr: No purgeable blocks!");
+	}
+
 	mmnew = mmfree;
 	mmfree = mmblocks[mmfree].next;
 			
@@ -830,7 +815,7 @@ void MM_FreePtr (memptr *baseptr)
 	int scan, last;
 
 	last = 0;
-	scan = mmblocks[last].next;
+	scan = mmblocks[0].next;
 
 	if (baseptr == mmblocks[mmrover].useptr)	// removed the last allocated block
 		mmrover = 0;
@@ -1092,11 +1077,8 @@ write (debughandle,scratch,strlen(scratch));
 
 long MM_UnusedMemory (void)
 {
-	unsigned free;
-	int scan;
-
-	free = 0;
-	scan = 0;
+	unsigned free = 0;
+	int scan = 0;
 
 	while (mmblocks[scan].next != MAXBLOCKS)
 	{
@@ -1122,11 +1104,8 @@ long MM_UnusedMemory (void)
 
 long MM_TotalFree (void)
 {
-	unsigned free;
-	int scan;
-
-	free = 0;
-	scan = 0;
+	unsigned free = 0;
+	int scan = 0;
 
 	while (mmblocks[scan].next != MAXBLOCKS)
 	{
