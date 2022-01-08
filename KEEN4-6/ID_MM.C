@@ -66,7 +66,6 @@ EMS / XMS unmanaged routines
 #define SAVEFARHEAP		0			// space to leave in far heap
 
 #define MAXBLOCKS		918
-#define NULLBLOCK		-1
 
 #define LOCKBIT		0x80	// if set in attributes, block cannot be moved
 #define PURGEBIT	1		// 0= unpurgeable, 1= purge
@@ -89,7 +88,7 @@ typedef struct mmblockstruct
 //#define GETNEWBLOCK {if(!(mmnew=mmfree))Quit("MM_GETNEWBLOCK: No free blocks!")\
 //	;mmfree=mmblocks[mmfree].next;}
 
-#define GETNEWBLOCK {if(mmfree==NULLBLOCK)MML_ClearBlock();mmnew=mmfree;mmfree=mmblocks[mmfree].next;}
+#define GETNEWBLOCK {if(mmfree==MAXBLOCKS)MML_ClearBlock();mmnew=mmfree;mmfree=mmblocks[mmfree].next;}
 
 #define FREEBLOCK(x) {*mmblocks[x].useptr=NULL;mmblocks[x].next=mmfree;mmfree=x;}
 
@@ -560,7 +559,7 @@ void MML_ClearBlock (void)
 
 	scan = mmblocks[mmhead].next;
 
-	while (scan != NULLBLOCK)
+	while (scan != MAXBLOCKS)
 	{
 		if (!ISLOCKED(scan) && ISPURGEABLE(scan))
 		{
@@ -605,11 +604,10 @@ void MM_Startup (void)
 //
 // set up the linked list (everything in the free list;
 //
-	mmhead = NULLBLOCK;
+	mmhead = MAXBLOCKS;
 	mmfree = 0;
-	for (i=0;i<MAXBLOCKS-1;i++)
+	for (i=0;i<MAXBLOCKS;i++)
 		mmblocks[i].next = i+1;
-	mmblocks[MAXBLOCKS-1].next = NULLBLOCK;
 
 //
 // locked block of all memory until we punch out free space
@@ -619,7 +617,7 @@ void MM_Startup (void)
 	mmblocks[mmnew].start = 0;
 	mmblocks[mmnew].length = 0xffff;
 	mmblocks[mmnew].attributes = LOCKBIT;
-	mmblocks[mmnew].next = NULLBLOCK;
+	mmblocks[mmnew].next = MAXBLOCKS;
 	mmrover = mmhead;
 
 
@@ -753,7 +751,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 		case 0:
 			lastscan = mmrover;
 			scan = mmblocks[mmrover].next;
-			endscan = NULLBLOCK;
+			endscan = MAXBLOCKS;
 			break;
 		case 1:
 			lastscan = mmhead;
@@ -764,7 +762,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 			MML_SortMem ();
 			lastscan = mmhead;
 			scan = mmblocks[mmhead].next;
-			endscan = NULLBLOCK;
+			endscan = MAXBLOCKS;
 			break;
 		}
 
@@ -835,13 +833,13 @@ void MM_FreePtr (memptr *baseptr)
 	if (baseptr == mmblocks[mmrover].useptr)	// removed the last allocated block
 		mmrover = mmhead;
 
-	while (mmblocks[scan].useptr != baseptr && scan != NULLBLOCK)
+	while (mmblocks[scan].useptr != baseptr && scan != MAXBLOCKS)
 	{
 		last = scan;
 		scan = mmblocks[scan].next;
 	}
 
-	if (scan == NULLBLOCK)
+	if (scan == MAXBLOCKS)
 		Quit ("MM_FreePtr: Block not found!");
 
 	mmblocks[last].next = mmblocks[scan].next;
@@ -863,7 +861,7 @@ void MML_SetRover(memptr *baseptr)
 
 		mmrover = mmblocks[mmrover].next;
 
-		if (mmrover == NULLBLOCK)
+		if (mmrover == MAXBLOCKS)
 			mmrover = mmhead;
 		else if (mmrover == start)
 			Quit ("MML_SetRover: Block not found!");
@@ -950,9 +948,9 @@ void MML_SortMem (void)
 
 	scan = mmhead;
 
-	last = NULLBLOCK;		// shut up compiler warning
+	last = MAXBLOCKS;		// shut up compiler warning
 
-	while (scan != NULLBLOCK)
+	while (scan != MAXBLOCKS)
 	{
 		if (ISLOCKED(scan))
 		{
@@ -1039,7 +1037,7 @@ void MM_ShowMemory (void)
 
 //CA_OpenDebug ();
 
-	while (scan != NULLBLOCK)
+	while (scan != MAXBLOCKS)
 	{
 		if (ISPURGEABLE(scan))
 			color = 5;		// dark purple = purgeable
@@ -1098,7 +1096,7 @@ long MM_UnusedMemory (void)
 	free = 0;
 	scan = mmhead;
 
-	while (mmblocks[scan].next != NULLBLOCK)
+	while (mmblocks[scan].next != MAXBLOCKS)
 	{
 		free += mmblocks[mmblocks[scan].next].start - (mmblocks[scan].start + mmblocks[scan].length);
 		scan = mmblocks[scan].next;
@@ -1128,7 +1126,7 @@ long MM_TotalFree (void)
 	free = 0;
 	scan = mmhead;
 
-	while (mmblocks[scan].next != NULLBLOCK)
+	while (mmblocks[scan].next != MAXBLOCKS)
 	{
 		if (ISPURGEABLE(scan) && !ISLOCKED(scan))
 			free += mmblocks[scan].length;
