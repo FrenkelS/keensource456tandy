@@ -85,11 +85,6 @@ typedef struct mmblockstruct
 } mmblocktype;
 
 
-//#define GETNEWBLOCK {if(!(mmnew=mmfree))Quit("MM_GETNEWBLOCK: No free blocks!")\
-//	;mmfree=mmblocks[mmfree].next;}
-
-#define GETNEWBLOCK {if(mmfree==MAXBLOCKS)MML_ClearBlock();mmnew=mmfree;mmfree=mmblocks[mmfree].next;}
-
 #define FREEBLOCK(x) {*mmblocks[x].useptr=NULL;mmblocks[x].next=mmfree;mmfree=x;}
 
 
@@ -529,7 +524,10 @@ void MM_UseSpace (unsigned segstart, unsigned seglength)
 
 	if (extra > 0)
 	{
-		GETNEWBLOCK;
+		// GETNEWBLOCK
+		mmnew = mmfree;
+		mmfree = mmblocks[mmfree].next;
+		
 		mmblocks[mmnew].useptr = NULL;			// Keen addition
 
 		mmblocks[mmnew].next = mmblocks[scan].next;
@@ -569,7 +567,7 @@ void MML_ClearBlock (void)
 		scan = mmblocks[scan].next;
 	}
 
-	Quit ("MM_ClearBlock: No purgeable blocks!");
+	Quit ("MML_ClearBlock: No purgeable blocks!");
 }
 
 
@@ -730,7 +728,13 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 
 	needed = (size+15)/16;		// convert size from bytes to paragraphs
 
-	GETNEWBLOCK;				// fill in start and next after a spot is found
+	// GETNEWBLOCK
+	// fill in start and next after a spot is found
+	if (mmfree == MAXBLOCKS)
+		MML_ClearBlock();
+	mmnew = mmfree;
+	mmfree = mmblocks[mmfree].next;
+			
 	mmblocks[mmnew].length = needed;
 	mmblocks[mmnew].useptr = baseptr;
 	mmblocks[mmnew].attributes = BASEATTRIBUTES;
@@ -831,7 +835,7 @@ void MM_FreePtr (memptr *baseptr)
 	if (baseptr == mmblocks[mmrover].useptr)	// removed the last allocated block
 		mmrover = 0;
 
-	while (mmblocks[scan].useptr != baseptr && scan != MAXBLOCKS)
+	while (scan != MAXBLOCKS && mmblocks[scan].useptr != baseptr)
 	{
 		last = scan;
 		scan = mmblocks[scan].next;
