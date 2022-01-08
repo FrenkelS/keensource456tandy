@@ -65,14 +65,15 @@ EMS / XMS unmanaged routines
 #define SAVENEARHEAP	0x400		// space to leave in data segment
 #define SAVEFARHEAP		0			// space to leave in far heap
 
-#define MAXBLOCKS		1200
+#define MAXBLOCKS		918
+#define NULLBLOCK		-1
 
 #define LOCKBIT		0x80	// if set in attributes, block cannot be moved
 #define PURGEBIT	1		// 0= unpurgeable, 1= purge
 #define BASEATTRIBUTES	0	// unlocked, non purgeable
 
-#define ISLOCKED(x)		(x->attributes&LOCKBIT)
-#define ISPURGEABLE(x)	(x->attributes&PURGEBIT)
+#define ISLOCKED(x)		(mmblocks[x].attributes&LOCKBIT)
+#define ISPURGEABLE(x)	(mmblocks[x].attributes&PURGEBIT)
 
 #define MAXUMBS		10
 
@@ -81,16 +82,16 @@ typedef struct mmblockstruct
 	unsigned	start,length;
 	unsigned	attributes;
 	memptr		*useptr;	// pointer to the segment start
-	struct mmblockstruct far *next;
+	int			next;
 } mmblocktype;
 
 
 //#define GETNEWBLOCK {if(!(mmnew=mmfree))Quit("MM_GETNEWBLOCK: No free blocks!")\
-//	;mmfree=mmfree->next;}
+//	;mmfree=mmblocks[mmfree].next;}
 
-#define GETNEWBLOCK {if(!mmfree)MML_ClearBlock();mmnew=mmfree;mmfree=mmfree->next;}
+#define GETNEWBLOCK {if(mmfree==NULLBLOCK)MML_ClearBlock();mmnew=mmfree;mmfree=mmblocks[mmfree].next;}
 
-#define FREEBLOCK(x) {*x->useptr=NULL;x->next=mmfree;mmfree=x;}
+#define FREEBLOCK(x) {*mmblocks[x].useptr=NULL;mmblocks[x].next=mmfree;mmfree=x;}
 
 
 //--------
@@ -155,8 +156,8 @@ boolean		mmstarted;
 void far	*farheap;
 void		*nearheap;
 
-mmblocktype	far mmblocks[MAXBLOCKS]
-			,far *mmhead,far *mmfree,far *mmrover,far *mmnew;
+mmblocktype	far mmblocks[MAXBLOCKS];
+int 		mmhead, mmfree, mmrover, mmnew;
 
 boolean		bombonerror;
 
@@ -494,7 +495,7 @@ asm	call	[DWORD PTR XMSaddr]
 
 void MM_UseSpace (unsigned segstart, unsigned seglength)
 {
-	mmblocktype far *scan,far *last;
+	int scan, last;
 	unsigned	oldend;
 	long		extra;
 
@@ -504,39 +505,39 @@ void MM_UseSpace (unsigned segstart, unsigned seglength)
 //
 // search for the block that contains the range of segments
 //
-	while (scan->start+scan->length < segstart)
+	while (mmblocks[scan].start+mmblocks[scan].length < segstart)
 	{
 		last = scan;
-		scan = scan->next;
+		scan = mmblocks[scan].next;
 	}
 
 //
 // take the given range out of the block
 //
-	oldend = scan->start + scan->length;
+	oldend = mmblocks[scan].start + mmblocks[scan].length;
 	extra = oldend - (segstart+seglength);
 	if (extra < 0)
 		Quit ("MM_UseSpace: Segment spans two blocks!");
 
-	if (segstart == scan->start)
+	if (segstart == mmblocks[scan].start)
 	{
-		last->next = scan->next;			// unlink block
+		mmblocks[last].next = mmblocks[scan].next;			// unlink block
 		FREEBLOCK(scan);
 		scan = last;
 	}
 	else
-		scan->length = segstart-scan->start;	// shorten block
+		mmblocks[scan].length = segstart-mmblocks[scan].start;	// shorten block
 
 	if (extra > 0)
 	{
 		GETNEWBLOCK;
-		mmnew->useptr = NULL;			// Keen addition
+		mmblocks[mmnew].useptr = NULL;			// Keen addition
 
-		mmnew->next = scan->next;
-		scan->next = mmnew;
-		mmnew->start = segstart+seglength;
-		mmnew->length = extra;
-		mmnew->attributes = LOCKBIT;
+		mmblocks[mmnew].next = mmblocks[scan].next;
+		mmblocks[scan].next = mmnew;
+		mmblocks[mmnew].start = segstart+seglength;
+		mmblocks[mmnew].length = extra;
+		mmblocks[mmnew].attributes = LOCKBIT;
 	}
 
 }
@@ -555,18 +556,18 @@ void MM_UseSpace (unsigned segstart, unsigned seglength)
 
 void MML_ClearBlock (void)
 {
-	mmblocktype far *scan;
+	int scan;
 
-	scan = mmhead->next;
+	scan = mmblocks[mmhead].next;
 
-	while (scan)
+	while (scan != NULLBLOCK)
 	{
 		if (!ISLOCKED(scan) && ISPURGEABLE(scan))
 		{
-			MM_FreePtr(scan->useptr);
+			MM_FreePtr(mmblocks[scan].useptr);
 			return;
 		}
-		scan = scan->next;
+		scan = mmblocks[scan].next;
 	}
 
 	Quit ("MM_ClearBlock: No purgeable blocks!");
@@ -604,21 +605,21 @@ void MM_Startup (void)
 //
 // set up the linked list (everything in the free list;
 //
-	mmhead = NULL;
-	mmfree = &mmblocks[0];
+	mmhead = NULLBLOCK;
+	mmfree = 0;
 	for (i=0;i<MAXBLOCKS-1;i++)
-		mmblocks[i].next = &mmblocks[i+1];
-	mmblocks[i].next = NULL;
+		mmblocks[i].next = i+1;
+	mmblocks[MAXBLOCKS-1].next = NULLBLOCK;
 
 //
 // locked block of all memory until we punch out free space
 //
 	GETNEWBLOCK;
 	mmhead = mmnew;				// this will always be the first node
-	mmnew->start = 0;
-	mmnew->length = 0xffff;
-	mmnew->attributes = LOCKBIT;
-	mmnew->next = NULL;
+	mmblocks[mmnew].start = 0;
+	mmblocks[mmnew].length = 0xffff;
+	mmblocks[mmnew].attributes = LOCKBIT;
+	mmblocks[mmnew].next = NULLBLOCK;
 	mmrover = mmhead;
 
 
@@ -727,17 +728,16 @@ void MM_Shutdown (void)
 
 void MM_GetPtr (memptr *baseptr,unsigned long size)
 {
-	mmblocktype far *scan,far *lastscan,far *endscan
-				,far *purge,far *next;
+	int 		scan, lastscan, endscan, purge, next;
 	int			search;
 	unsigned	needed,startseg;
 
 	needed = (size+15)/16;		// convert size from bytes to paragraphs
 
 	GETNEWBLOCK;				// fill in start and next after a spot is found
-	mmnew->length = needed;
-	mmnew->useptr = baseptr;
-	mmnew->attributes = BASEATTRIBUTES;
+	mmblocks[mmnew].length = needed;
+	mmblocks[mmnew].useptr = baseptr;
+	mmblocks[mmnew].attributes = BASEATTRIBUTES;
 
 	for (search = 0; search<3; search++)
 	{
@@ -752,40 +752,40 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 		{
 		case 0:
 			lastscan = mmrover;
-			scan = mmrover->next;
-			endscan = NULL;
+			scan = mmblocks[mmrover].next;
+			endscan = NULLBLOCK;
 			break;
 		case 1:
 			lastscan = mmhead;
-			scan = mmhead->next;
+			scan = mmblocks[mmhead].next;
 			endscan = mmrover;
 			break;
 		case 2:
 			MML_SortMem ();
 			lastscan = mmhead;
-			scan = mmhead->next;
-			endscan = NULL;
+			scan = mmblocks[mmhead].next;
+			endscan = NULLBLOCK;
 			break;
 		}
 
-		startseg = lastscan->start + lastscan->length;
+		startseg = mmblocks[lastscan].start + mmblocks[lastscan].length;
 
 		while (scan != endscan)
 		{
-			if (scan->start - startseg >= needed)
+			if (mmblocks[scan].start - startseg >= needed)
 			{
 			//
 			// got enough space between the end of lastscan and
 			// the start of scan, so throw out anything in the middle
 			// and allocate the new block
 			//
-				purge = lastscan->next;
-				lastscan->next = mmnew;
-				mmnew->start = *(unsigned *)baseptr = startseg;
-				mmnew->next = scan;
+				purge = mmblocks[lastscan].next;
+				mmblocks[lastscan].next = mmnew;
+				mmblocks[mmnew].start = *(unsigned *)baseptr = startseg;
+				mmblocks[mmnew].next = scan;
 				while ( purge != scan)
 				{	// free the purgeable block
-					next = purge->next;
+					next = mmblocks[purge].next;
 					FREEBLOCK(purge);
 					purge = next;		// purge another if not at scan
 				}
@@ -799,11 +799,11 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 			if (ISLOCKED(scan) || !ISPURGEABLE(scan))
 			{
 				lastscan = scan;
-				startseg = lastscan->start + lastscan->length;
+				startseg = mmblocks[lastscan].start + mmblocks[lastscan].length;
 			}
 
 
-			scan=scan->next;		// look at next line
+			scan=mmblocks[scan].next;		// look at next line
 		}
 	}
 
@@ -820,31 +820,31 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 =
 = MM_FreePtr
 =
-= Allocates an unlocked, unpurgeable block
+= Deallocates an unlocked, purgeable block
 =
 ====================
 */
 
 void MM_FreePtr (memptr *baseptr)
 {
-	mmblocktype far *scan,far *last;
+	int scan, last;
 
 	last = mmhead;
-	scan = last->next;
+	scan = mmblocks[last].next;
 
-	if (baseptr == mmrover->useptr)	// removed the last allocated block
+	if (baseptr == mmblocks[mmrover].useptr)	// removed the last allocated block
 		mmrover = mmhead;
 
-	while (scan->useptr != baseptr && scan)
+	while (mmblocks[scan].useptr != baseptr && scan != NULLBLOCK)
 	{
 		last = scan;
-		scan = scan->next;
+		scan = mmblocks[scan].next;
 	}
 
-	if (!scan)
+	if (scan == NULLBLOCK)
 		Quit ("MM_FreePtr: Block not found!");
 
-	last->next = scan->next;
+	mmblocks[last].next = mmblocks[scan].next;
 
 	FREEBLOCK(scan);
 }
@@ -852,18 +852,18 @@ void MM_FreePtr (memptr *baseptr)
 
 void MML_SetRover(memptr *baseptr)
 {
-	mmblocktype far *start;
+	int start;
 
 	start = mmrover;
 
 	do
 	{
-		if (mmrover->useptr == baseptr)
+		if (mmblocks[mmrover].useptr == baseptr)
 			break;
 
-		mmrover = mmrover->next;
+		mmrover = mmblocks[mmrover].next;
 
-		if (!mmrover)
+		if (mmrover == NULLBLOCK)
 			mmrover = mmhead;
 		else if (mmrover == start)
 			Quit ("MML_SetRover: Block not found!");
@@ -884,8 +884,8 @@ void MML_SetRover(memptr *baseptr)
 void MM_SetPurge (memptr *baseptr, boolean purge)
 {
 	MML_SetRover(baseptr);
-	mmrover->attributes &= ~PURGEBIT;
-	mmrover->attributes |= purge*PURGEBIT;
+	mmblocks[mmrover].attributes &= ~PURGEBIT;
+	mmblocks[mmrover].attributes |= purge*PURGEBIT;
 }
 
 //==========================================================================
@@ -903,8 +903,8 @@ void MM_SetPurge (memptr *baseptr, boolean purge)
 void MM_SetLock (memptr *baseptr, boolean locked)
 {
 	MML_SetRover(baseptr);
-	mmrover->attributes &= ~LOCKBIT;
-	mmrover->attributes |= locked*LOCKBIT;
+	mmblocks[mmrover].attributes &= ~LOCKBIT;
+	mmblocks[mmrover].attributes |= locked*LOCKBIT;
 }
 
 //==========================================================================
@@ -921,7 +921,7 @@ void MM_SetLock (memptr *baseptr, boolean locked)
 
 void MML_SortMem (void)
 {
-	mmblocktype far *scan,far *last,far *next;
+	int			scan, last, next;
 	unsigned	start,length,source,dest,oldborder;
 	int			playing;
 
@@ -950,25 +950,25 @@ void MML_SortMem (void)
 
 	scan = mmhead;
 
-	last = NULL;		// shut up compiler warning
+	last = NULLBLOCK;		// shut up compiler warning
 
-	while (scan)
+	while (scan != NULLBLOCK)
 	{
 		if (ISLOCKED(scan))
 		{
 		//
 		// block is locked, so try to pile later blocks right after it
 		//
-			start = scan->start + scan->length;
+			start = mmblocks[scan].start + mmblocks[scan].length;
 		}
 		else if (ISPURGEABLE(scan))
 		{
 		//
 		// throw out the purgeable block
 		//
-			next = scan->next;
+			next = mmblocks[scan].next;
 			FREEBLOCK(scan);
-			last->next = next;
+			mmblocks[last].next = next;
 			scan = next;
 			continue;
 		}
@@ -977,10 +977,10 @@ void MML_SortMem (void)
 		//
 		// push the non purgeable block on top of the last moved block
 		//
-			if (scan->start != start)
+			if (mmblocks[scan].start != start)
 			{
-				length = scan->length;
-				source = scan->start;
+				length = mmblocks[scan].length;
+				source = mmblocks[scan].start;
 				dest = start;
 				while (length > 0xf00)
 				{
@@ -991,14 +991,14 @@ void MML_SortMem (void)
 				}
 				movedata(source,0,dest,0,length*16);
 
-				scan->start = start;
-				*(unsigned *)scan->useptr = start;
+				mmblocks[scan].start = start;
+				*(unsigned *)mmblocks[scan].useptr = start;
 			}
-			start = scan->start + scan->length;
+			start = mmblocks[scan].start + mmblocks[scan].length;
 		}
 
 		last = scan;
-		scan = scan->next;		// go to next block
+		scan = mmblocks[scan].next;		// go to next block
 	}
 
 	mmrover = mmhead;
@@ -1022,7 +1022,7 @@ void MML_SortMem (void)
 
 void MM_ShowMemory (void)
 {
-	mmblocktype far *scan;
+	int scan;
 	unsigned color,temp;
 	long	end,owner;
 	char    scratch[80],str[10];
@@ -1039,7 +1039,7 @@ void MM_ShowMemory (void)
 
 //CA_OpenDebug ();
 
-	while (scan)
+	while (scan != NULLBLOCK)
 	{
 		if (ISPURGEABLE(scan))
 			color = 5;		// dark purple = purgeable
@@ -1047,27 +1047,27 @@ void MM_ShowMemory (void)
 			color = 9;		// medium blue = non purgeable
 		if (ISLOCKED(scan))
 			color = 12;		// red = locked
-		if (scan->start<=end)
+		if (mmblocks[scan].start<=end)
 			Quit ("MM_ShowMemory: Memory block order corrupted!");
-		end = scan->start+scan->length-1;
-		VW_Hlin(scan->start,(unsigned)end,0,color);
-		VW_Plot(scan->start,0,15);
-		if (scan->next->start > end+1)
-			VW_Hlin(end+1,scan->next->start,0,0);	// black = free
+		end = mmblocks[scan].start+mmblocks[scan].length-1;
+		VW_Hlin(mmblocks[scan].start,(unsigned)end,0,color);
+		VW_Plot(mmblocks[scan].start,0,15);
+		if (mmblocks[mmblocks[scan].next].start > end+1)
+			VW_Hlin(end+1,mmblocks[mmblocks[scan].next].start,0,0);	// black = free
 
 #if 0
 strcpy (scratch,"Size:");
-ltoa ((long)scan->length*16,str,10);
+ltoa ((long)mmblocks[scan].length*16,str,10);
 strcat (scratch,str);
 strcat (scratch,"\tOwner:0x");
-owner = (unsigned)scan->useptr;
+owner = (unsigned)mmblocks[scan].useptr;
 ultoa (owner,str,16);
 strcat (scratch,str);
 strcat (scratch,"\n");
 write (debughandle,scratch,strlen(scratch));
 #endif
 
-		scan = scan->next;
+		scan = mmblocks[scan].next;
 	}
 
 //CA_CloseDebug ();
@@ -1093,15 +1093,15 @@ write (debughandle,scratch,strlen(scratch));
 long MM_UnusedMemory (void)
 {
 	unsigned free;
-	mmblocktype far *scan;
+	int scan;
 
 	free = 0;
 	scan = mmhead;
 
-	while (scan->next)
+	while (mmblocks[scan].next != NULLBLOCK)
 	{
-		free += scan->next->start - (scan->start + scan->length);
-		scan = scan->next;
+		free += mmblocks[mmblocks[scan].next].start - (mmblocks[scan].start + mmblocks[scan].length);
+		scan = mmblocks[scan].next;
 	}
 
 	return free*16l;
@@ -1123,17 +1123,17 @@ long MM_UnusedMemory (void)
 long MM_TotalFree (void)
 {
 	unsigned free;
-	mmblocktype far *scan;
+	int scan;
 
 	free = 0;
 	scan = mmhead;
 
-	while (scan->next)
+	while (mmblocks[scan].next != NULLBLOCK)
 	{
 		if (ISPURGEABLE(scan) && !ISLOCKED(scan))
-			free += scan->length;
-		free += scan->next->start - (scan->start + scan->length);
-		scan = scan->next;
+			free += mmblocks[scan].length;
+		free += mmblocks[mmblocks[scan].next].start - (mmblocks[scan].start + mmblocks[scan].length);
+		scan = mmblocks[scan].next;
 	}
 
 	return free*16l;
