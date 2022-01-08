@@ -528,10 +528,8 @@ void DialogDraw(char *title, Uint16 numcache)
 {
 	Sint16 i;
 	Uint16 height;
-	Sint32 totalfree;
 
-	totalfree = MM_TotalFree();
-	if (totalfree < 2048)
+	if (MM_FreeMemory(true) < 2048)
 	{
 		handpic = 5;
 	}

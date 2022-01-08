@@ -1067,48 +1067,21 @@ write (debughandle,scratch,strlen(scratch));
 /*
 ======================
 =
-= MM_UnusedMemory
+= MM_FreeMemory
 =
-= Returns the total free space without purging
+= Returns the total free space with or without purging
 =
 ======================
 */
 
-long MM_UnusedMemory (void)
+long MM_FreeMemory (boolean withpurging)
 {
 	unsigned free = 0;
 	int scan = 0;
 
 	while (mmblocks[scan].next != MAXBLOCKS)
 	{
-		free += mmblocks[mmblocks[scan].next].start - (mmblocks[scan].start + mmblocks[scan].length);
-		scan = mmblocks[scan].next;
-	}
-
-	return free*16l;
-}
-
-//==========================================================================
-
-
-/*
-======================
-=
-= MM_TotalFree
-=
-= Returns the total free space with purging
-=
-======================
-*/
-
-long MM_TotalFree (void)
-{
-	unsigned free = 0;
-	int scan = 0;
-
-	while (mmblocks[scan].next != MAXBLOCKS)
-	{
-		if (ISPURGEABLE(scan) && !ISLOCKED(scan))
+		if (withpurging && ISPURGEABLE(scan) && !ISLOCKED(scan))
 			free += mmblocks[scan].length;
 		free += mmblocks[mmblocks[scan].next].start - (mmblocks[scan].start + mmblocks[scan].length);
 		scan = mmblocks[scan].next;

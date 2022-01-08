@@ -149,9 +149,9 @@ void DebugMemory(void)
 	US_Print("Total     :");
 	US_PrintUnsigned((mminfo.mainmem+mminfo.EMSmem+mminfo.XMSmem)/1024);
 	US_Print("k\nFree      :");
-	US_PrintUnsigned(MM_UnusedMemory()/1024);
+	US_PrintUnsigned(MM_FreeMemory(false)/1024);
 	US_Print("k\nWith purge:");
-	US_PrintUnsigned(MM_TotalFree()/1024);
+	US_PrintUnsigned(MM_FreeMemory(true)/1024);
 	US_Print("k\n");
 	VW_UpdateScreen();
 	IN_Ack();

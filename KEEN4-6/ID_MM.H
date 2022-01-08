@@ -64,8 +64,7 @@ void MM_SetLock (memptr *baseptr, boolean locked);
 void MM_ShowMemory (void);
 #endif
 
-long MM_UnusedMemory (void);
-long MM_TotalFree (void);
+long MM_FreeMemory (boolean withpurging);
 
 void MM_BombOnError (boolean bomb);
 
