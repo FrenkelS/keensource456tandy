@@ -637,6 +637,9 @@ EVEN
 	mov	bx,di
 	sub	bx,dx					; number of tiles in a row
 	shl	bx,1					; number of bytes / row
+IFE GRMODE-TGAGR
+	shl	bx,1
+ENDIF
 
 	mov	di,dx					; lookup position of start tile
 	sub	di,[updateptr]
@@ -652,8 +655,6 @@ IFE GRMODE-CGAGR
 	sub	dx,bx					; bx is words wide in CGA tiles
 ENDIF
 IFE GRMODE-TGAGR
-	sub	dx,bx					; bx is words wide in TGA tiles
-	shl	bx,1
 	sub	dx,bx
 ENDIF
 
