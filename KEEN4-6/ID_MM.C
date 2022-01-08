@@ -151,7 +151,7 @@ void far	*farheap;
 void		*nearheap;
 
 mmblocktype	far mmblocks[MAXBLOCKS];
-int 		mmfree, mmrover, mmnew;
+int 		mmfree, mmrover;
 
 boolean		bombonerror;
 
@@ -488,7 +488,7 @@ asm	call	[DWORD PTR XMSaddr]
 
 void MM_UseSpace (unsigned segstart, unsigned seglength)
 {
-	int scan, last;
+	int scan, last, mmnew;
 	unsigned	oldend;
 	long		extra;
 
@@ -575,13 +575,12 @@ void MM_Startup (void)
 //
 // locked block of all memory until we punch out free space
 //
-	mmnew=0;
-	mmfree=1;
 	mmblocks[0].start = 0;
 	mmblocks[0].length = 0xffff;
 	mmblocks[0].attributes = LOCKBIT;
 	mmblocks[0].next = MAXBLOCKS;
 	mmrover = 0;
+	mmfree = 1;
 
 
 //
@@ -689,7 +688,7 @@ void MM_Shutdown (void)
 
 void MM_GetPtr (memptr *baseptr,unsigned long size)
 {
-	int 		scan, lastscan, endscan, purge, next;
+	int 		scan, lastscan, endscan, purge, next, mmnew;
 	int			search;
 	unsigned	needed,startseg;
 
@@ -719,7 +718,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 
 	mmnew = mmfree;
 	mmfree = mmblocks[mmfree].next;
-			
+
 	mmblocks[mmnew].length = needed;
 	mmblocks[mmnew].useptr = baseptr;
 	mmblocks[mmnew].attributes = BASEATTRIBUTES;
