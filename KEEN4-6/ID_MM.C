@@ -156,7 +156,7 @@ void far	*farheap;
 void		*nearheap;
 
 mmblocktype	far mmblocks[MAXBLOCKS];
-int 		mmhead, mmfree, mmrover, mmnew;
+int 		mmfree, mmrover, mmnew;
 
 boolean		bombonerror;
 
@@ -498,8 +498,8 @@ void MM_UseSpace (unsigned segstart, unsigned seglength)
 	unsigned	oldend;
 	long		extra;
 
-	scan = last = mmhead;
-	mmrover = mmhead;		// reset rover to start of memory
+	scan = last = 0;
+	mmrover = 0;			// reset rover to start of memory
 
 //
 // search for the block that contains the range of segments
@@ -557,7 +557,7 @@ void MML_ClearBlock (void)
 {
 	int scan;
 
-	scan = mmblocks[mmhead].next;
+	scan = mmblocks[0].next;
 
 	while (scan != MAXBLOCKS)
 	{
@@ -604,21 +604,19 @@ void MM_Startup (void)
 //
 // set up the linked list (everything in the free list;
 //
-	mmhead = MAXBLOCKS;
-	mmfree = 0;
 	for (i=0;i<MAXBLOCKS;i++)
 		mmblocks[i].next = i+1;
 
 //
 // locked block of all memory until we punch out free space
 //
-	GETNEWBLOCK;
-	mmhead = mmnew;				// this will always be the first node
-	mmblocks[mmnew].start = 0;
-	mmblocks[mmnew].length = 0xffff;
-	mmblocks[mmnew].attributes = LOCKBIT;
-	mmblocks[mmnew].next = MAXBLOCKS;
-	mmrover = mmhead;
+	mmnew=0;
+	mmfree=1;
+	mmblocks[0].start = 0;
+	mmblocks[0].length = 0xffff;
+	mmblocks[0].attributes = LOCKBIT;
+	mmblocks[0].next = MAXBLOCKS;
+	mmrover = 0;
 
 
 //
@@ -684,7 +682,7 @@ emsskip:
 // allocate the misc buffer
 //
 xmsskip:
-	mmrover = mmhead;		// start looking for space after low block
+	mmrover = 0;			// start looking for space after low block
 
 	MM_GetPtr (&bufferseg,BUFFERSIZE);
 }
@@ -743,7 +741,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 	// first search:	try to allocate right after the rover, then on up
 	// second search: 	search from the head pointer up to the rover
 	// third search:	compress memory, then scan from start
-		if (search == 1 && mmrover == mmhead)
+		if (search == 1 && mmrover == 0)
 			search++;
 
 		switch (search)
@@ -754,14 +752,14 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 			endscan = MAXBLOCKS;
 			break;
 		case 1:
-			lastscan = mmhead;
-			scan = mmblocks[mmhead].next;
+			lastscan = 0;
+			scan = mmblocks[0].next;
 			endscan = mmrover;
 			break;
 		case 2:
 			MML_SortMem ();
-			lastscan = mmhead;
-			scan = mmblocks[mmhead].next;
+			lastscan = 0;
+			scan = mmblocks[0].next;
 			endscan = MAXBLOCKS;
 			break;
 		}
@@ -827,11 +825,11 @@ void MM_FreePtr (memptr *baseptr)
 {
 	int scan, last;
 
-	last = mmhead;
+	last = 0;
 	scan = mmblocks[last].next;
 
 	if (baseptr == mmblocks[mmrover].useptr)	// removed the last allocated block
-		mmrover = mmhead;
+		mmrover = 0;
 
 	while (mmblocks[scan].useptr != baseptr && scan != MAXBLOCKS)
 	{
@@ -862,7 +860,7 @@ void MML_SetRover(memptr *baseptr)
 		mmrover = mmblocks[mmrover].next;
 
 		if (mmrover == MAXBLOCKS)
-			mmrover = mmhead;
+			mmrover = 0;
 		else if (mmrover == start)
 			Quit ("MML_SetRover: Block not found!");
 
@@ -946,7 +944,7 @@ void MML_SortMem (void)
 	oldborder = bordercolor;
 	VW_ColorBorder (15);
 
-	scan = mmhead;
+	scan = 0;
 
 	last = MAXBLOCKS;		// shut up compiler warning
 
@@ -999,7 +997,7 @@ void MML_SortMem (void)
 		scan = mmblocks[scan].next;		// go to next block
 	}
 
-	mmrover = mmhead;
+	mmrover = 0;
 
 	VW_ColorBorder (oldborder);
 
@@ -1031,7 +1029,7 @@ void MM_ShowMemory (void)
 	bufferofs = 0;
 	VW_SetScreen (0,0);
 
-	scan = mmhead;
+	scan = 0;
 
 	end = -1;
 
@@ -1094,7 +1092,7 @@ long MM_UnusedMemory (void)
 	int scan;
 
 	free = 0;
-	scan = mmhead;
+	scan = 0;
 
 	while (mmblocks[scan].next != MAXBLOCKS)
 	{
@@ -1124,7 +1122,7 @@ long MM_TotalFree (void)
 	int scan;
 
 	free = 0;
-	scan = mmhead;
+	scan = 0;
 
 	while (mmblocks[scan].next != MAXBLOCKS)
 	{
