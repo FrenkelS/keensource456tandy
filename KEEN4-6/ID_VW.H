@@ -48,6 +48,7 @@
 
 #if GRMODE == EGAGR
 #define	SCREENWIDTH		64
+#define VIRTUALHEIGHT	300
 #define CHARWIDTH		1
 #define TILEWIDTH		2
 #define BYTEPIXELS		8
@@ -56,6 +57,7 @@
 
 #if GRMODE == TGAGR
 #define	SCREENWIDTH		170
+#define VIRTUALHEIGHT	200
 #define CHARWIDTH		4
 #define TILEWIDTH		8
 #define BYTEPIXELS		2
@@ -64,13 +66,13 @@
 
 #if GRMODE == CGAGR
 #define	SCREENWIDTH		128
+#define VIRTUALHEIGHT	300
 #define CHARWIDTH		2
 #define TILEWIDTH		4
 #define BYTEPIXELS		4
 #define PLANES			2
 #endif
 
-#define VIRTUALHEIGHT	300
 
 
 #if GRMODE == CGAGR || GRMODE == TGAGR
