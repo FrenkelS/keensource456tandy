@@ -30,7 +30,6 @@
 
 #define __ID_CA__
 
-#define	BUFFERSIZE		0x1000		// miscellaneous, always available buffer
 
 //==========================================================================
 
@@ -44,7 +43,6 @@ typedef struct
 //==========================================================================
 
 extern	mminfotype	mminfo;
-extern	memptr		bufferseg;
 extern	boolean		mmerror;
 
 //==========================================================================

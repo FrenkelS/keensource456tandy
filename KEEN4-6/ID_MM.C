@@ -24,8 +24,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-// NEWMM.C
-
 /*
 =============================================================================
 
@@ -38,12 +36,6 @@ RELIES ON
 ---------
 Quit (char *error) function
 
-
-WORK TO DO
-----------
-MM_SizePtr to change the size of a given pointer
-
-EMS / XMS unmanaged routines
 
 =============================================================================
 */
@@ -61,34 +53,6 @@ EMS / XMS unmanaged routines
 
 =============================================================================
 */
-
-#define SAVENEARHEAP	0x400		// space to leave in data segment
-#define SAVEFARHEAP		0			// space to leave in far heap
-
-#define MAXBLOCKS		918
-
-#define LOCKBIT		0x80	// if set in attributes, block cannot be moved
-#define PURGEBIT	1		// 0= unpurgeable, 1= purge
-#define BASEATTRIBUTES	0	// unlocked, non purgeable
-
-#define ISLOCKED(x)		(mmblocks[x].attributes&LOCKBIT)
-#define ISPURGEABLE(x)	(mmblocks[x].attributes&PURGEBIT)
-
-#define MAXUMBS		10
-
-typedef struct mmblockstruct
-{
-	unsigned	start,length;
-	unsigned	attributes;
-	memptr		*useptr;	// pointer to the segment start
-	int			next;
-} mmblocktype;
-
-
-#define FREEBLOCK(x) {*mmblocks[x].useptr=NULL;mmblocks[x].next=mmfree;mmfree=x;}
-
-
-//--------
 
 #define	EMS_INT			0x67
 
@@ -125,6 +89,33 @@ typedef struct mmblockstruct
 #define	XMS_ALLOCUMB	0x10
 #define	XMS_FREEUMB		0x11
 
+//--------
+
+#define SAVENEARHEAP	0x400		// space to leave in data segment
+#define SAVEFARHEAP		0			// space to leave in far heap
+
+#define MAXBLOCKS		918
+
+#define LOCKBIT		1		// if set in attributes, block cannot be moved
+#define PURGEBIT	2		// 0= unpurgeable, 1= purge
+#define BASEATTRIBUTES	0	// unlocked, non purgeable
+
+#define ISLOCKED(x)		(mmblocks[x].attributes&LOCKBIT)
+#define ISPURGEABLE(x)	(mmblocks[x].attributes&PURGEBIT)
+
+#define MAXUMBS		10
+
+typedef struct mmblockstruct
+{
+	unsigned	start,length;
+	unsigned	attributes;
+	memptr		*useptr;	// pointer to the segment start
+	int			next;
+} mmblocktype;
+
+
+#define FREEBLOCK(x) {*mmblocks[x].useptr=NULL;mmblocks[x].next=mmfree;mmfree=x;}
+
 /*
 =============================================================================
 
@@ -134,7 +125,6 @@ typedef struct mmblockstruct
 */
 
 mminfotype	mminfo;
-memptr		bufferseg;
 boolean		mmerror;
 
 /*
@@ -425,7 +415,7 @@ asm	{
 	jnz	gotone
 
 	cmp	bl,0xb0						// error: smaller UMB is available
-	jne	done;
+	jne	done
 
 	mov	ah,XMS_ALLOCUMB
 	call	[DWORD PTR XMSaddr]		// DX holds largest available UMB
@@ -445,7 +435,7 @@ asm	{
 	if (numUMBs < MAXUMBS)
 		goto getmemory;
 
-done:;
+done:
 	mminfo.XMSmem *= 16;
 }
 
@@ -547,7 +537,6 @@ void MM_UseSpace (unsigned segstart, unsigned seglength)
 = MM_Startup
 =
 = Grabs all space from turbo with malloc/farmalloc
-= Allocates bufferseg misc buffer
 =
 ===================
 */
@@ -642,13 +631,8 @@ emsskip:
 	if (MML_CheckForXMS())
 		MML_SetupXMS();					// allocate as many UMBs as possible
 
-//
-// allocate the misc buffer
-//
 xmsskip:
 	mmrover = 0;			// start looking for space after low block
-
-	MM_GetPtr (&bufferseg,BUFFERSIZE);
 }
 
 //==========================================================================

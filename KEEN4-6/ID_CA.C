@@ -32,9 +32,6 @@
 Id Software Caching Manager
 ---------------------------
 
-Must be started BEFORE the memory manager, because it needs to get the headers
-loaded into the data segment
-
 =============================================================================
 */
 
@@ -61,6 +58,7 @@ typedef struct
 	byte		tileinfo[];
 } mapfiletype;
 
+#define	BUFFERSIZE		0x1000		// miscellaneous, always available buffer
 
 /*
 =============================================================================
@@ -107,7 +105,7 @@ extern	byte	far	maphead;
 extern	byte	far	audiohead;
 
 
-long		_seg *grstarts;	// array of offsets in egagraph, -1 for sparse
+long		_seg *grstarts;		// array of offsets in egagraph, -1 for sparse
 long		_seg *audiostarts;	// array of offsets in audio / audiot
 
 
@@ -118,6 +116,8 @@ int			audiohandle;	// handle to AUDIOT / AUDIO
 long		chunkcomplen,chunkexplen;
 
 SDMode		oldsoundmode;
+
+memptr		bufferseg;
 
 
 
@@ -784,6 +784,11 @@ void CA_Startup (void)
 	mapon = -1;
 	ca_levelbit = 1;
 	ca_levelnum = 0;
+
+//
+// allocate the misc buffer
+//
+	MM_GetPtr (&bufferseg,BUFFERSIZE);
 }
 
 //==========================================================================
