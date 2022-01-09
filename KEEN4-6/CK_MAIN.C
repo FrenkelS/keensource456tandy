@@ -294,6 +294,7 @@ void TEDDeath(void)
 
 //===========================================================================
 
+#if GRMODE == CGAGR || GRMODE == EGAGR
 /*
 ==================
 =
@@ -316,6 +317,7 @@ void CheckMemory(void)
 	gotoxy (1,24);
 	exit(1);
 }
+#endif
 
 //===========================================================================
 
@@ -511,7 +513,9 @@ void main(void)
 		storedemo = true;
 
 	InitGame();
+#if GRMODE == CGAGR || GRMODE == EGAGR
 	CheckMemory();
+#endif
 	if (NoWait || tedlevel)
 		debugok = true;
 

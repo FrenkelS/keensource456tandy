@@ -37,7 +37,7 @@
 
 #if GRMODE == CGAGR
 #define MINMEMORY 280000l
-#elif GRMODE == EGAGR || GRMODE == TGAGR
+#elif GRMODE == EGAGR
 #define MINMEMORY 310000l
 #endif
 
