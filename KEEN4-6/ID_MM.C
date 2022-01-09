@@ -439,13 +439,14 @@ asm	{
 	mov	[size],dx
 	}
 	MM_UseSpace (base,size);
-	mminfo.XMSmem += size*16;
+	mminfo.XMSmem += size;
 	UMBbase[numUMBs] = base;
 	numUMBs++;
 	if (numUMBs < MAXUMBS)
 		goto getmemory;
 
 done:;
+	mminfo.XMSmem *= 16;
 }
 
 
@@ -635,7 +636,7 @@ emsskip:
 	mminfo.XMSmem = 0;
 	for (i = 1;i < _argc;i++)
 	{
-		if ( US_CheckParm(_argv[i],ParmStrings) == 0)	// BUG: NOXMS is index 1, not 0
+		if ( US_CheckParm(_argv[i],ParmStrings) == 1)
 			goto xmsskip;				// param NOXMS
 	}
 
