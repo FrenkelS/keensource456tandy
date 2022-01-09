@@ -208,6 +208,7 @@ void InitGame(void)
 		seglength--;
 	}
 	MM_UseSpace (segstart,seglength);
+	mminfo.mainmem += 4000;
 
 	VW_SetScreenMode(GRMODE);
 #if GRMODE == CGAGR
