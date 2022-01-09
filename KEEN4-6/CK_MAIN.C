@@ -306,7 +306,7 @@ void CheckMemory(void)
 {
 	Uint16 finscreen;
 
-	if (mminfo.nearheap+mminfo.farheap+mminfo.EMSmem+mminfo.XMSmem >= MINMEMORY)
+	if (mminfo.mainmem+mminfo.EMSmem+mminfo.XMSmem >= MINMEMORY)
 		return;
 
 	CA_CacheGrChunk (OUTOFMEM);

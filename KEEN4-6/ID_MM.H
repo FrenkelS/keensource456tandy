@@ -38,7 +38,7 @@ typedef void _seg * memptr;
 
 typedef struct
 {
-	long	nearheap,farheap,EMSmem,XMSmem,mainmem;
+	long	EMSmem,XMSmem,mainmem;
 } mminfotype;
 
 //==========================================================================

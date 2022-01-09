@@ -595,7 +595,7 @@ void MM_Startup (void)
 	seglength = length / 16;			// now in paragraphs
 	segstart = FP_SEG(start)+(FP_OFF(start)+15)/16;
 	MM_UseSpace (segstart,seglength);
-	mminfo.nearheap = length;
+	mminfo.mainmem = length;
 
 //
 // get all available far conventional memory segments
@@ -607,8 +607,7 @@ void MM_Startup (void)
 	seglength = length / 16;			// now in paragraphs
 	segstart = FP_SEG(start)+(FP_OFF(start)+15)/16;
 	MM_UseSpace (segstart,seglength);
-	mminfo.farheap = length;
-	mminfo.mainmem = mminfo.nearheap + mminfo.farheap;
+	mminfo.mainmem += length;
 
 
 //
