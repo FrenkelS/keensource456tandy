@@ -393,7 +393,6 @@ void VW_ClearVideoBottom (void)
 asm	mov	ax,0xb800+(11*16)/4*160/0x10
 asm	mov	es,ax
 
-asm	xor	si,si
 asm	xor	di,di
 
 asm	xor	ax,ax
