@@ -36,7 +36,7 @@
 
 Uint16 fadecount;
 Sint16 levelcompleted;
-Sint32 chunkcount, chunkmax, handpic;
+Sint16 chunkcount, chunkmax, handpic;
 
 /*
 =============================================================================
