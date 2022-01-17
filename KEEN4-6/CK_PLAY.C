@@ -147,12 +147,11 @@ void DebugMemory(void)
 	US_CPrint("Memory Usage");
 	US_CPrint("------------");
 	US_Print("Total     :");
-	US_PrintUnsigned((mminfo.mainmem+mminfo.EMSmem+mminfo.XMSmem)/1024);
-	US_Print("k\nFree      :");
-	US_PrintUnsigned(MM_FreeMemory(false)/1024);
-	US_Print("k\nWith purge:");
-	US_PrintUnsigned(MM_FreeMemory(true)/1024);
-	US_Print("k\n");
+	US_PrintUnsigned(mminfo.mainmem+mminfo.EMSmem+mminfo.XMSmem);
+	US_Print("\nFree      :");
+	US_PrintUnsigned(MM_FreeMemory(false));
+	US_Print("\nWith purge:");
+	US_PrintUnsigned(MM_FreeMemory(true));
 	VW_UpdateScreen();
 	IN_Ack();
 #if GRMODE == EGAGR
