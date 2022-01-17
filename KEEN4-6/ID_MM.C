@@ -100,15 +100,14 @@ Quit (char *error) function
 #define PURGEBIT	2		// 0= unpurgeable, 1= purge
 #define BASEATTRIBUTES	0	// unlocked, non purgeable
 
-#define ISLOCKED(x)		(mmblocks[x].attributes&LOCKBIT)
-#define ISPURGEABLE(x)	(mmblocks[x].attributes&PURGEBIT)
+#define ISLOCKED(x)		(mmattributes[x]&LOCKBIT)
+#define ISPURGEABLE(x)	(mmattributes[x]&PURGEBIT)
 
 #define MAXUMBS		10
 
-typedef struct mmblockstruct
+typedef struct
 {
 	unsigned	start,length;
-	unsigned	attributes;
 	memptr		*useptr;	// pointer to the segment start
 	int			next;
 } mmblocktype;
@@ -141,6 +140,7 @@ void far	*farheap;
 void		*nearheap;
 
 mmblocktype	far mmblocks[MAXBLOCKS];
+byte		mmattributes[MAXBLOCKS];
 int 		mmfree, mmrover;
 
 boolean		bombonerror;
@@ -524,7 +524,7 @@ void MM_UseSpace (unsigned segstart, unsigned seglength)
 		mmblocks[scan].next = mmnew;
 		mmblocks[mmnew].start = segstart+seglength;
 		mmblocks[mmnew].length = extra;
-		mmblocks[mmnew].attributes = LOCKBIT;
+		mmattributes[mmnew] = LOCKBIT;
 	}
 
 }
@@ -567,7 +567,7 @@ void MM_Startup (void)
 //
 	mmblocks[0].start = 0;
 	mmblocks[0].length = 0xffff;
-	mmblocks[0].attributes = LOCKBIT;
+	mmattributes[0] = LOCKBIT;
 	mmblocks[0].next = MAXBLOCKS;
 	mmrover = 0;
 	mmfree = 1;
@@ -705,7 +705,7 @@ void MM_GetPtr (memptr *baseptr,unsigned long size)
 
 	mmblocks[mmnew].length = needed;
 	mmblocks[mmnew].useptr = baseptr;
-	mmblocks[mmnew].attributes = BASEATTRIBUTES;
+	mmattributes[mmnew] = BASEATTRIBUTES;
 
 	for (search = 0; search<3; search++)
 	{
@@ -852,8 +852,8 @@ void MML_SetRover(memptr *baseptr)
 void MM_SetPurge (memptr *baseptr, boolean purge)
 {
 	MML_SetRover(baseptr);
-	mmblocks[mmrover].attributes &= ~PURGEBIT;
-	mmblocks[mmrover].attributes |= purge*PURGEBIT;
+	mmattributes[mmrover] &= ~PURGEBIT;
+	mmattributes[mmrover] |= purge*PURGEBIT;
 }
 
 //==========================================================================
@@ -871,8 +871,8 @@ void MM_SetPurge (memptr *baseptr, boolean purge)
 void MM_SetLock (memptr *baseptr, boolean locked)
 {
 	MML_SetRover(baseptr);
-	mmblocks[mmrover].attributes &= ~LOCKBIT;
-	mmblocks[mmrover].attributes |= locked*LOCKBIT;
+	mmattributes[mmrover] &= ~LOCKBIT;
+	mmattributes[mmrover] |= locked*LOCKBIT;
 }
 
 //==========================================================================
