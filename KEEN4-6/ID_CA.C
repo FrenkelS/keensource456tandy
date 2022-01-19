@@ -529,13 +529,11 @@ asm	rep stosw
 
 next:
 
+asm	mov	cl,4
 asm	cmp	si,0x10		// normalize ds:si
 asm  	jb	sinorm
 asm	mov	ax,si
-asm	shr	ax,1
-asm	shr	ax,1
-asm	shr	ax,1
-asm	shr	ax,1
+asm	shr	ax,cl
 asm	mov	dx,ds
 asm	add	dx,ax
 asm	mov	ds,dx
@@ -544,10 +542,7 @@ sinorm:
 asm	cmp	di,0x10		// normalize es:di
 asm  	jb	dinorm
 asm	mov	ax,di
-asm	shr	ax,1
-asm	shr	ax,1
-asm	shr	ax,1
-asm	shr	ax,1
+asm	shr	ax,cl
 asm	mov	dx,es
 asm	add	dx,ax
 asm	mov	es,dx

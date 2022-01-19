@@ -1243,9 +1243,8 @@ PROC	ShiftPropChar	NEAR
 	and	ax,7
 	mov	[bufferbit],ax			;new bit position
 	mov	ax,cx
-	shr	ax,1
-	shr	ax,1
-	shr	ax,1
+	mov	cl,3
+	shr	ax,cl
 	add	[bufferbyte],ax			;new byte position
 
 	add	si,1
