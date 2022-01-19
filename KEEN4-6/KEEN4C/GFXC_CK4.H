@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021-2022 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,8 +48,8 @@
 #define NUMFONT      2
 #define NUMFONTM     0
 #define NUMPICM      3
-#define NUMTILE8     108	// BUG: only 104 tiles exist in EGAGRAPH!
-#define NUMTILE8M    36		// BUG: only 20 tiles exist in EGAGRAPH!
+#define NUMTILE8     104
+#define NUMTILE8M    20
 #define NUMTILE32    0
 #define NUMTILE32M   0
 

@@ -128,10 +128,8 @@ USES	SI,DI
 	sub	bx,2
 
 	mov	si,[tile]
-	shl	si,1
-	shl	si,1
-	shl	si,1
-	shl	si,1
+	mov	cl,4
+	shl	si,cl
 
 	mov	ds,[grsegs+STARTTILE8*2] ; segment for all tile8s
 
@@ -163,24 +161,39 @@ ENDP
 ; The mask comes first, then the data.  Separate unwound routines are used
 ; to speed drawing.
 ;
-; Mask blocks will always be an even width because of the way IGRAB works
-;
 ; DONE
 ;
 ;============================================================================
 
 DATASEG
 
-UNWOUNDMASKS	=	18
+UNWOUNDMASKS	=	22
 
 
-maskroutines	dw	mask0,mask0,mask2E,mask2O,mask4E,mask4O
-				dw	mask6E,mask6O,mask8E,mask8O,mask10E,mask10O
-				dw	mask12E,mask12O,mask14E,mask14O,mask16E,mask16O
+maskroutines	dw	mask0,mask0
+				dw	woundroutine,woundroutine	;There are no sprites of width 1
+				dw	mask2E,mask2O
+				dw	mask3E,mask3O
+				dw	mask4E,mask4O
+				dw	mask5E,mask5O
+				dw	mask6E,mask6O
+				dw	mask7E,mask7O
+				dw	mask8E,mask8O
+				dw	mask9E,mask9O
+				dw	mask10E,mask10O
+				dw	woundroutine,woundroutine	;There are no sprites of width 11
+				dw	mask12E,mask12O
+				dw	woundroutine,woundroutine	;There are no sprites of width 13
+				dw	mask14E,mask14O
+				dw	woundroutine,woundroutine	;There are no sprites of width 15
+				dw	mask16E,mask16O
+				dw	woundroutine,woundroutine	;There are no sprites of width 17
 				dw	mask18E,mask18O
+				dw	woundroutine,woundroutine	;There are no sprites of width 19
+				dw	mask20E,mask20O
+				dw	woundroutine,woundroutine	;There are no sprites of width 21
+				dw	mask22E,mask22O
 
-
-routinetouse	dw	?
 
 CODESEG
 
@@ -206,10 +219,12 @@ USES	SI,DI
 ;
 ;==============
 
-	mov	[ss:linedelta],dx
 	mov	ds,[segm]
 	mov	si,[ofs]
 	mov	di,[dest]
+
+woundroutine:
+	mov	[ss:linedelta],dx
 	mov	dx,[height]				;scan lines to draw
 
 @@lineloopgen:
@@ -239,7 +254,6 @@ mask0:
 ;=================
 
 @@unwoundroutine:
-	shr	di,1					;we only have even width unwound routines
 	mov	cx,[dest]
 	shr	cx,1
 	rcl	di,1					;shift a 1 in if destination is odd
@@ -297,6 +311,18 @@ mask2O:
 	SPRITELOOP	mask2O
 
 EVEN
+mask3E:
+	MASKWORD
+	MASKBYTE
+	SPRITELOOP	mask3E
+
+EVEN
+mask3O:
+	MASKBYTE
+	MASKWORD
+	SPRITELOOP	mask3O
+
+EVEN
 mask4E:
 	MASKWORD
 	MASKWORD
@@ -308,6 +334,20 @@ mask4O:
 	MASKWORD
 	MASKBYTE
 	SPRITELOOP	mask4O
+
+EVEN
+mask5E:
+	MASKWORD
+	MASKWORD
+	MASKBYTE
+	SPRITELOOP	mask5E
+
+EVEN
+mask5O:
+	MASKBYTE
+	MASKWORD
+	MASKWORD
+	SPRITELOOP	mask5O
 
 EVEN
 mask6E:
@@ -325,6 +365,22 @@ mask6O:
 	SPRITELOOP	mask6O
 
 EVEN
+mask7E:
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKBYTE
+	SPRITELOOP	mask7E
+
+EVEN
+mask7O:
+	MASKBYTE
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	SPRITELOOP	mask7O
+
+EVEN
 mask8E:
 	MASKWORD
 	MASKWORD
@@ -340,6 +396,24 @@ mask8O:
 	MASKWORD
 	MASKBYTE
 	SPRITELOOP	mask8O
+
+EVEN
+mask9E:
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKBYTE
+	SPRITELOOP	mask9E
+
+EVEN
+mask9O:
+	MASKBYTE
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	SPRITELOOP	mask9O
 
 EVEN
 mask10E:
@@ -456,7 +530,111 @@ mask18O:
 	MASKBYTE
 	SPRITELOOP	mask18O
 
+EVEN
+mask20E:
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	SPRITELOOP	mask20E
 
+EVEN
+mask20O:
+	MASKBYTE
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKBYTE
+	SPRITELOOP	mask20O
+
+EVEN
+mask22E:
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	SPRITELOOP	mask22E
+
+EVEN
+mask22O:
+	MASKBYTE
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKBYTE
+	SPRITELOOP	mask22O
+
+
+ENDP
+
+
+;============================================================================
+;
+; VW_MaskBlockClipped
+;
+;============================================================================
+
+PROC	VW_MaskBlockClipped	segm:WORD, ofs:WORD, dest:WORD, wide:WORD, height:WORD, planesize:WORD, spritewidthdelta:WORD
+PUBLIC	VW_MaskBlockClipped
+USES	SI,DI
+
+	mov	es,[screenseg]
+
+	mov	dx,[linewidth]
+	sub	dx,[wide]
+	mov	[ss:linedelta],dx
+
+	mov	bx,[planesize]
+
+	mov	ds,[segm]
+	mov	si,[ofs]
+	mov	di,[dest]
+	mov	dx,[height]
+
+@@yloop:
+	mov	cx,[wide]
+@@xloop:
+	mov	al,[es:di]
+	and	al,[si]
+	or	al,[bx+si]
+	inc	si
+	stosb
+	loop	@@xloop
+
+	add si,[spritewidthdelta]
+	add	di,[ss:linedelta]
+	dec	dx
+	jnz	@@yloop
+
+	mov	ax,ss
+	mov	ds,ax					;restore turbo's data segment
+	ret
 ENDP
 
 
@@ -953,9 +1131,8 @@ PROC	ShiftPropChar	NEAR
 	and	ax,7
 	mov	[bufferbit],ax			;new bit position
 	mov	ax,cx
-	shr	ax,1
-	shr	ax,1
-	shr	ax,1
+	mov	cl,3
+	shr	ax,cl
 	add	[bufferbyte],ax			;new byte position
 
 	add	si,3
