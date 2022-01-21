@@ -76,9 +76,8 @@ USES	SI,DI
 	add	di,[ylookup+bx]
 	mov	bx,[x]
 	mov	ax,bx
-	shr	ax,1
-	shr	ax,1
-	shr	ax,1
+	mov	cl,3
+	shr	ax,cl
 	add	di,ax				; di = byte on screen
 
 	and	bx,7
@@ -126,9 +125,8 @@ USES	SI,DI
 	add	di,[ylookup+bx]
 	mov	bx,[x]
 	mov	ax,bx
-	shr	ax,1
-	shr	ax,1
-	shr	ax,1
+	mov	cl,3
+	shr	ax,cl
 	add	di,ax				; di = byte on screen
 
 	and	bx,7
@@ -190,11 +188,8 @@ USES	SI,DI
 	dec	bx
 
 	mov	si,[tile]
-	shl	si,1
-	shl	si,1
-	shl	si,1
-	shl	si,1
-	shl	si,1
+	mov	cl,5
+	shl	si,cl
 
 	mov	ds,[grsegs+STARTTILE8*2] ; segment for all tile8s
 
@@ -241,13 +236,21 @@ ENDP
 
 DATASEG
 
-UNWOUNDMASKS	=	10
+UNWOUNDMASKS	=	11
 
 
-maskroutines	dw	mask0,mask0,mask1E,mask1E,mask2E,mask2O,mask3E,mask3O
-				dw	mask4E,mask4O,mask5E,mask5O,mask6E,mask6O
-				dw	mask7E,mask7O,mask8E,mask8O,mask9E,mask9O
+maskroutines	dw	mask0,mask0
+				dw	mask1E,mask1E
+				dw	mask2E,mask2O
+				dw	mask3E,mask3O
+				dw	mask4E,mask4O
+				dw	mask5E,mask5O
+				dw	mask6E,mask6O
+				dw	mask7E,mask7O
+				dw	mask8E,mask8O
+				dw	mask9E,mask9O
 				dw	mask10E,mask10O
+				dw	mask11E,mask11O
 
 
 routinetouse	dw	?
@@ -513,6 +516,26 @@ mask10O:
 	MASKWORD
 	MASKBYTE
 	SPRITELOOP	mask10O
+
+EVEN
+mask11E:
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKBYTE
+	SPRITELOOP	mask11E
+
+EVEN
+mask11O:
+	MASKBYTE
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	MASKWORD
+	SPRITELOOP	mask11O
 
 
 ENDP
@@ -1244,15 +1267,12 @@ PROC	ShiftPropChar	NEAR
 	and	ax,7
 	mov	[bufferbit],ax			;new bit position
 	mov	ax,cx
-	shr	ax,1
-	shr	ax,1
-	shr	ax,1
+	mov	cl,3
+	shr	ax,cl
 	add	[bufferbyte],ax			;new byte position
 
 	add	si,7
-	shr	si,1
-	shr	si,1
-	shr	si,1					;bytes the character is wide
+	shr	si,cl					;bytes the character is wide
 	shl	si,1                    ;*2 to look up in shiftdrawtable
 
 	mov	cx,[es:pcharheight]
@@ -1398,9 +1418,8 @@ ENDM
 	add	di,[panadjust]
 
 	mov	ax,[px]
-	shr	ax,1
-	shr	ax,1
-	shr	ax,1		;x location in bytes
+	mov	cl,3
+	shr	ax,cl		;x location in bytes
 	add	di,ax
 	mov	[screenspot],di
 
@@ -1408,9 +1427,7 @@ ENDM
 ; advance px
 ;
 	mov	ax,[bufferbyte]
-	shl	ax,1
-	shl	ax,1
-	shl	ax,1
+	shl	ax,cl
 	or	ax,[bufferbit]
 	add	[px],ax
 

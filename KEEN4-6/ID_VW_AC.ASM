@@ -596,50 +596,6 @@ ENDP
 
 ;============================================================================
 ;
-; VW_MaskBlockClipped
-;
-;============================================================================
-
-PROC	VW_MaskBlockClipped	segm:WORD, ofs:WORD, dest:WORD, wide:WORD, height:WORD, planesize:WORD, spritewidthdelta:WORD
-PUBLIC	VW_MaskBlockClipped
-USES	SI,DI
-
-	mov	es,[screenseg]
-
-	mov	dx,[linewidth]
-	sub	dx,[wide]
-	mov	[ss:linedelta],dx
-
-	mov	bx,[planesize]
-
-	mov	ds,[segm]
-	mov	si,[ofs]
-	mov	di,[dest]
-	mov	dx,[height]
-
-@@yloop:
-	mov	cx,[wide]
-@@xloop:
-	mov	al,[es:di]
-	and	al,[si]
-	or	al,[bx+si]
-	inc	si
-	stosb
-	loop	@@xloop
-
-	add si,[spritewidthdelta]
-	add	di,[ss:linedelta]
-	dec	dx
-	jnz	@@yloop
-
-	mov	ax,ss
-	mov	ds,ax					;restore turbo's data segment
-	ret
-ENDP
-
-
-;============================================================================
-;
 ; VW_ScreenToScreen
 ;
 ; Basic block copy routine.  Copies one block of screen memory to another,

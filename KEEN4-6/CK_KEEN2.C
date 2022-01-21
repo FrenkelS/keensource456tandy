@@ -105,11 +105,8 @@ void MemDrawChar(Sint16 char8, Uint8 far *dest, Uint16 width, Uint16 planesize)
 	Uint16 source = (Uint16)grsegs[STARTTILE8];	// Note: this differs from Keen Dreams source
 
 asm	mov	si,[char8]
-asm	shl	si,1
-asm	shl	si,1
-asm	shl	si,1
-asm	shl	si,1
-asm	shl	si,1		// index into char 8 segment
+asm	mov	cl,5
+asm	shl	si,cl		// index into char 8 segment
 
 asm	mov	ds,[WORD PTR source]	// Note: this differs from Keen Dreams source
 asm	mov	es,[WORD PTR dest+2]
@@ -152,10 +149,8 @@ asm	mov	ds,ax
 void MemDrawChar (int char8,byte far *dest,unsigned width)
 {
 asm	mov	si,[char8]
-asm	shl	si,1
-asm	shl	si,1
-asm	shl	si,1
-asm	shl	si,1		// index into char 8 segment
+asm	mov	cl,4
+asm	shl	si,cl		// index into char 8 segment
 
 asm	mov	ds,[WORD PTR grsegs+STARTTILE8*2]
 asm	mov	es,[WORD PTR dest+2]

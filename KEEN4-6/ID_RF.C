@@ -1666,10 +1666,13 @@ redraw:
 		//
 		// draw it!
 		//
-			width = sprite->width;
 			height = sprite->height;
 			sourceofs = sprite->sourceofs;
+
+#if GRMODE == TGAGR
+			width = sprite->width;
 			clipvertically = false;
+
 			if (portx<0)
 			{
 				width += portx;
@@ -1682,6 +1685,7 @@ redraw:
 				width = PORTSCREENWIDE - portx;
 				clipvertically = true;
 			}
+#endif
 
 			if (porty<0)
 			{
@@ -1696,6 +1700,7 @@ redraw:
 
 			dest = bufferofs + ylookup[porty] + portx;
 
+#if GRMODE == TGAGR
 			if (clipvertically)
 			{
 				VW_MaskBlockClipped(grsegs[sprite->grseg], sourceofs,
@@ -1707,6 +1712,11 @@ redraw:
 				VW_MaskBlock(grsegs[sprite->grseg], sourceofs,
 					dest,sprite->width,height,sprite->planesize);
 			}
+#elif GRMODE == CGAGR || GRMODE == EGAGR
+			VW_MaskBlock(grsegs[sprite->grseg], sourceofs,
+				dest,sprite->width,height,sprite->planesize);
+#endif
+
 #ifdef PROFILE
 			updatecount++;
 #endif

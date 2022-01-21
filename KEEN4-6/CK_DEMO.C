@@ -1643,10 +1643,8 @@ void CompileSWUpdate(void)
 		// normalize ES:DI
 		//
 		asm	mov	ax, di;
-		asm	shr	ax, 1;
-		asm	shr	ax, 1;
-		asm	shr	ax, 1;
-		asm	shr	ax, 1;
+		asm	mov	cl,	4;
+		asm	shr	ax, cl;
 		asm	mov	bx, es;
 		asm	add	ax, bx;
 		asm	mov	es, ax;
