@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021 Frenkel Smeijers
+ * Copyright (C) 2021-2022 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -34,12 +34,6 @@
 
 =============================================================================
 */
-
-#if GRMODE == CGAGR
-#define MINMEMORY 280000l
-#elif GRMODE == EGAGR
-#define MINMEMORY 310000l
-#endif
 
 #define STARPALETTE   {0, 1, 2, 3, 4, 16, 6, 7, 31, 31, 31, 31, 31, 31, 31, 31, 0}
 #define INTROPALETTE  {0, 24, 24, 7, 1, 1, 1, 1, 17, 17, 17, 17, 19, 19, 19, 19, 0}

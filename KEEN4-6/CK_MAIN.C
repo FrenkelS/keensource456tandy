@@ -294,33 +294,6 @@ void TEDDeath(void)
 
 //===========================================================================
 
-#if GRMODE == CGAGR || GRMODE == EGAGR
-/*
-==================
-=
-= CheckMemory
-=
-==================
-*/
-
-void CheckMemory(void)
-{
-	Uint16 finscreen;
-
-	if (mminfo.mainmem+mminfo.EMSmem+mminfo.XMSmem >= MINMEMORY)
-		return;
-
-	CA_CacheGrChunk (OUTOFMEM);
-	finscreen = (Uint16)grsegs[OUTOFMEM];
-	ShutdownId();
-	movedata (finscreen,7,0xb800,0,4000);
-	gotoxy (1,24);
-	exit(1);
-}
-#endif
-
-//===========================================================================
-
 /*
 =====================
 =
@@ -513,9 +486,7 @@ void main(void)
 		storedemo = true;
 
 	InitGame();
-#if GRMODE == CGAGR || GRMODE == EGAGR
-	CheckMemory();
-#endif
+
 	if (NoWait || tedlevel)
 		debugok = true;
 
