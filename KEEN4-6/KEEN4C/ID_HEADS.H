@@ -1,4 +1,8 @@
-/* Reconstructed Commander Keen 4-6 Source Code
+/* Commander Keen 4 Tandy Version Source Code
+ * Copyright (C) 2021-2022 Frenkel Smeijers
+ *
+ * This file is primarily based on:
+ * Reconstructed Commander Keen 4-6 Source Code
  * Copyright (C) 2021 K1n9_Duk3
  *
  * This file is primarily based on:
@@ -55,16 +59,10 @@ extern	char far introscn;
 #define	TEXTGR	0
 #define	CGAGR	1
 #define	EGAGR	2
-#define	VGAGR	3
 
 #define GRMODE	CGAGR
 
-#if GRMODE == EGAGR
-#define GREXT	"EGA"
-#endif
-#if GRMODE == CGAGR
 #define GREXT	"CGA"
-#endif
 
 //#define PROFILE
 

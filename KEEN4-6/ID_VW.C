@@ -46,11 +46,6 @@
 =============================================================================
 */
 
-#if GRMODE == CGAGR || GRMODE == EGAGR
-cardtype	videocard;		// set by VW_Startup
-#endif
-grtype		grmode;			// CGAgr, EGAgr, VGAgr, TGAgr
-
 unsigned	bufferofs;		// hidden area to draw to before displaying
 unsigned	displayofs;		// origin of the visable screen
 unsigned	panx,pany;		// panning adjustments inside port in pixels
@@ -71,7 +66,10 @@ pictabletype	_seg *picmtable;
 spritetabletype _seg *spritetable;
 
 int			bordercolor;
+
+#if GRMODE == EGAGR
 boolean			nopan;
+#endif
 
 /*
 =============================================================================
@@ -93,10 +91,6 @@ void	VWL_ScreenToMem(unsigned source,memptr dest,unsigned width,unsigned height)
 void	VWL_DrawPropString (char far *string);
 void	VWL_UpdateScreenBlocks (void);
 
-#if GRMODE == CGAGR || GRMODE == EGAGR
-cardtype	VWL_VideoID (void);
-#endif
-
 int			bordercolor;
 int			cursorvisible;
 int			cursornumber,cursorwidth,cursorheight,cursorx,cursory;
@@ -114,56 +108,29 @@ unsigned	cursorspot;
 =======================
 */
 
-#if GRMODE == CGAGR || GRMODE == EGAGR
-static	char *ParmStrings[] = {"HIDDENCARD","NOPAN",""};
+#if GRMODE == EGAGR
+static	char *ParmStrings[] = {"NOPAN",""};
 #endif
 
 void	VW_Startup (void)
 {
-	int i,n;
+	int i;
 
 	asm	cld;				// all string instructions assume forward
 
-#if GRMODE == CGAGR || GRMODE == EGAGR
-	videocard = 0;
-
+#if GRMODE == EGAGR
 	for (i = 1;i < _argc;i++)
 	{
-		n = US_CheckParm(_argv[i],ParmStrings);
-		if (n == 0)
-		{
-			videocard = EGAcard;
-		}
-		else if (n == 1)
+		if (US_CheckParm(_argv[i],ParmStrings) == 0)
 		{
 			nopan = true;
 		}
 	}
-
-	if (!videocard)
-		videocard = VWL_VideoID ();
 #endif
 
 #if GRMODE == EGAGR
-	grmode = EGAGR;
-	if (videocard != EGAcard && videocard != VGAcard)
-		Quit ("Improper video card!  If you really have an EGA/VGA card that I am not\n"
-			"detecting, use the -HIDDENCARD command line parameter!");
-
 	EGAWRITEMODE(0);
-#endif
-
-#if GRMODE == CGAGR
-	grmode = CGAGR;
-	if (videocard < CGAcard || videocard > VGAcard)
-		Quit ("Improper video card!  If you really have a CGA card that I am not\n"
-			"detecting, use the -HIDDENCARD command line parameter!");
-
-	MM_GetPtr (&(memptr)screenseg,0x10000l);	// grab 64k for floating screen
-#endif
-
-#if GRMODE == TGAGR
-	grmode = TGAGR;
+#elif GRMODE == CGAGR || GRMODE == TGAGR
 	MM_GetPtr (&(memptr)screenseg,0x10000l);	// grab 64k for floating screen
 #endif
 
@@ -194,7 +161,7 @@ void	VW_Shutdown (void)
 ========================
 =
 = VW_SetScreenMode
-= Call BIOS to set TEXT / CGAgr / TGAgr / EGAgr / VGAgr
+= Call BIOS to set TEXT / CGAgr / TGAgr / EGAgr
 =
 ========================
 */

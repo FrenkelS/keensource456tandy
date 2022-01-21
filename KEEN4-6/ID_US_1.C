@@ -640,18 +640,14 @@ US_UpdateTextScreen(void)
 	longword        totalmem;
 
 	// Show video card info
-#if GRMODE == CGAGR || GRMODE == EGAGR
-	b = (grmode == CGAGR);
-	USL_Show(21,7,4,(videocard >= CGAcard) && (videocard <= VGAcard),b);
-	b = (grmode == EGAGR || grmode == VGAGR);
-	USL_Show(21,8,7,(videocard >= EGAcard) && (videocard <= VGAcard),b);
-#elif GRMODE == TGAGR
-	USL_Show(21,7,4,true,false);
-	USL_Show(21,9,5,true,true);
-#endif
-#if GRMODE == EGAGR
+#if GRMODE == CGAGR
+	USL_Show(21,7,4,true,true);
+#elif GRMODE == EGAGR
+	USL_Show(21,8,7,true,true);
 	if (compatibility)
 		USL_ScreenDraw(5,10,"SVGA Compatibility Mode Enabled.",0x4f);
+#elif GRMODE == TGAGR
+	USL_Show(21,9,5,true,true);
 #endif
 
 	// Show input device info

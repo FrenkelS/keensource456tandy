@@ -59,18 +59,11 @@ extern	char far introscn;
 #define	TEXTGR	0
 #define	CGAGR	1
 #define	EGAGR	2
-#define	VGAGR	3
 #define	TGAGR	9
 
 #define GRMODE	TGAGR
 
-#if GRMODE == EGAGR
-#define GREXT	"EGA"
-#elif GRMODE == CGAGR
-#define GREXT	"CGA"
-#elif GRMODE == TGAGR
 #define GREXT	"TGA"
-#endif
 
 //#define PROFILE
 
