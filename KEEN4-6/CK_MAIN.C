@@ -399,73 +399,6 @@ void DemoLoop(void)
 
 //===========================================================================
 
-#if (GRMODE == EGAGR) && !(defined KEEN6)
-/*
-=====================
-=
-= CheckCutFile
-=
-=====================
-*/
-
-#define FILE_GR1 GREXT"1."EXTENSION
-#define FILE_GR2 GREXT"2."EXTENSION
-#define FILE_GRAPH GREXT"GRAPH."EXTENSION
-
-static void CheckCutFile(void)
-{
-	register Sint16 ohandle, ihandle;
-	Sint16 handle;
-	Sint32 size;
-	void far *buffer;
-
-	if ( (handle = open(FILE_GRAPH, O_BINARY|O_RDONLY)) != -1)
-	{
-		close(handle);
-		return;
-	}
-	puts("Combining "FILE_GR1" and "FILE_GR2" into "FILE_GRAPH"...");
-	if (rename(FILE_GR1, FILE_GRAPH) == -1)
-	{
-		puts("Can't rename "FILE_GR1"!");
-		exit(1);
-	}
-	if ( (ohandle = open(FILE_GRAPH, O_BINARY|O_APPEND|O_WRONLY)) == -1)
-	{
-		puts("Can't open "FILE_GRAPH"!");
-		exit(1);
-	}
-	lseek(ohandle, 0, SEEK_END);
-	if ( (ihandle = open(FILE_GR2, O_BINARY|O_RDONLY)) == -1)
-	{
-		puts("Can't find "FILE_GR2"!");
-		exit(1);
-	}
-	size = filelength(ihandle);
-	buffer = farmalloc(32000);
-	while (size)
-	{
-		if (size > 32000)
-		{
-			CA_FarRead(ihandle, buffer, 32000);
-			CA_FarWrite(ohandle, buffer, 32000);
-			size -= 32000;
-		}
-		else
-		{
-			CA_FarRead(ihandle, buffer, size);
-			CA_FarWrite(ohandle, buffer, size);
-			size = 0;
-		}
-	}
-	farfree(buffer);
-	close(ohandle);
-	close(ihandle);
-	unlink(FILE_GR2);
-}
-#endif
-
-//===========================================================================
 
 
 /*
@@ -478,10 +411,6 @@ static void CheckCutFile(void)
 
 void main(void)
 {
-#if (GRMODE == EGAGR) && !(defined KEEN6)
-	CheckCutFile();
-#endif
-
 	if (US_ParmPresent("DEMO"))
 		storedemo = true;
 
