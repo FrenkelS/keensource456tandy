@@ -53,7 +53,7 @@ unsigned	pansx,pansy;	// panning adjustments inside port in screen
 							// block limited pixel values (ie 0/8 for ega x)
 unsigned	panadjust;		// panx/pany adjusted by screen resolution
 
-unsigned	screenseg;		// normally 0xa000 / 0xb800
+unsigned	screenseg;		// 0xa000 or the 64k floating screen segment
 unsigned	linewidth;
 unsigned	ylookup[VIRTUALHEIGHT];
 
@@ -178,9 +178,40 @@ void VW_SetScreenMode (int grmode)
 		  geninterrupt (0x10);		// screenseg is actually a main mem buffer
 		  break;
 #elif GRMODE == TGAGR
+#ifndef MCGA
 	  case TGAGR: _AX = 9;
 		  geninterrupt (0x10);		// screenseg is actually a main mem buffer
 		  break;
+#else
+	  case TGAGR: _AX = 0x13;
+		  geninterrupt (0x10);
+
+		  // set palette: repeat the EGA palette 16 times
+		  {
+			int i;
+			outportb(0x3c8, 0);
+			for (i=0;i<16;i++) {
+			  outportb(0x3c9, 0x00); outportb(0x3c9, 0x00); outportb(0x3c9, 0x00);
+			  outportb(0x3c9, 0x00); outportb(0x3c9, 0x00); outportb(0x3c9, 0x2a);
+			  outportb(0x3c9, 0x00); outportb(0x3c9, 0x2a); outportb(0x3c9, 0x00);
+			  outportb(0x3c9, 0x00); outportb(0x3c9, 0x2a); outportb(0x3c9, 0x2a);
+			  outportb(0x3c9, 0x2a); outportb(0x3c9, 0x00); outportb(0x3c9, 0x00);
+			  outportb(0x3c9, 0x2a); outportb(0x3c9, 0x00); outportb(0x3c9, 0x2a);
+			  outportb(0x3c9, 0x2a); outportb(0x3c9, 0x15); outportb(0x3c9, 0x00);
+			  outportb(0x3c9, 0x2a); outportb(0x3c9, 0x2a); outportb(0x3c9, 0x2a);
+
+			  outportb(0x3c9, 0x15); outportb(0x3c9, 0x15); outportb(0x3c9, 0x15);
+			  outportb(0x3c9, 0x15); outportb(0x3c9, 0x15); outportb(0x3c9, 0x3f);
+			  outportb(0x3c9, 0x15); outportb(0x3c9, 0x3f); outportb(0x3c9, 0x15);
+			  outportb(0x3c9, 0x15); outportb(0x3c9, 0x3f); outportb(0x3c9, 0x3f);
+			  outportb(0x3c9, 0x3f); outportb(0x3c9, 0x15); outportb(0x3c9, 0x15);
+			  outportb(0x3c9, 0x3f); outportb(0x3c9, 0x15); outportb(0x3c9, 0x3f);
+			  outportb(0x3c9, 0x3f); outportb(0x3c9, 0x3f); outportb(0x3c9, 0x15);
+			  outportb(0x3c9, 0x3f); outportb(0x3c9, 0x3f); outportb(0x3c9, 0x3f);
+			}
+		  }
+		  break;
+#endif
 #elif GRMODE == EGAGR
 	  case EGAGR: _AX = 0xd;
 		  geninterrupt (0x10);
@@ -357,15 +388,18 @@ asm	rep stosw;
 void VW_ClearVideoBottom (void)
 {
 #if GRMODE == TGAGR
+
+#ifndef MCGA
+
 asm	mov	ax,0xb800+(11*16)/4*160/0x10
 asm	mov	es,ax
 
 asm	xor	di,di
 
 asm	xor	ax,ax
-asm	mov	bx,6				// pair of 4 scan lines to copy
+asm	mov	bx,24/4				// pair of 4 scan lines to clear
 asm	mov	dx,80				// words accross screen
-copyfourlines:
+clearfourlines:
 asm	mov	cx,dx
 asm	rep	stosw
 asm	add	di,0x2000-160		// go to the second bank
@@ -380,7 +414,20 @@ asm	rep	stosw
 asm	sub	di,0x6000			// go to the first bank
 
 asm	dec	bx
-asm	jnz	copyfourlines
+asm	jnz	clearfourlines
+
+#else
+
+asm	mov	ax,0xa000+(11*16)*320/0x10
+asm	mov	es,ax
+
+asm	xor	di,di
+
+asm	xor	ax,ax
+asm	mov	cx,24*320/2
+asm	rep	stosw
+
+#endif
 
 asm	mov	ax,ss
 asm	mov	es,ax
@@ -891,6 +938,8 @@ void VW_TGAFullUpdate (void)
 {
 	displayofs = bufferofs+panadjust;
 
+#ifndef MCGA
+
 asm	mov	ax,0xb800
 asm	mov	es,ax
 
@@ -965,6 +1014,48 @@ asm	sub	di,0x6000			// go to the first bank
 asm	dec	bx
 asm	jnz	copyfourlines
 
+#else
+
+asm	mov	ax,0xa000
+asm	mov	es,ax
+
+asm	mov	si,[displayofs]
+asm	xor	di,di
+
+asm	mov	bx,11*16			// scan lines to copy
+asm	mov	cl,4
+
+asm	mov	ds,[screenseg]
+
+copyline:
+asm	mov	dx,10
+copybytes:
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	dec	dx
+asm	jnz	copybytes
+
+asm	add	si,10
+
+asm	dec	bx
+asm	jnz	copyline
+
+#endif
+
 blitdone:
 asm	mov	ax,ss
 asm	mov	ds,ax
@@ -992,13 +1083,15 @@ void VW_TGABottomUpdate (void)
 {
 	displayofs = bufferofs+panadjust+(11*16)*SCREENWIDTH;
 
+#ifndef MCGA
+
 asm	mov	ax,0xb800+(11*16)/4*160/0x10
 asm	mov	es,ax
 
 asm	mov	si,[displayofs]
 asm	xor	di,di
 
-asm	mov	bx,6				// pair of 4 scan lines to copy
+asm	mov	bx,24/4				// pair of 4 scan lines to copy
 asm	mov	dx,[linewidth]
 asm	sub	dx,160
 
@@ -1065,6 +1158,48 @@ asm	sub	di,0x6000			// go to the first bank
 
 asm	dec	bx
 asm	jnz	copyfourlines
+
+#else
+
+asm	mov	ax,0xa000+(11*16)*320/0x10
+asm	mov	es,ax
+
+asm	mov	si,[displayofs]
+asm	xor	di,di
+
+asm	mov	bx,24			// scan lines to copy
+asm	mov	cl,4
+
+asm	mov	ds,[screenseg]
+
+copyline:
+asm	mov	dx,10
+copybytes:
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
+asm	dec	dx
+asm	jnz	copybytes
+
+asm	add	si,10
+
+asm	dec	bx
+asm	jnz	copyline
+
+#endif
 
 blitdone:
 asm	mov	ax,ss

@@ -221,7 +221,7 @@ extern	unsigned	panx,pany;		// panning adjustments inside port in pixels
 extern	unsigned	pansx,pansy;
 extern	unsigned	panadjust;		// panx/pany adjusted by screen resolution
 
-extern	unsigned	screenseg;		// normally 0xa000 or buffer segment
+extern	unsigned	screenseg;		// 0xa000 or the 64k floating screen segment
 
 extern	unsigned	linewidth;
 extern	unsigned	ylookup[VIRTUALHEIGHT];
