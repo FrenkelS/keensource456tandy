@@ -211,8 +211,6 @@ typedef struct
 } fontstruct;
 
 
-typedef enum {CGAgr,EGAgr,TGAgr} grtype;
-
 //===========================================================================
 
 extern	unsigned	bufferofs;		// hidden port to draw to before displaying
@@ -227,7 +225,7 @@ extern	unsigned	linewidth;
 extern	unsigned	ylookup[VIRTUALHEIGHT];
 
 extern	boolean		screenfaded;
-extern	char 		colors[7][17];	// pallets for fades
+extern	char 		colors[4][17];	// palettes for fades
 
 extern	pictabletype	_seg *pictable;
 extern	pictabletype	_seg *picmtable;

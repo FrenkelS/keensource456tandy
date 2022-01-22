@@ -186,7 +186,7 @@ void VW_SetScreenMode (int grmode)
 	  case TGAGR: _AX = 0x13;
 		  geninterrupt (0x10);
 
-		  // set palette: repeat the EGA palette 16 times
+		  // set palette: repeat the default EGA palette 16 times
 		  {
 			int i;
 			outportb(0x3c8, 0);
@@ -230,14 +230,12 @@ void VW_SetScreenMode (int grmode)
 =============================================================================
 */
 
-#if GRMODE == EGAGR
-char colors[7][17]=
+#if GRMODE == EGAGR || GRMODE == TGAGR
+char colors[4][17]=
 {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
  {0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,0},
  {0,0,0,0,0,0,0,0,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0},
- {0,1,2,3,4,5,6,7,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0},
- {0,1,2,3,4,5,6,7,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0},
- {0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f}};
+ {0,1,2,3,4,5,6,7,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0}};
 #endif
 
 
@@ -252,7 +250,8 @@ void VW_ColorBorder (int color)
 
 void VW_SetDefaultColors(void)
 {
-#if GRMODE == EGAGR
+#if GRMODE == EGAGR || GRMODE == TGAGR
+#ifndef MCGA
 	colors[3][16] = bordercolor;
 	_ES=FP_SEG(&colors[3]);
 	_DX=FP_OFF(&colors[3]);
@@ -260,12 +259,14 @@ void VW_SetDefaultColors(void)
 	geninterrupt(0x10);
 	screenfaded = false;
 #endif
+#endif
 }
 
 
 void VW_FadeOut(void)
 {
-#if GRMODE == EGAGR
+#if GRMODE == EGAGR || GRMODE == TGAGR
+#ifndef MCGA
 	int i;
 
 	for (i=3;i>=0;i--)
@@ -279,12 +280,14 @@ void VW_FadeOut(void)
 	}
 	screenfaded = true;
 #endif
+#endif
 }
 
 
 void VW_FadeIn(void)
 {
-#if GRMODE == EGAGR
+#if GRMODE == EGAGR || GRMODE == TGAGR
+#ifndef MCGA
 	int i;
 
 	for (i=0;i<4;i++)
@@ -297,6 +300,7 @@ void VW_FadeIn(void)
 	  VW_WaitVBL(6);
 	}
 	screenfaded = false;
+#endif
 #endif
 }
 
