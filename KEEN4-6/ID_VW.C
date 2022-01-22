@@ -231,11 +231,13 @@ void VW_SetScreenMode (int grmode)
 */
 
 #if GRMODE == EGAGR || GRMODE == TGAGR
+#ifndef MCGA
 char colors[4][17]=
 {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
  {0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,0},
  {0,0,0,0,0,0,0,0,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0},
  {0,1,2,3,4,5,6,7,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0}};
+#endif
 #endif
 
 
