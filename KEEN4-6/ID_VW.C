@@ -272,8 +272,7 @@ void VW_SetDefaultColors(void)
 
 void VW_FadeOut(void)
 {
-#if GRMODE == EGAGR || GRMODE == TGAGR
-#ifndef MCGA
+#if GRMODE == EGAGR
 	int i;
 
 	for (i=3;i>=0;i--)
@@ -285,6 +284,21 @@ void VW_FadeOut(void)
 	  geninterrupt(0x10);
 	  VW_WaitVBL(6);
 	}
+	screenfaded = true;
+#elif GRMODE == TGAGR
+#ifndef MCGA
+	int i,j;
+	
+	for (i=3;i>=0;i--)
+	{
+		for(j=0;j<16;j++)
+		{
+			outportb(0x3da,j+0x10);
+			outportb(0x3de,colors[i][j]);
+		}
+		VW_WaitVBL(3);
+	}
+	screenfaded = true;
 #else
 	int i,j,k;
 
@@ -303,16 +317,15 @@ void VW_FadeOut(void)
 		}
 		VW_WaitVBL(1);
 	}
-#endif
 	screenfaded = true;
+#endif
 #endif
 }
 
 
 void VW_FadeIn(void)
 {
-#if GRMODE == EGAGR || GRMODE == TGAGR
-#ifndef MCGA
+#if GRMODE == EGAGR
 	int i;
 
 	for (i=0;i<4;i++)
@@ -324,6 +337,21 @@ void VW_FadeIn(void)
 	  geninterrupt(0x10);
 	  VW_WaitVBL(6);
 	}
+	screenfaded = false;
+#elif GRMODE == TGAGR
+#ifndef MCGA
+	int i,j;
+	
+	for (i=0;i<4;i++)
+	{
+		for(j=0;j<16;j++)
+		{
+			outportb(0x3da,j+0x10);
+			outportb(0x3de,colors[i][j]);
+		}
+		VW_WaitVBL(3);
+	}
+	screenfaded = false;
 #else
 	int i,j,k;
 
@@ -342,8 +370,8 @@ void VW_FadeIn(void)
 		}
 		VW_WaitVBL(1);
 	}
-#endif
 	screenfaded = false;
+#endif
 #endif
 }
 
