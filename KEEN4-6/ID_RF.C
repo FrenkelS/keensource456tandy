@@ -1448,14 +1448,14 @@ void RFL_BoundNewOrigin (unsigned orgx,unsigned orgy)
 	for (check=0;check<vscrollblocks;check++)
 	{
 		edge = vscrolledge[check];
-		if (edge>=originxtile && edge <=originxtile+10)
+		if (edge>=originxtile && edge <=originxtile+SCREENTILESWIDE/2)
 		{
 			orgx = (edge+1)*TILEGLOBAL;
 			break;
 		}
-		if (edge>=originxtile+11 && edge <=originxtile+20)
+		if (edge>=originxtile+SCREENTILESWIDE/2+1 && edge <=originxtile+SCREENTILESWIDE)
 		{
-			orgx = (edge-20)*TILEGLOBAL;
+			orgx = (edge-SCREENTILESWIDE)*TILEGLOBAL;
 			break;
 		}
 	}
@@ -1463,14 +1463,14 @@ void RFL_BoundNewOrigin (unsigned orgx,unsigned orgy)
 	for (check=0;check<hscrollblocks;check++)
 	{
 		edge = hscrolledge[check];
-		if (edge>=originytile && edge <=originytile+6)
+		if (edge>=originytile && edge <=originytile+SCREENTILESHIGH/2)
 		{
 			orgy = (edge+1)*TILEGLOBAL;
 			break;
 		}
-		if (edge>=originytile+7 && edge <=originytile+13)
+		if (edge>=originytile+SCREENTILESHIGH/2+1 && edge <=originytile+SCREENTILESHIGH)
 		{
-			orgy = (edge-13)*TILEGLOBAL;
+			orgy = (edge-SCREENTILESHIGH)*TILEGLOBAL;
 			break;
 		}
 	}
