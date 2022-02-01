@@ -79,8 +79,8 @@
 
 typedef	struct
 {
-	long		planestart[3];
-	unsigned	planelength[3];
+	long		planestart[MAPPLANES];
+	unsigned	planelength[MAPPLANES];
 	unsigned	width,height;
 	char		name[16];
 } maptype;
@@ -90,7 +90,7 @@ typedef	struct
 extern	byte 		_seg	*tinf;
 extern	int			mapon;
 
-extern	unsigned	_seg	*mapsegs[3];
+extern	unsigned	_seg	*mapsegs[MAPPLANES];
 extern	maptype		_seg	*mapheaderseg[NUMMAPS];
 extern	byte		_seg	*audiosegs[NUMSNDCHUNKS];
 extern	void		_seg	*grsegs[NUMCHUNKS];

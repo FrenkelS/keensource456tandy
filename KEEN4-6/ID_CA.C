@@ -71,7 +71,7 @@ typedef struct
 byte 		_seg	*tinf;
 int			mapon;
 
-unsigned	_seg	*mapsegs[3];
+unsigned	_seg	*mapsegs[MAPPLANES];
 maptype		_seg	*mapheaderseg[NUMMAPS];
 byte		_seg	*audiosegs[NUMSNDCHUNKS];
 void		_seg	*grsegs[NUMCHUNKS];
@@ -119,10 +119,6 @@ SDMode		oldsoundmode;
 
 memptr		bufferseg;
 
-
-
-void	CAL_CarmackExpand (unsigned far *source, unsigned far *dest,
-		unsigned length);
 
 
 #ifdef THREEBYTEGRSTARTS
