@@ -113,8 +113,6 @@ int			grhandle;		// handle to EGAGRAPH
 int			maphandle;		// handle to MAPTEMP / GAMEMAPS
 int			audiohandle;	// handle to AUDIOT / AUDIO
 
-long		chunkcomplen,chunkexplen;
-
 SDMode		oldsoundmode;
 
 memptr		bufferseg;
@@ -189,11 +187,12 @@ void CA_CloseDebug (void)
 ============================
 */
 
-void CAL_GetGrChunkLength (int chunk)
+long CAL_GetGrChunkLength (int chunk)
 {
+	static long chunkexplen;
 	lseek(grhandle,GRFILEPOS(chunk),SEEK_SET);
 	read(grhandle,&chunkexplen,sizeof(chunkexplen));
-	chunkcomplen = GRFILEPOS(chunk+1)-GRFILEPOS(chunk)-4;
+	return GRFILEPOS(chunk+1)-GRFILEPOS(chunk)-4;
 }
 
 
@@ -579,6 +578,7 @@ void CAL_SetupGrFile (void)
 {
 	int handle;
 	memptr compseg;
+	long chunkcomplen;
 
 #ifdef GRHEADERLINKED
 
@@ -623,7 +623,7 @@ void CAL_SetupGrFile (void)
 //
 #if NUMPICS>0
 	MM_GetPtr(&(memptr)pictable,NUMPICS*sizeof(pictabletype));
-	CAL_GetGrChunkLength(STRUCTPIC);		// position file pointer
+	chunkcomplen = CAL_GetGrChunkLength(STRUCTPIC);		// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
 	CAL_Zx0Expand (compseg, (byte huge *)pictable);
@@ -632,7 +632,7 @@ void CAL_SetupGrFile (void)
 
 #if NUMPICM>0
 	MM_GetPtr(&(memptr)picmtable,NUMPICM*sizeof(pictabletype));
-	CAL_GetGrChunkLength(STRUCTPICM);		// position file pointer
+	chunkcomplen = CAL_GetGrChunkLength(STRUCTPICM);		// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
 	CAL_Zx0Expand (compseg, (byte huge *)picmtable);
@@ -641,7 +641,7 @@ void CAL_SetupGrFile (void)
 
 #if NUMSPRITES>0
 	MM_GetPtr(&(memptr)spritetable,NUMSPRITES*sizeof(spritetabletype));
-	CAL_GetGrChunkLength(STRUCTSPRITE);	// position file pointer
+	chunkcomplen = CAL_GetGrChunkLength(STRUCTSPRITE);	// position file pointer
 	MM_GetPtr(&compseg,chunkcomplen);
 	CA_FarRead (grhandle,compseg,chunkcomplen);
 	CAL_Zx0Expand (compseg, (byte huge *)spritetable);
