@@ -189,9 +189,7 @@ void CA_CloseDebug (void)
 
 long CAL_GetGrChunkLength (int chunk)
 {
-	static long chunkexplen;
-	lseek(grhandle,GRFILEPOS(chunk),SEEK_SET);
-	read(grhandle,&chunkexplen,sizeof(chunkexplen));
+	lseek(grhandle,GRFILEPOS(chunk)+4,SEEK_SET); // skip chunkexplen
 	return GRFILEPOS(chunk+1)-GRFILEPOS(chunk)-4;
 }
 
