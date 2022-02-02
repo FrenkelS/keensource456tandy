@@ -366,7 +366,7 @@ void RF_FixOfs (void)
 	screenstart[1] = SCREENSPACE;
 	screenstart[2] = SCREENSPACE*2;
 
-	panx = pany = pansx = pansy = panadjust = 0;
+	panx = pansx = pansy = panadjust = 0;
 
 #if GRMODE == EGAGR
 	screenpage = 0;
@@ -1027,24 +1027,21 @@ void RFL_CalcOriginStuff (long x, long y)
 	originyscreen = originytile<<SY_T_SHIFT;
 	originmap = mapbwidthtable[originytile] + originxtile*2;
 
+	panx  = (originxglobal>>G_P_SHIFT) & 15;
+	pansy = (originyglobal>>G_P_SHIFT) & 15;
+
 #if GRMODE == EGAGR
-	panx = (originxglobal>>G_P_SHIFT) & 15;
 	pansx = panx & 8;
-	pany = pansy = (originyglobal>>G_P_SHIFT) & 15;
-	panadjust = panx/8 + ylookup[pany];
+	panadjust = panx/8 + ylookup[pansy];
 #endif
 
 #if GRMODE == TGAGR
-	panx = (originxglobal>>G_P_SHIFT) & 15;
 	pansx = panx & 12;
-	pany = pansy = (originyglobal>>G_P_SHIFT) & 15;
-	panadjust = panx/2 + ylookup[pany];
+	panadjust = panx/2 + ylookup[pansy];
 #endif
 
 #if GRMODE == CGAGR
-	panx = (originxglobal>>G_P_SHIFT) & 15;
 	pansx = panx & 12;
-	pany = pansy = (originyglobal>>G_P_SHIFT) & 15;
 	panadjust = pansx/4 + ylookup[pansy];
 #endif
 
