@@ -101,10 +101,9 @@ extern	long		lasttimecount;
 
 extern	unsigned	originxglobal,originyglobal;
 extern	unsigned	originxtile,originytile;
-extern	unsigned	originxscreen,originyscreen;
 
-extern	unsigned	mapwidth,mapheight,mapbyteswide,mapwordswide
-					,mapbytesextra,mapwordsextra;
+extern	unsigned	mapwidth,mapheight;
+
 extern	unsigned	mapbwidthtable[MAXMAPHEIGHT];
 
 extern	unsigned	originxmin,originxmax,originymin,originymax;

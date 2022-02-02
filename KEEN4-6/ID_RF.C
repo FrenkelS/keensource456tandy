@@ -158,8 +158,7 @@ long		lasttimecount;
 
 boolean		compatibility;			// crippled refresh for weirdo SVGAs
 
-unsigned	mapwidth,mapheight,mapbyteswide,mapwordswide
-			,mapbytesextra,mapwordsextra;
+unsigned	mapwidth,mapheight;
 unsigned	mapbwidthtable[MAXMAPHEIGHT];
 
 //
@@ -387,10 +386,7 @@ void RF_NewMap (void)
 	unsigned spot,*table;
 
 	mapwidth = mapheaderseg[mapon]->width;
-	mapbyteswide = 2*mapwidth;
 	mapheight = mapheaderseg[mapon]->height;
-	mapwordsextra = mapwidth-PORTTILESWIDE;
-	mapbytesextra = 2*mapwordsextra;
 
 //
 // make a lookup table for the maps left edge
@@ -401,7 +397,7 @@ void RF_NewMap (void)
 	for (i=0;i<mapheight;i++)
 	{
 	  mapbwidthtable[i] = spot;
-	  spot += mapbyteswide;
+	  spot += 2*mapwidth;
 	}
 
 //
@@ -416,7 +412,7 @@ void RF_NewMap (void)
 // the y max value clips off the bottom half of a tile so a map that is
 // 13 + MAPBORDER*2 tile high will not scroll at all vertically
 //
-	originxmax = (mapwidth-MAPBORDER-SCREENTILESWIDE)*TILEGLOBAL;
+	originxmax = (mapwidth -MAPBORDER-SCREENTILESWIDE)*TILEGLOBAL;
 	originymax = (mapheight-MAPBORDER-SCREENTILESHIGH)*TILEGLOBAL;
 	if (originxmax<originxmin)		// for very small maps
 		originxmax=originxmin;
