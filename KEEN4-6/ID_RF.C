@@ -305,32 +305,17 @@ void RF_Startup (void)
 	masterofs = SCREENSPACE*2;
 
 	updateptr = baseupdatestart[otherpage];
-
-	blockstart = &blockstarts[0];
-	for (y=0;y<UPDATEHIGH;y++)
-		for (x=0;x<UPDATEWIDE;x++)
-			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
-#elif GRMODE == CGAGR
-	updateptr = baseupdateptr = &update[0][UPDATESPARESIZE];
-
+#elif GRMODE == CGAGR || GRMODE == TGAGR
 	bufferofs = 0;
 	masterofs = 0x8000;
 
-	blockstart = &blockstarts[0];
-	for (y=0;y<UPDATEHIGH;y++)
-		for (x=0;x<UPDATEWIDE;x++)
-			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
-#elif GRMODE == TGAGR
 	updateptr = baseupdateptr = &update[0][UPDATESPARESIZE];
-
-	bufferofs = 0;
-	masterofs = 0x8000;
-
-	blockstart = &blockstarts[0];
-	for (y=0;y<UPDATEHIGH;y++)
-		for (x=0;x<UPDATEWIDE;x++)
-			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
 #endif
+
+	blockstart = &blockstarts[0];
+	for (y=0;y<UPDATEHIGH;y++)
+		for (x=0;x<UPDATEWIDE;x++)
+			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
 }
 
 
