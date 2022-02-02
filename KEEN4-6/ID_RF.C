@@ -212,7 +212,7 @@ void 		(*refreshvector) (void);
 unsigned	screenstart[3] =
 	{0,SCREENSPACE,SCREENSPACE*2};
 
-unsigned	xpanmask;			// prevent panning to odd pixels
+#define		XPANMASK	6		// prevent panning to odd pixels
 
 unsigned	screenpage;			// screen currently being displayed
 unsigned	otherpage;
@@ -305,8 +305,6 @@ void RF_Startup (void)
 	for (y=0;y<UPDATEHIGH;y++)
 		for (x=0;x<UPDATEWIDE;x++)
 			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
-
-	xpanmask = 6;	// dont pan to odd pixels
 #elif GRMODE == CGAGR
 	SX_T_SHIFT = 2;
 
@@ -1863,7 +1861,7 @@ void RF_Scroll (int x, int y)
 				PORTTILESWIDE*2,PORTTILESHIGH*16);
 
 			if (i==screenpage)
-				VW_SetScreen(newscreen+oldpanadjust,oldpanx & xpanmask);
+				VW_SetScreen(newscreen+oldpanadjust,oldpanx & XPANMASK);
 		}
 	}
 	bufferofs = screenstart[otherpage];
@@ -2279,7 +2277,7 @@ void RF_Refresh (void)
 //
 // display the changed screen
 //
-	VW_SetScreen(bufferofs+panadjust,panx & xpanmask);
+	VW_SetScreen(bufferofs+panadjust,panx & XPANMASK);
 
 //
 // prepare for next refresh
