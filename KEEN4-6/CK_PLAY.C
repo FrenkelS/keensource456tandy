@@ -1317,7 +1317,6 @@ void StatusWindow(void)
 	RFL_InitAnimList();
 	oldbufferofs = bufferofs;
 	bufferofs = windowofs = RF_FindFreeBuffer();
-	VW_ScreenToScreen(displayofs, displayofs, 44, 224);	// useless (source and dest offsets are identical)
 	VW_ScreenToScreen(displayofs, masterofs, 44, 224);
 	VW_ScreenToScreen(displayofs, bufferofs, 44, 168);
 	DrawStatusWindow();

@@ -211,12 +211,12 @@ void 		(*refreshvector) (void);
 #if GRMODE == EGAGR
 unsigned	screenstart[3] =
 	{0,SCREENSPACE,SCREENSPACE*2};
-#endif
 
 unsigned	xpanmask;			// prevent panning to odd pixels
 
 unsigned	screenpage;			// screen currently being displayed
 unsigned	otherpage;
+#endif
 
 
 spritelisttype	spritearray[MAXSPRITES],*prioritystart[PRIORITIES],
@@ -366,13 +366,12 @@ void RF_Shutdown (void)
 
 void RF_FixOfs (void)
 {
-	screenstart[0] = 0;
-	screenstart[1] = SCREENSPACE;
-	screenstart[2] = SCREENSPACE*2;
-
 	panx = pansx = pansy = panadjust = 0;
 
 #if GRMODE == EGAGR
+	screenstart[0] = 0;
+	screenstart[1] = SCREENSPACE;
+	screenstart[2] = SCREENSPACE*2;
 	screenpage = 0;
 	otherpage = 1;
 	displayofs = 0;
