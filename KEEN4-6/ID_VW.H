@@ -215,8 +215,7 @@ typedef struct
 
 extern	unsigned	bufferofs;		// hidden port to draw to before displaying
 extern	unsigned	displayofs;		// origin of port on visable screen
-extern	unsigned	panx;			// panning adjustments inside port in pixels
-extern	unsigned	pansx,pansy;
+extern	unsigned	pansx,pansy;	// panning adjustments inside port in screen
 extern	unsigned	panadjust;		// panx adjusted by screen resolution
 
 extern	unsigned	screenseg;		// 0xa000 or the 64k floating screen segment

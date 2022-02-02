@@ -224,13 +224,12 @@ unsigned	screenpage;			// screen currently being displayed
 unsigned	otherpage;
 #endif
 
+unsigned	panx;				// panning adjustments inside port in pixels
 
 spritelisttype	spritearray[MAXSPRITES],*prioritystart[PRIORITIES],
 				*spritefreeptr;
 
 animtiletype	animarray[MAXANIMTILES],*animhead,*animfreeptr;
-
-int				animfreespot;
 
 eraseblocktype	eraselist[2][MAXSPRITES],*eraselistptr[2];
 

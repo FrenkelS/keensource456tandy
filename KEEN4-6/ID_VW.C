@@ -48,7 +48,6 @@
 
 unsigned	bufferofs;		// hidden area to draw to before displaying
 unsigned	displayofs;		// origin of the visable screen
-unsigned	panx;			// panning adjustments inside port in pixels
 unsigned	pansx,pansy;	// panning adjustments inside port in screen
 							// block limited pixel values (ie 0/8 for ega x)
 unsigned	panadjust;		// panx adjusted by screen resolution
