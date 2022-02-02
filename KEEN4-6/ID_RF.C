@@ -61,8 +61,10 @@ updated
 #define	SCREENTILESHIGH	11
 #endif
 
+#if GRMODE == EGAGR
 #define	SCREENSPACE		(SCREENWIDTH*240)
 #define FREEEGAMEM		(0x10000l-3l*SCREENSPACE)
+#endif
 
 //
 // the update array must have enough space for two screens that can float
@@ -206,8 +208,10 @@ unsigned	numanimchains;
 
 void 		(*refreshvector) (void);
 
+#if GRMODE == EGAGR
 unsigned	screenstart[3] =
 	{0,SCREENSPACE,SCREENSPACE*2};
+#endif
 
 unsigned	xpanmask;			// prevent panning to odd pixels
 
@@ -291,9 +295,9 @@ void RF_Startup (void)
 
 	screenpage = 0;
 	otherpage = 1;
-	displayofs = screenstart[screenpage];
-	bufferofs = screenstart[otherpage];
-	masterofs = screenstart[2];
+	displayofs = 0;
+	bufferofs = SCREENSPACE;
+	masterofs = SCREENSPACE*2;
 
 	updateptr = baseupdatestart[otherpage];
 
@@ -371,9 +375,9 @@ void RF_FixOfs (void)
 #if GRMODE == EGAGR
 	screenpage = 0;
 	otherpage = 1;
-	displayofs = screenstart[screenpage];
-	bufferofs = screenstart[otherpage];
-	masterofs = screenstart[2];
+	displayofs = 0;
+	bufferofs = SCREENSPACE;
+	masterofs = SCREENSPACE*2;
 	VW_SetScreen (displayofs,0);
 #elif GRMODE == CGAGR || GRMODE == TGAGR
 	bufferofs = 0;

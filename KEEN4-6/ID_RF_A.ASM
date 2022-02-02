@@ -52,7 +52,6 @@ EXTRN	updateptr:WORD
 EXTRN	updatestart:WORD
 EXTRN	masterofs:WORD		;start of master tile port
 EXTRN	bufferofs:WORD		;start of current buffer port
-EXTRN	screenstart:WORD	;starts of three screens (0/1/master) in EGA mem
 EXTRN	grsegs:WORD
 EXTRN	mapsegs:WORD
 EXTRN	originmap:WORD
