@@ -251,7 +251,6 @@ void RFL_UpdateTiles (void);
 
 void RFL_BoundScroll (int x, int y);
 void RFL_CalcOriginStuff (long x, long y);
-void RFL_ClearScrollBlocks (void);
 void RFL_InitSpriteList (void);
 void RFL_CheckForAnimTile (unsigned x, unsigned y);
 void RFL_AnimateTiles (void);
@@ -423,7 +422,7 @@ void RF_NewMap (void)
 //
 	RFL_InitSpriteList ();
 	RFL_InitAnimList ();
-	RFL_ClearScrollBlocks ();
+	hscrollblocks = vscrollblocks = 0;	// clear scroll blocks;
 	RF_SetScrollBlockHorizontal (MAPBORDER-1);
 	RF_SetScrollBlockHorizontal (mapheight-MAPBORDER);
 	RF_SetScrollBlockVertical (MAPBORDER-1);
@@ -1027,20 +1026,6 @@ void RFL_CalcOriginStuff (long x, long y)
 	panadjust = pansx/4 + ylookup[pansy];
 #endif
 
-}
-
-
-/*
-=================
-=
-= RFL_ClearScrollBlocks
-=
-=================
-*/
-
-void RFL_ClearScrollBlocks (void)
-{
-	hscrollblocks = vscrollblocks = 0;
 }
 
 
