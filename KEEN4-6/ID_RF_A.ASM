@@ -65,7 +65,7 @@ planenum	db	?
 
 CODESEG
 
-screenstartcs	dw	?		;in code segment for accesability
+screenstartcs	dw	?		;in code segment for accessibility
 
 
 
