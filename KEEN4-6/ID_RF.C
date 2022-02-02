@@ -82,7 +82,14 @@ updated
 #define G_TGASX_SHIFT	5	// global >> ?? = screen x
 #define G_SY_SHIFT		4	// global >> ?? = screen y
 
-unsigned	SX_T_SHIFT;		// screen x >> ?? = tile EGA = 1, CGA = 2, TGA = 3;
+#if GRMODE == EGAGR
+#define	SX_T_SHIFT		1	// screen x >> ?? = tile
+#elif GRMODE == CGAGR
+#define	SX_T_SHIFT		2
+#elif GRMODE == TGAGR
+#define	SX_T_SHIFT		3
+#endif
+
 #define	SY_T_SHIFT		4	// screen y >> ?? = tile
 
 
@@ -288,8 +295,6 @@ void RF_Startup (void)
 	eraselistptr[1] = &eraselist[1][0];
 
 #if GRMODE == EGAGR
-	SX_T_SHIFT = 1;
-
 	baseupdatestart[0] = &update[0][UPDATESPARESIZE];
 	baseupdatestart[1] = &update[1][UPDATESPARESIZE];
 
@@ -306,8 +311,6 @@ void RF_Startup (void)
 		for (x=0;x<UPDATEWIDE;x++)
 			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
 #elif GRMODE == CGAGR
-	SX_T_SHIFT = 2;
-
 	updateptr = baseupdateptr = &update[0][UPDATESPARESIZE];
 
 	bufferofs = 0;
@@ -318,8 +321,6 @@ void RF_Startup (void)
 		for (x=0;x<UPDATEWIDE;x++)
 			*blockstart++ = SCREENWIDTH*16*y+x*TILEWIDTH;
 #elif GRMODE == TGAGR
-	SX_T_SHIFT = 3;
-
 	updateptr = baseupdateptr = &update[0][UPDATESPARESIZE];
 
 	bufferofs = 0;
