@@ -1021,8 +1021,7 @@ asm	mov	si,[displayofs]
 asm	xor	di,di
 
 asm	mov	bx,SCREENTILESHIGH*16/4		// group of 4 scan lines to copy
-asm	mov	dx,[linewidth]
-asm	sub	dx,160
+asm	mov	dx,SCREENWIDTH-160
 
 asm	mov	ds,[screenseg]
 asm	test	si,1
@@ -1123,7 +1122,7 @@ asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
 asm	dec	dx
 asm	jnz	copybytes
 
-asm	add	si,10
+asm	add	si,SCREENWIDTH-160
 
 asm	dec	bx
 asm	jnz	copyline
@@ -1166,8 +1165,7 @@ asm	mov	si,[displayofs]
 asm	xor	di,di
 
 asm	mov	bx,(200-SCREENTILESHIGH*16)/4	// group of 4 scan lines to copy
-asm	mov	dx,[linewidth]
-asm	sub	dx,160
+asm	mov	dx,SCREENWIDTH-160
 
 asm	mov	ds,[screenseg]
 asm	test	si,1
@@ -1268,7 +1266,7 @@ asm	{lodsb; ror ax,cl; shr ah,cl; stosw}
 asm	dec	dx
 asm	jnz	copybytes
 
-asm	add	si,10
+asm	add	si,SCREENWIDTH-160
 
 asm	dec	bx
 asm	jnz	copyline
@@ -1313,8 +1311,7 @@ asm	mov	si,[displayofs]
 asm	xor	di,di
 
 asm	mov	bx,200/2			// pairs of scan lines to copy
-asm	mov	dx,[linewidth]
-asm	sub	dx,80
+asm	mov	dx,SCREENWIDTH-80
 
 asm	mov	ds,[screenseg]
 asm	test	si,1
