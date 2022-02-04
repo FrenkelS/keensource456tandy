@@ -75,12 +75,15 @@
 #define P_T_SHIFT			4		// pixels >> ?? = tile
 
 #if GRMODE == EGAGR || GRMODE == CGAGR
-#define	PORTTILESWIDE		21      // all drawing takes place inside a
-#define	PORTTILESHIGH		14		// non displayed port of this size
+#define	SCREENTILESWIDE		20
+#define	SCREENTILESHIGH		13
 #elif GRMODE == TGAGR
-#define	PORTTILESWIDE		21      // all drawing takes place inside a
-#define	PORTTILESHIGH		12		// non displayed port of this size
+#define	SCREENTILESWIDE		20
+#define	SCREENTILESHIGH		11
 #endif
+
+#define	PORTTILESWIDE	(SCREENTILESWIDE+1)	// all drawing takes place inside a
+#define	PORTTILESHIGH	(SCREENTILESHIGH+1)	// non displayed port of this size
 
 #define UPDATEWIDE			(PORTTILESWIDE+1)
 #define UPDATEHIGH			PORTTILESHIGH

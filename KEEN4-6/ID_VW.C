@@ -465,40 +465,40 @@ void VW_ClearVideoBottom (void)
 
 #ifndef MCGA
 
-asm	mov	ax,0xb800+(11*16)/4*160/0x10
+asm	mov	ax,0xb800+(SCREENTILESHIGH*16)/4*160/0x10
 asm	mov	es,ax
 
 asm	xor	di,di
 
 asm	xor	ax,ax
-asm	mov	bx,24/4				// pair of 4 scan lines to clear
-asm	mov	dx,80				// words accross screen
+asm	mov	bx,(200-SCREENTILESHIGH*16)/4	// group of 4 scan lines to clear
+asm	mov	dx,80							// words accross screen
 clearfourlines:
 asm	mov	cx,dx
 asm	rep	stosw
-asm	add	di,0x2000-160		// go to the second bank
+asm	add	di,0x2000-160					// go to the second bank
 asm	mov	cx,dx
 asm	rep	stosw
-asm	add	di,0x2000-160		// go to the third bank
+asm	add	di,0x2000-160					// go to the third bank
 asm	mov	cx,dx
 asm	rep	stosw
-asm	add	di,0x2000-160		// go to the fourth bank
+asm	add	di,0x2000-160					// go to the fourth bank
 asm	mov	cx,dx
 asm	rep	stosw
-asm	sub	di,0x6000			// go to the first bank
+asm	sub	di,0x6000						// go to the first bank
 
 asm	dec	bx
 asm	jnz	clearfourlines
 
 #else
 
-asm	mov	ax,0xa000+(11*16)*320/0x10
+asm	mov	ax,0xa000+(SCREENTILESHIGH*16)*320/0x10
 asm	mov	es,ax
 
 asm	xor	di,di
 
 asm	xor	ax,ax
-asm	mov	cx,24*320/2
+asm	mov	cx,(200-SCREENTILESHIGH*16)*320/2
 asm	rep	stosw
 
 #endif
@@ -1020,7 +1020,7 @@ asm	mov	es,ax
 asm	mov	si,[displayofs]
 asm	xor	di,di
 
-asm	mov	bx,11*16/4			// pair of 4 scan lines to copy
+asm	mov	bx,SCREENTILESHIGH*16/4		// group of 4 scan lines to copy
 asm	mov	dx,[linewidth]
 asm	sub	dx,160
 
@@ -1096,7 +1096,7 @@ asm	mov	es,ax
 asm	mov	si,[displayofs]
 asm	xor	di,di
 
-asm	mov	bx,11*16			// scan lines to copy
+asm	mov	bx,SCREENTILESHIGH*16	// scan lines to copy
 asm	mov	cl,4
 
 asm	mov	ds,[screenseg]
@@ -1155,17 +1155,17 @@ asm	rep	stosw
 
 void VW_TGABottomUpdate (void)
 {
-	displayofs = bufferofs+panadjust+(11*16)*SCREENWIDTH;
+	displayofs = bufferofs+panadjust+(SCREENTILESHIGH*16)*SCREENWIDTH;
 
 #ifndef MCGA
 
-asm	mov	ax,0xb800+(11*16)/4*160/0x10
+asm	mov	ax,0xb800+(SCREENTILESHIGH*16)/4*160/0x10
 asm	mov	es,ax
 
 asm	mov	si,[displayofs]
 asm	xor	di,di
 
-asm	mov	bx,24/4				// pair of 4 scan lines to copy
+asm	mov	bx,(200-SCREENTILESHIGH*16)/4	// group of 4 scan lines to copy
 asm	mov	dx,[linewidth]
 asm	sub	dx,160
 
@@ -1235,13 +1235,13 @@ asm	jnz	copyfourlines
 
 #else
 
-asm	mov	ax,0xa000+(11*16)*320/0x10
+asm	mov	ax,0xa000+(SCREENTILESHIGH*16)*320/0x10
 asm	mov	es,ax
 
 asm	mov	si,[displayofs]
 asm	xor	di,di
 
-asm	mov	bx,24			// scan lines to copy
+asm	mov	bx,200-SCREENTILESHIGH*16	// scan lines to copy
 asm	mov	cl,4
 
 asm	mov	ds,[screenseg]
@@ -1312,7 +1312,7 @@ asm	mov	es,ax
 asm	mov	si,[displayofs]
 asm	xor	di,di
 
-asm	mov	bx,100				// pairs of scan lines to copy
+asm	mov	bx,200/2			// pairs of scan lines to copy
 asm	mov	dx,[linewidth]
 asm	sub	dx,80
 

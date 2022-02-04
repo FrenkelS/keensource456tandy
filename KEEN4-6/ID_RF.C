@@ -51,16 +51,6 @@ updated
 =============================================================================
 */
 
-#if GRMODE == EGAGR || GRMODE == CGAGR
-#define	SCREENTILESWIDE	20
-#define	SCREENTILESHIGH	13
-#endif
-
-#if GRMODE == TGAGR
-#define	SCREENTILESWIDE	20
-#define	SCREENTILESHIGH	11
-#endif
-
 #if GRMODE == EGAGR
 #define	SCREENSPACE		(SCREENWIDTH*240)
 #define FREEEGAMEM		(0x10000l-3l*SCREENSPACE)
