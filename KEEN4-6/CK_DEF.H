@@ -393,7 +393,7 @@ void HandleDeath(void);
 =============================================================================
 */
 
-extern boolean singlestep, jumpcheat, godmode, keenkilled;
+extern boolean jumpcheat, godmode, keenkilled;
 extern exittype playstate;
 extern gametype gamestate;
 extern objtype *new, *player, *scoreobj;

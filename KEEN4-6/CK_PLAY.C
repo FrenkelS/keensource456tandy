@@ -36,7 +36,7 @@
 
 ScanCode firescan = sc_Space;
 
-boolean singlestep, jumpcheat, godmode, keenkilled;
+boolean jumpcheat, godmode, keenkilled;
 
 exittype playstate;
 gametype gamestate;
@@ -92,6 +92,8 @@ Uint16 windowofs;
 Sint16 vislines;
 boolean scrollup;
 #endif
+
+boolean singlestep;
 
 Sint16 oldfirecount;
 
