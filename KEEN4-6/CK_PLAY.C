@@ -48,8 +48,6 @@ Uint16 originytilemax;
 
 ControlInfo c;
 
-objtype dummyobj;
-
 Sint16 invincible;
 
 boolean oldshooting, showscorebox;
@@ -96,6 +94,8 @@ boolean scrollup;
 boolean singlestep;
 
 Sint16 oldfirecount;
+
+objtype dummyobj;
 
 //===========================================================================
 

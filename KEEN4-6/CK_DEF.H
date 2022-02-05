@@ -399,7 +399,6 @@ extern gametype gamestate;
 extern objtype *new, *player, *scoreobj;
 extern Uint16 originxtilemax, originytilemax;
 extern ControlInfo c;
-extern objtype dummyobj;
 extern Sint16 invincible;
 extern boolean oldshooting, showscorebox;
 extern Sint16 groundslam;
