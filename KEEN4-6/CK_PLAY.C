@@ -74,7 +74,6 @@ objtype *obj;
 
 Uint16 centerlevel;
 
-Uint16 objectcount;
 objtype objarray[MAXACTORS];
 objtype *lastobj;
 objtype *objfreelist;
@@ -1803,8 +1802,6 @@ void InitObjArray(void)
 	objfreelist = &objarray[0];
 	lastobj = NULL;
 
-	objectcount = 0;
-
 //
 // give the player and score the first free spots
 //
@@ -1853,8 +1850,6 @@ void GetNewObj(boolean usedummy)
 	new->active = ac_yes;
 	new->needtoclip = cl_midclip;
 	lastobj = new;
-
-	objectcount++;
 }
 
 //===========================================================================
