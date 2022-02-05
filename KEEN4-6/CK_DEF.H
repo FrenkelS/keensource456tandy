@@ -401,7 +401,6 @@ extern Uint16 originxtilemax, originytilemax;
 extern ControlInfo c;
 extern Sint16 invincible;
 extern boolean oldshooting, showscorebox;
-extern Sint16 groundslam;
 extern boolean debugok;
 extern boolean jumpbutton, jumpheld, pogobutton, pogoheld, firebutton, fireheld, upheld;
 

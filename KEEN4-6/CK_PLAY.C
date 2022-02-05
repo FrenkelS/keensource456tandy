@@ -52,7 +52,9 @@ Sint16 invincible;
 
 boolean oldshooting, showscorebox;
 
+#ifdef KEEN6
 Sint16 groundslam;
+#endif
 
 boolean debugok;
 boolean jumpbutton, jumpheld, pogobutton, pogoheld, firebutton, fireheld, upheld;
