@@ -70,8 +70,6 @@ boolean jumpbutton, jumpheld, pogobutton, pogoheld, firebutton, fireheld, upheld
 
 #define MAXACTORS 100
 
-objtype *obj;
-
 Uint16 centerlevel;
 
 objtype objarray[MAXACTORS];
@@ -89,9 +87,11 @@ Uint16 __dummy__;	// never used, but must be present to recreate the original EX
 
 Uint16 extravbls;
 
+#if GRMODE == EGAGR
 Uint16 windowofs;
 Sint16 vislines;
 boolean scrollup;
+#endif
 
 Sint16 oldfirecount;
 
@@ -2203,6 +2203,7 @@ void StartMusic(Uint16 num)
 
 void PlayLoop(void)
 {
+	objtype *obj;
 	objtype *check;
 
 	StartMusic(gamestate.mapon);
