@@ -40,32 +40,11 @@
 =============================================================================
 */
 
-#define	MINTICS				2
-#define	MAXTICS				5
-#define DEMOTICS			3
-
-#define	MAPBORDER			2		// map border must be at least 1
-
 #ifdef KEEN5
-
-#define	MAXSPRITES			60		// max tracked sprites
-#define	MAXANIMTILES		90		// max animating tiles on screen
-#define MAXANIMTYPES		80		// max different unique anim tiles on map
-
 #define	MAXMAPHEIGHT		250
-
 #else
-
-#define	MAXSPRITES			60		// max tracked sprites
-#define	MAXANIMTILES		90		// max animating tiles on screen
-#define MAXANIMTYPES		65		// max different unique anim tiles on map
-
 #define	MAXMAPHEIGHT		200
-
 #endif
-
-#define	PRIORITIES			4
-#define	MASKEDTILEPRIORITY	3		// planes go: 0,1,2,MTILES,3
 
 #define TILEGLOBAL			256
 #define PIXGLOBAL			16

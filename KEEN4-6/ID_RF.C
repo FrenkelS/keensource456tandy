@@ -51,6 +51,24 @@ updated
 =============================================================================
 */
 
+#define	MINTICS				2
+#define	MAXTICS				5
+#define DEMOTICS			3
+
+#define	MAPBORDER			2		// map border must be at least 1
+
+#define	MAXSPRITES			60		// max tracked sprites
+#define	MAXANIMTILES		90		// max animating tiles on screen
+
+#ifdef KEEN5
+#define MAXANIMTYPES		80		// max different unique anim tiles on map
+#else
+#define MAXANIMTYPES		65		// max different unique anim tiles on map
+#endif
+
+#define	PRIORITIES			4
+#define	MASKEDTILEPRIORITY	3		// planes go: 0,1,2,MTILES,3
+
 #if GRMODE == EGAGR
 #define	SCREENSPACE		(SCREENWIDTH*240)
 #define FREEEGAMEM		(0x10000l-3l*SCREENSPACE)
