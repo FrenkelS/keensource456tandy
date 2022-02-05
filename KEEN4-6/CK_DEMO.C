@@ -107,6 +107,9 @@ static Sint16 prevbottom[2];
 Uint16 pageofs;
 Uint16 byteadjust;
 
+#define SetPalette(pal) {_ES=FP_SEG(pal); _DX=FP_OFF(pal); _AX=0x1002; geninterrupt(0x10);}
+#define SetPaletteEx(pal) {(pal)[16] = bordercolor; SetPalette(pal);}
+
 #endif	// if GRMODE == EGAGR
 
 //===========================================================================

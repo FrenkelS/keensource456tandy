@@ -46,15 +46,8 @@
 #define CONVERT_TILE_TO_GLOBAL(x)  ((x)<<(G_T_SHIFT))
 #define CONVERT_GLOBAL_TO_PIXEL(x) ((x)>>(G_P_SHIFT))
 #define CONVERT_PIXEL_TO_GLOBAL(x) ((x)<<(G_P_SHIFT))
-#define CONVERT_PIXEL_TO_TILE(x)   ((x)>>(P_T_SHIFT))
-#define CONVERT_TILE_TO_PIXEL(x)   ((x)<<(P_T_SHIFT))
-
-#define SPAWN_ADJUST_Y(y, h) (CONVERT_TILE_TO_GLOBAL(y) + (CONVERT_PIXEL_TO_GLOBAL(16-(h))))
 
 #define ARRAYLENGTH(x) (sizeof(x)/sizeof(*(x)))
-
-#define SetPalette(pal) {_ES=FP_SEG(pal); _DX=FP_OFF(pal); _AX=0x1002; geninterrupt(0x10);}
-#define SetPaletteEx(pal) {(pal)[16] = bordercolor; SetPalette(pal);}
 
 #define PLATFORMBLOCK 31
 #define DIRARROWSTART 91

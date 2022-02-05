@@ -72,7 +72,6 @@
 
 #define	G_T_SHIFT			8		// global >> ?? = tile
 #define	G_P_SHIFT			4		// global >> ?? = pixels
-#define P_T_SHIFT			4		// pixels >> ?? = tile
 
 #if GRMODE == EGAGR || GRMODE == CGAGR
 #define	SCREENTILESWIDE		20
