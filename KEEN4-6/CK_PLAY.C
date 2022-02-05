@@ -68,6 +68,8 @@ boolean jumpbutton, jumpheld, pogobutton, pogoheld, firebutton, fireheld, upheld
 =============================================================================
 */
 
+#define MAXACTORS 100
+
 objtype *obj;
 
 Uint16 centerlevel;

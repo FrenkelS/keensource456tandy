@@ -40,8 +40,6 @@
 =============================================================================
 */
 
-#define MAXACTORS 100
-
 #define GAMELEVELS 25
 
 #define CONVERT_GLOBAL_TO_TILE(x)  ((x)>>(G_T_SHIFT))
