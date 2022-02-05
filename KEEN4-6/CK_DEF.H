@@ -396,7 +396,7 @@ void HandleDeath(void);
 extern boolean singlestep, jumpcheat, godmode, keenkilled;
 extern exittype playstate;
 extern gametype gamestate;
-extern objtype *new, *check, *player, *scoreobj;
+extern objtype *new, *player, *scoreobj;
 extern Uint16 originxtilemax, originytilemax;
 extern ControlInfo c;
 extern objtype dummyobj;

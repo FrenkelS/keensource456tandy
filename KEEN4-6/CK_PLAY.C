@@ -41,7 +41,7 @@ boolean singlestep, jumpcheat, godmode, keenkilled;
 exittype playstate;
 gametype gamestate;
 
-objtype *new, *check, *player, *scoreobj;
+objtype *new, *player, *scoreobj;
 
 Uint16 originxtilemax;
 Uint16 originytilemax;
