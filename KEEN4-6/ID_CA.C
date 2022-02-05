@@ -312,78 +312,6 @@ asm	mov	ds,ax
 }
 
 
-/*
-======================
-=
-= CAL_CarmackExpand
-=
-= Length is the length of the EXPANDED data
-=
-======================
-*/
-
-#define NEARTAG	0xa7
-#define FARTAG	0xa8
-
-void CAL_CarmackExpand (unsigned far *source, unsigned far *dest, unsigned length)
-{
-	unsigned	ch,chhigh,count,offset;
-	unsigned	far *copyptr, far *inptr, far *outptr;
-
-	length/=2;
-
-	inptr = source;
-	outptr = dest;
-
-	while (length)
-	{
-		ch = *inptr++;
-		chhigh = ch>>8;
-		if (chhigh == NEARTAG)
-		{
-			count = ch&0xff;
-			if (!count)
-			{				// have to insert a word containing the tag byte
-				ch |= *((unsigned char far *)inptr)++;
-				*outptr++ = ch;
-				length--;
-			}
-			else
-			{
-				offset = *((unsigned char far *)inptr)++;
-				copyptr = outptr - offset;
-				length -= count;
-				while (count--)
-					*outptr++ = *copyptr++;
-			}
-		}
-		else if (chhigh == FARTAG)
-		{
-			count = ch&0xff;
-			if (!count)
-			{				// have to insert a word containing the tag byte
-				ch |= *((unsigned char far *)inptr)++;
-				*outptr++ = ch;
-				length --;
-			}
-			else
-			{
-				offset = *inptr++;
-				copyptr = dest + offset;
-				length -= count;
-				while (count--)
-					*outptr++ = *copyptr++;
-			}
-		}
-		else
-		{
-			*outptr++ = ch;
-			length --;
-		}
-	}
-}
-
-
 
 /*
 ======================
@@ -1318,10 +1246,6 @@ void CA_CacheMap (int mapnum)
 	memptr	*dest,bigbufferseg;
 	unsigned	size;
 	unsigned	far	*source;
-#ifdef MAPHEADERLINKED
-	memptr	buffer2seg;
-	long	expanded;
-#endif
 
 
 //
@@ -1383,28 +1307,12 @@ void CA_CacheMap (int mapnum)
 		}
 
 		CA_FarRead(maphandle,(byte far *)source,compressed);
-#ifdef MAPHEADERLINKED
-		//
-		// unhuffman, then unRLEW
-		// The huffman'd chunk has a two byte expanded length first
-		// The resulting RLEW chunk also does, even though it's not really
-		// needed
-		//
-		expanded = *source;
-		source++;
-		MM_GetPtr (&buffer2seg,expanded);
-		CAL_CarmackExpand (source, (unsigned far *)buffer2seg,expanded);
-		CA_RLEWexpand (((unsigned far *)buffer2seg)+1,*dest,size,
-		((mapfiletype _seg *)tinf)->RLEWtag);
-		MM_FreePtr (&buffer2seg);
 
-#else
 		//
 		// unRLEW, skipping expanded length
 		//
 		CA_RLEWexpand (source+1, *dest,size,
 		((mapfiletype _seg *)tinf)->RLEWtag);
-#endif
 
 		if (compressed>BUFFERSIZE)
 			MM_FreePtr(&bigbufferseg);
