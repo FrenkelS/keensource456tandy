@@ -1,6 +1,8 @@
 # Commander Keen 4 Tandy 320x200 16 color source code port
 This is a Tandy 320x200 16 color version of Commander Keen 4.
 
+If the graphics are corrupted, you probably need to run `ADJMEM -16` before running this game.
+
 If you can create executables that are byte for byte 100% identical
 to the Keen 4 v1.4 EGA and CGA executables with K1n9_Duk3's reconstructed Commander Keen 4-6 source code, you can probably also compile this code.
 
