@@ -1241,11 +1241,9 @@ void CA_CacheGrChunk (int chunk)
 
 void CA_CacheMap (int mapnum)
 {
-	long	pos,compressed;
+	long	pos;
 	int		plane;
-	memptr	*dest,bigbufferseg;
 	unsigned	size;
-	unsigned	far	*source;
 
 
 //
@@ -1287,35 +1285,10 @@ void CA_CacheMap (int mapnum)
 
 	for (plane = 0; plane<MAPPLANES; plane++)
 	{
-		pos = mapheaderseg[mapnum]->planestart[plane];
-		compressed = mapheaderseg[mapnum]->planelength[plane];
-
-		if (!compressed)
-			continue;		// the plane is not used in this game
-
-		dest = &(memptr)mapsegs[plane];
-		MM_GetPtr(dest,size);
-
-		lseek(maphandle,pos,SEEK_SET);
-		if (compressed<=BUFFERSIZE)
-			source = bufferseg;
-		else
-		{
-			MM_GetPtr(&bigbufferseg,compressed);
-			MM_SetLock (&bigbufferseg,true);
-			source = bigbufferseg;
-		}
-
-		CA_FarRead(maphandle,(byte far *)source,compressed);
-
-		//
-		// unRLEW, skipping expanded length
-		//
-		CA_RLEWexpand (source+1, *dest,size,
-		((mapfiletype _seg *)tinf)->RLEWtag);
-
-		if (compressed>BUFFERSIZE)
-			MM_FreePtr(&bigbufferseg);
+		MM_GetPtr(&(memptr)mapsegs[plane],size);
+		lseek(maphandle,mapheaderseg[mapnum]->planestart[plane],SEEK_SET);
+		CA_FarRead(maphandle,(byte far *)bufferseg,mapheaderseg[mapnum]->planelength[plane]);
+		CAL_Zx0Expand(bufferseg, (memptr)mapsegs[plane]);
 	}
 }
 
