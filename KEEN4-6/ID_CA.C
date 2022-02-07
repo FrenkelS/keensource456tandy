@@ -1408,7 +1408,7 @@ void CA_SetAllPurge (void)
 		if (mapheaderseg[i])
 			MM_SetPurge (&(memptr)mapheaderseg[i],true);
 
-	for (i=0;i<3;i++)
+	for (i=0;i<MAPPLANES;i++)
 		if (mapsegs[i])
 			MM_FreePtr (&(memptr)mapsegs[i]);
 
