@@ -134,22 +134,22 @@ boolean		mmerror;
 =============================================================================
 */
 
-boolean		mmstarted;
+static boolean		mmstarted;
 
-void far	*farheap;
-void		*nearheap;
+static void far	*farheap;
+static void		*nearheap;
 
-mmblocktype	far mmblocks[MAXBLOCKS];
-byte		mmattributes[MAXBLOCKS];
-int 		mmfree, mmrover;
+static mmblocktype	far mmblocks[MAXBLOCKS];
+static byte			mmattributes[MAXBLOCKS];
+static int 			mmfree, mmrover;
 
-boolean		bombonerror;
+static boolean		bombonerror;
 
-unsigned	totalEMSpages,freeEMSpages,EMSpageframe,EMSpagesmapped,EMShandle;
+static unsigned	totalEMSpages,freeEMSpages,EMSpageframe,EMSpagesmapped,EMShandle;
 
-void		(* XMSaddr) (void);		// far pointer to XMS driver
+static void		(* XMSaddr) (void);		// far pointer to XMS driver
 
-unsigned	numUMBs,UMBbase[MAXUMBS];
+static unsigned	numUMBs,UMBbase[MAXUMBS];
 
 //==========================================================================
 
@@ -157,12 +157,12 @@ unsigned	numUMBs,UMBbase[MAXUMBS];
 // local prototypes
 //
 
-boolean		MML_CheckForEMS (void);
-void 		MML_ShutdownEMS (void);
-void 		MML_MapEMS (void);
-boolean 	MML_CheckForXMS (void);
-void 		MML_ShutdownXMS (void);
-void		MML_SortMem (void);
+static boolean	MML_CheckForEMS (void);
+static void 	MML_ShutdownEMS (void);
+static void 	MML_MapEMS (void);
+static boolean 	MML_CheckForXMS (void);
+static void 	MML_ShutdownXMS (void);
+static void		MML_SortMem (void);
 
 //==========================================================================
 
@@ -176,9 +176,9 @@ void		MML_SortMem (void);
 =======================
 */
 
-char	emmname[9] = "EMMXXXX0";
+static char	emmname[9] = "EMMXXXX0";
 
-boolean MML_CheckForEMS (void)
+static boolean MML_CheckForEMS (void)
 {
 asm	mov	dx,OFFSET emmname[0]
 asm	mov	ax,0x3d00
@@ -226,7 +226,7 @@ error:
 =======================
 */
 
-void MML_SetupEMS (void)
+static void MML_SetupEMS (void)
 {
 	char	str[80],str2[10];
 	unsigned	error;
@@ -297,7 +297,7 @@ noEMS:
 =======================
 */
 
-void MML_ShutdownEMS (void)
+static void MML_ShutdownEMS (void)
 {
 	if (!EMShandle)
 		return;
@@ -328,7 +328,7 @@ ok:
 ====================
 */
 
-void MML_MapEMS (void)
+static void MML_MapEMS (void)
 {
 	char	str[80],str2[10];
 	unsigned	error;
@@ -369,7 +369,7 @@ error:
 =======================
 */
 
-boolean MML_CheckForXMS (void)
+static boolean MML_CheckForXMS (void)
 {
 	numUMBs = 0;
 
@@ -395,7 +395,7 @@ good:
 =======================
 */
 
-void MML_SetupXMS (void)
+static void MML_SetupXMS (void)
 {
 	unsigned	base,size;
 
@@ -448,7 +448,7 @@ done:
 ======================
 */
 
-void MML_ShutdownXMS (void)
+static void MML_ShutdownXMS (void)
 {
 	int	i;
 	unsigned	base;
@@ -818,7 +818,7 @@ void MM_FreePtr (memptr *baseptr)
 }
 //==========================================================================
 
-void MML_SetRover(memptr *baseptr)
+static void MML_SetRover(memptr *baseptr)
 {
 	int start;
 
@@ -887,7 +887,7 @@ void MM_SetLock (memptr *baseptr, boolean locked)
 =====================
 */
 
-void MML_SortMem (void)
+static void MML_SortMem (void)
 {
 	int			scan, last, next;
 	unsigned	start,length,source,dest,oldborder;
