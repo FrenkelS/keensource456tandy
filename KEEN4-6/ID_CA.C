@@ -122,7 +122,7 @@ memptr		bufferseg;
 #ifdef THREEBYTEGRSTARTS
 #define FILEPOSSIZE	3
 //#define	GRFILEPOS(c) (*(long far *)(((byte far *)grstarts)+(c)*3)&0xffffff)
-long GRFILEPOS(int c)
+static long GRFILEPOS(int c)
 {
 	long value;
 	int	offset;
@@ -187,7 +187,7 @@ void CA_CloseDebug (void)
 ============================
 */
 
-long CAL_GetGrChunkLength (int chunk)
+static long CAL_GetGrChunkLength (int chunk)
 {
 	lseek(grhandle,GRFILEPOS(chunk)+4,SEEK_SET); // skip chunkexplen
 	return GRFILEPOS(chunk+1)-GRFILEPOS(chunk)-4;
@@ -285,7 +285,7 @@ done:
 ======================
 */
 
-void CAL_Zx0Expand (byte huge *source, byte huge *dest)
+static void CAL_Zx0Expand (byte huge *source, byte huge *dest)
 {
   unsigned sourceseg,sourceoff,destseg,destoff;
 
@@ -500,7 +500,7 @@ asm	mov	ds,ax
 ======================
 */
 
-void CAL_SetupGrFile (void)
+static void CAL_SetupGrFile (void)
 {
 	int handle;
 	memptr compseg;
@@ -587,7 +587,7 @@ void CAL_SetupGrFile (void)
 ======================
 */
 
-void CAL_SetupMapFile (void)
+static void CAL_SetupMapFile (void)
 {
 	int handle;
 	long length;
@@ -634,7 +634,7 @@ void CAL_SetupMapFile (void)
 ======================
 */
 
-void CAL_SetupAudioFile (void)
+static void CAL_SetupAudioFile (void)
 {
 	int handle;
 	long length;
@@ -972,7 +972,7 @@ asm	mov	ds,ax
 ======================
 */
 
-void CAL_CacheSprite (int chunk, byte far *compressed)
+static void CAL_CacheSprite (int chunk, byte far *compressed)
 {
 	int i;
 	unsigned shiftstarts[5];
@@ -1104,7 +1104,7 @@ void CAL_CacheSprite (int chunk, byte far *compressed)
 ======================
 */
 
-void CAL_ExpandGrChunk (int chunk, byte far *source)
+static void CAL_ExpandGrChunk (int chunk, byte far *source)
 {
 	long	expanded;
 
