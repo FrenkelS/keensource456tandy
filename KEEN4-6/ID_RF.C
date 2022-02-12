@@ -217,32 +217,32 @@ byte		*updateptr,*baseupdateptr,						// current start of update window
 static		char	scratch[20],str[80];
 #endif
 
-tiletype	allanims[MAXANIMTYPES];
-unsigned	numanimchains;
+static tiletype	allanims[MAXANIMTYPES];
+static unsigned	numanimchains;
 
-void 		(*refreshvector) (void);
+static void 		(*refreshvector) (void);
 
 #if GRMODE == EGAGR
-unsigned	screenstart[3] =
+static unsigned	screenstart[3] =
 	{0,SCREENSPACE,SCREENSPACE*2};
 
 #define		XPANMASK	6		// prevent panning to odd pixels
 
-unsigned	screenpage;			// screen currently being displayed
-unsigned	otherpage;
+static unsigned	screenpage;			// screen currently being displayed
+static unsigned	otherpage;
 #endif
 
-unsigned	panx;				// panning adjustments inside port in pixels
+static unsigned	panx;				// panning adjustments inside port in pixels
 
-spritelisttype	spritearray[MAXSPRITES],*prioritystart[PRIORITIES],
+static spritelisttype	spritearray[MAXSPRITES],*prioritystart[PRIORITIES],
 				*spritefreeptr;
 
-animtiletype	animarray[MAXANIMTILES],*animhead,*animfreeptr;
+static animtiletype	animarray[MAXANIMTILES],*animhead,*animfreeptr;
 
-eraseblocktype	eraselist[2][MAXSPRITES],*eraselistptr[2];
+static eraseblocktype	eraselist[2][MAXSPRITES],*eraselistptr[2];
 
-int		hscrollblocks,vscrollblocks;
-int		hscrolledge[MAXSCROLLEDGES],vscrolledge[MAXSCROLLEDGES];
+static int		hscrollblocks,vscrollblocks;
+static int		hscrolledge[MAXSCROLLEDGES],vscrolledge[MAXSCROLLEDGES];
 
 /*
 =============================================================================
@@ -252,21 +252,21 @@ int		hscrolledge[MAXSCROLLEDGES],vscrolledge[MAXSCROLLEDGES];
 =============================================================================
 */
 
-void RFL_InitAnimList (void);
+static void RFL_InitAnimList (void);
 void RFL_NewTile (unsigned updateoffset);
 void RFL_MaskForegroundTiles (void);
 void RFL_UpdateTiles (void);
 
-void RFL_BoundScroll (int x, int y);
-void RFL_CalcOriginStuff (long x, long y);
-void RFL_InitSpriteList (void);
-void RFL_CheckForAnimTile (unsigned x, unsigned y);
-void RFL_AnimateTiles (void);
-void RFL_RemoveAnimsOnX (unsigned x);
-void RFL_RemoveAnimsOnY (unsigned y);
-void RFL_EraseBlocks (void);
-void RFL_CalcTics (void);
-void RFL_UpdateSprites (void);
+static void RFL_BoundScroll (int x, int y);
+static void RFL_CalcOriginStuff (long x, long y);
+static void RFL_InitSpriteList (void);
+static void RFL_CheckForAnimTile (unsigned x, unsigned y);
+static void RFL_AnimateTiles (void);
+static void RFL_RemoveAnimsOnX (unsigned x);
+static void RFL_RemoveAnimsOnY (unsigned y);
+static void RFL_EraseBlocks (void);
+static void RFL_CalcTics (void);
+static void RFL_UpdateSprites (void);
 
 
 /*
@@ -460,12 +460,12 @@ typedef struct {
 	int sounds[NUMSOUNDTILES];
 } tilesoundtype;
 
-tilesoundtype far soundtiles = {
+static tilesoundtype far soundtiles = {
 	{2152|0x8000, 2208|0x8000},
 	{SND_STOMP,   SND_FLAME}
 };
 
-void RFL_CheckTileSound(tiletype *anim, unsigned tile)
+static void RFL_CheckTileSound(tiletype *anim, unsigned tile)
 {
 	int i;
 
@@ -680,7 +680,7 @@ nextfront:
 =========================
 */
 
-void RFL_InitAnimList (void)
+static void RFL_InitAnimList (void)
 {
 	int	i;
 
@@ -712,7 +712,7 @@ void RFL_InitAnimList (void)
 ====================
 */
 
-void RFL_CheckForAnimTile (unsigned x, unsigned y)
+static void RFL_CheckForAnimTile (unsigned x, unsigned y)
 {
 	unsigned 	tile,offset;
 	unsigned	far *map;
@@ -790,7 +790,7 @@ void RFL_CheckForAnimTile (unsigned x, unsigned y)
 ====================
 */
 
-void RFL_RemoveAnimsOnX (unsigned x)
+static void RFL_RemoveAnimsOnX (unsigned x)
 {
 	animtiletype *current,*next;
 
@@ -824,7 +824,7 @@ void RFL_RemoveAnimsOnX (unsigned x)
 ====================
 */
 
-void RFL_RemoveAnimsOnY (unsigned y)
+static void RFL_RemoveAnimsOnY (unsigned y)
 {
 	animtiletype *current,*next;
 
@@ -858,7 +858,7 @@ void RFL_RemoveAnimsOnY (unsigned y)
 ====================
 */
 
-void RFL_RemoveAnimsInBlock (unsigned x, unsigned y, unsigned width, unsigned height)
+static void RFL_RemoveAnimsInBlock (unsigned x, unsigned y, unsigned width, unsigned height)
 {
 	animtiletype *current,*next;
 
@@ -892,7 +892,7 @@ void RFL_RemoveAnimsInBlock (unsigned x, unsigned y, unsigned width, unsigned he
 ====================
 */
 
-void RFL_AnimateTiles (void)
+static void RFL_AnimateTiles (void)
 {
 	animtiletype *current;
 	unsigned	updateofs,tile,x,y;
@@ -978,7 +978,7 @@ void RFL_AnimateTiles (void)
 =========================
 */
 
-void RFL_InitSpriteList (void)
+static void RFL_InitSpriteList (void)
 {
 	int	i;
 
@@ -1006,7 +1006,7 @@ void RFL_InitSpriteList (void)
 =================
 */
 
-void RFL_CalcOriginStuff (long x, long y)
+static void RFL_CalcOriginStuff (long x, long y)
 {
 	originxglobal = x;
 	originyglobal = y;
@@ -1072,7 +1072,7 @@ void RF_SetScrollBlockVertical (int x)
 =================
 */
 
-void RFL_BoundScroll (int x, int y)
+static void RFL_BoundScroll (int x, int y)
 {
 	int	check,newxtile,newytile;
 
@@ -1156,7 +1156,7 @@ void RF_SetRefreshHook (void (*func) (void) )
 =================
 */
 
-void	RFL_NewRowTop (void)
+static void	RFL_NewRowTop (void)
 {
 	unsigned count,updatespot;
 	int		x;
@@ -1174,7 +1174,7 @@ void	RFL_NewRowTop (void)
 	}
 }
 
-void	RFL_NewRowBottom (void)
+static void	RFL_NewRowBottom (void)
 {
 	unsigned count,updatespot;
 	int		x,y;
@@ -1193,7 +1193,7 @@ void	RFL_NewRowBottom (void)
 	}
 }
 
-void	RFL_NewRowRight (void)
+static void	RFL_NewRowRight (void)
 {
 	unsigned count,updatespot;
 	int		x,y;
@@ -1212,7 +1212,7 @@ void	RFL_NewRowRight (void)
 	}
 }
 
-void	RFL_NewRowLeft (void)
+static void	RFL_NewRowLeft (void)
 {
 	unsigned count,updatespot;
 	int		y;
@@ -1397,7 +1397,7 @@ void RF_MemToMap (unsigned far *source, unsigned plane,
 =====================
 */
 
-void RFL_BoundNewOrigin (unsigned orgx,unsigned orgy)
+static void RFL_BoundNewOrigin (unsigned orgx,unsigned orgy)
 {
 	int	check,edge;
 
@@ -1462,7 +1462,7 @@ void RFL_BoundNewOrigin (unsigned orgx,unsigned orgy)
 =====================
 */
 
-void RFL_CalcTics (void)
+static void RFL_CalcTics (void)
 {
 	long	newtime,oldtimecount;
 
@@ -1556,7 +1556,7 @@ unsigned RF_FindFreeBuffer (void)
 ====================
 */
 
-void RFL_UpdateSprites (void)
+static void RFL_UpdateSprites (void)
 {
 	spritelisttype	*sprite;
 	int	portx,porty,x,y,xtl,xth,ytl,yth;
@@ -2100,7 +2100,7 @@ void RF_RemoveSprite (void **user)
 ====================
 */
 
-void RFL_EraseBlocks (void)
+static void RFL_EraseBlocks (void)
 {
 	eraseblocktype	*block,*done;
 	int			screenxh,screenyh;
@@ -2627,7 +2627,7 @@ void RF_RemoveSprite (void **user)
 ====================
 */
 
-void RFL_EraseBlocks (void)
+static void RFL_EraseBlocks (void)
 {
 	eraseblocktype	*block,*done;
 	int			screenxh,screenyh;
