@@ -322,7 +322,7 @@ asm	popf
 //	alOut(n,b) - Puts b in AdLib card register n
 //
 ///////////////////////////////////////////////////////////////////////////
-void
+static void
 alOut(byte n,byte b)
 {
 asm	pushf
