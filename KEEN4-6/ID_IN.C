@@ -154,7 +154,7 @@ static	Direction	DirTable[] =		// Quick lookup for total direction
 						dir_SouthWest,	dir_South,	dir_SouthEast
 					};
 
-void	INL_SetControlType(int,ControlType);
+static	void	INL_SetControlType(int,ControlType);
 
 static	void interrupt	(*OldKeyVect)(void);
 
@@ -907,7 +907,7 @@ register	KeyboardDef	*def;
 //		player
 //
 ///////////////////////////////////////////////////////////////////////////
-void
+static void
 INL_SetControlType(int player,ControlType type)
 {
 	// DEBUG - check that requested type is present?
@@ -1031,7 +1031,7 @@ IN_WaitForASCII(void)
 //	INL_AckBack() - Waits for either an ASCII keypress or a button press
 //
 ///////////////////////////////////////////////////////////////////////////
-void
+static void
 INL_AckBack(void)
 {
 	word	i;
