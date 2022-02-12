@@ -90,11 +90,10 @@ void	VWL_ScreenToMem(unsigned source,memptr dest,unsigned width,unsigned height)
 void	VWL_DrawPropString (char far *string);
 void	VWL_UpdateScreenBlocks (void);
 
-int			bordercolor;
-int			cursorvisible;
-int			cursornumber,cursorwidth,cursorheight,cursorx,cursory;
-memptr		cursorsave;
-unsigned	cursorspot;
+static	int			cursorvisible;
+static	int			cursornumber,cursorwidth,cursorheight,cursorx,cursory;
+static	memptr		cursorsave;
+static	unsigned	cursorspot;
 
 //===========================================================================
 
@@ -213,7 +212,7 @@ char colors[4][17]=
  {0,0,0,0,0,0,0,0,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0},
  {0,1,2,3,4,5,6,7,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0}};
 #else
-char palette[3*16]=
+static char palette[3*16]=
 {0x00, 0x00, 0x00,
  0x00, 0x00, 0x2a,
  0x00, 0x2a, 0x00,
@@ -587,8 +586,8 @@ void VW_ClipDrawMPic(unsigned x, int y, unsigned chunknum)
 
 #if GRMODE == EGAGR
 
-unsigned char leftmask[8] = {0xff,0x7f,0x3f,0x1f,0xf,7,3,1};
-unsigned char rightmask[8] = {0x80,0xc0,0xe0,0xf0,0xf8,0xfc,0xfe,0xff};
+static unsigned char leftmask[8] = {0xff,0x7f,0x3f,0x1f,0xf,7,3,1};
+static unsigned char rightmask[8] = {0x80,0xc0,0xe0,0xf0,0xf8,0xfc,0xfe,0xff};
 
 void VW_Hlin(unsigned xl, unsigned xh, unsigned y, unsigned color)
 {
@@ -672,10 +671,10 @@ done:
 
 #if GRMODE == CGAGR
 
-unsigned char pixmask[4] = {0xc0,0x30,0x0c,0x03};
-unsigned char leftmask[4] = {0xff,0x3f,0x0f,0x03};
-unsigned char rightmask[4] = {0xc0,0xf0,0xfc,0xff};
-unsigned char colorbyte[4] = {0,0x55,0xaa,0xff};
+static unsigned char pixmask[4] = {0xc0,0x30,0x0c,0x03};
+static unsigned char leftmask[4] = {0xff,0x3f,0x0f,0x03};
+static unsigned char rightmask[4] = {0xc0,0xf0,0xfc,0xff};
+static unsigned char colorbyte[4] = {0,0x55,0xaa,0xff};
 
 //
 // could be optimized for rep stosw
@@ -757,9 +756,9 @@ asm	stosb
 
 #if GRMODE == TGAGR
 
-unsigned char leftmask[2] = {0xff,0x0f};
-unsigned char rightmask[2] = {0xf0,0xff};
-unsigned char colorbyte[16] = {0,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
+static unsigned char leftmask[2] = {0xff,0x0f};
+static unsigned char rightmask[2] = {0xf0,0xff};
+static unsigned char colorbyte[16] = {0,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 
 //
 // could be optimized for rep stosw
@@ -967,13 +966,13 @@ done:
 /*
 ==================
 =
-= VW_MeasureString
+= VWL_MeasureString
 =
 ==================
 */
 
 #if NUMFONT+NUMFONTM>0
-void
+static void
 VWL_MeasureString (char far *string, word *width, word *height, fontstruct _seg *font)
 {
 	*height = font->height;
@@ -1395,7 +1394,7 @@ These only work in the context of the double buffered update routines
 ====================
 */
 
-void VWL_DrawCursor (void)
+static void VWL_DrawCursor (void)
 {
 	cursorspot = bufferofs + ylookup[cursory+pansy]+(cursorx+pansx)/SCREENXDIV;
 	VWL_ScreenToMem(cursorspot,cursorsave,cursorwidth,cursorheight);
@@ -1414,7 +1413,7 @@ void VWL_DrawCursor (void)
 ====================
 */
 
-void VWL_EraseCursor (void)
+static void VWL_EraseCursor (void)
 {
 	VWL_MemToScreen(cursorsave,cursorspot,cursorwidth,cursorheight);
 	VWL_MarkUpdateBlock ((cursorx+pansx)&SCREENXMASK,cursory+pansy,
@@ -1535,7 +1534,7 @@ void VW_FixRefreshBuffer (void)
 =======================
 */
 
-boolean VWL_MarkUpdateBlock (int x1, int y1, int x2, int y2)
+static boolean VWL_MarkUpdateBlock (int x1, int y1, int x2, int y2)
 {
 	int	x,y,xt1,yt1,xt2,yt2,nextline;
 	byte *mark;
