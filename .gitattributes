@@ -1,1 +1,5 @@
 * text=auto
+*.C text eol=crlf
+*.H text eol=crlf
+*.ASM text eol=crlf
+*.EQU text eol=crlf
