@@ -1319,7 +1319,7 @@ void StatusWindow(void)
 	}
 
 	RF_Refresh();
-	RFL_InitAnimList();
+	RF_InitAnimList();
 	oldbufferofs = bufferofs;
 	bufferofs = windowofs = RF_FindFreeBuffer();
 	VW_ScreenToScreen(displayofs, masterofs, 44, 224);

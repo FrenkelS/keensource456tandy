@@ -252,7 +252,6 @@ static int		hscrolledge[MAXSCROLLEDGES],vscrolledge[MAXSCROLLEDGES];
 =============================================================================
 */
 
-static void RFL_InitAnimList (void);
 void RFL_NewTile (unsigned updateoffset);
 void RFL_MaskForegroundTiles (void);
 void RFL_UpdateTiles (void);
@@ -429,7 +428,7 @@ void RF_NewMap (void)
 // clear out the lists
 //
 	RFL_InitSpriteList ();
-	RFL_InitAnimList ();
+	RF_InitAnimList ();
 	hscrollblocks = vscrollblocks = 0;	// clear scroll blocks;
 	RF_SetScrollBlockHorizontal (MAPBORDER-1);
 	RF_SetScrollBlockHorizontal (mapheight-MAPBORDER);
@@ -672,7 +671,7 @@ nextfront:
 /*
 =========================
 =
-= RFL_InitAnimList
+= RF_InitAnimList
 =
 = Call to clear out the entire animating tile list and return all of them to
 = the free list.
@@ -680,7 +679,7 @@ nextfront:
 =========================
 */
 
-static void RFL_InitAnimList (void)
+void RF_InitAnimList (void)
 {
 	int	i;
 
@@ -1733,7 +1732,7 @@ void RF_NewPosition (unsigned x, unsigned y)
 //
 // clear out all animating tiles
 //
-	RFL_InitAnimList ();
+	RF_InitAnimList ();
 
 //
 // set up the new update arrays at base position
@@ -2311,7 +2310,7 @@ void RF_NewPosition (unsigned x, unsigned y)
 //
 // clear out all animating tiles
 //
-	RFL_InitAnimList ();
+	RF_InitAnimList ();
 
 //
 // set up the new update arrays at base position
