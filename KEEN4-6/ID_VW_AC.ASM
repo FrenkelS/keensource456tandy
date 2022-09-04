@@ -977,7 +977,6 @@ USES	BP
 	mov	di,[screenspot]
 
 	mov	bx,[bufferwidth]		;calculate offsets for end of each line
-	mov	[bufferwidth],bx
 
 	or	bx,bx
 	jnz	@@isthere
