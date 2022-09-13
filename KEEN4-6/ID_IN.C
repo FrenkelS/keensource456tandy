@@ -154,13 +154,12 @@ static	Direction	DirTable[] =		// Quick lookup for total direction
 						dir_SouthWest,	dir_South,	dir_SouthEast
 					};
 
-static	void	INL_SetControlType(int,ControlType);
-
 static	void interrupt	(*OldKeyVect)(void);
 
 static	char			*ParmStrings[] = {"nojoys","nomouse",nil};
 
 //	Internal routines
+static	void	INL_SetControlType(ControlType);
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -650,7 +649,7 @@ IN_Default(boolean gotit,ControlType in)
 	|| 	((in == ctrl_Mouse) && !MousePresent)
 	)
 		in = ctrl_Keyboard1;
-	INL_SetControlType(0,in);
+	INL_SetControlType(in);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -897,10 +896,10 @@ register	KeyboardDef	*def;
 //
 ///////////////////////////////////////////////////////////////////////////
 static void
-INL_SetControlType(int player,ControlType type)
+INL_SetControlType(ControlType type)
 {
 	// DEBUG - check that requested type is present?
-	Controls[player] = type;
+	Controls[0] = type;
 }
 
 ///////////////////////////////////////////////////////////////////////////
