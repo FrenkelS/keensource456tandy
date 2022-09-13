@@ -511,16 +511,6 @@ INL_StartMouse(void)
 	return(false);
 }
 
-///////////////////////////////////////////////////////////////////////////
-//
-//	INL_ShutMouse() - Cleans up after the mouse
-//
-///////////////////////////////////////////////////////////////////////////
-static void
-INL_ShutMouse(void)
-{
-}
-
 //
 //	INL_SetJoyScale() - Sets up scaling values for the specified joystick
 //
@@ -676,7 +666,6 @@ IN_Shutdown(void)
 	if (!IN_Started)
 		return;
 
-	INL_ShutMouse();
 	for (i = 0;i < MaxJoys;i++)
 		INL_ShutJoy(i);
 	INL_ShutKbd();
