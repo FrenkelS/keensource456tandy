@@ -115,7 +115,7 @@ int			audiohandle;	// handle to AUDIOT / AUDIO
 
 SDMode		oldsoundmode;
 
-memptr		bufferseg;
+static memptr		bufferseg;
 
 
 
