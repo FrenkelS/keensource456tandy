@@ -786,7 +786,7 @@ void CheckKeys(void)
 	}
 
 //
-// pause key wierdness can't be checked as a scan code
+// pause key weirdness can't be checked as a scan code
 //
 	if (Paused)
 	{
@@ -1940,7 +1940,7 @@ void GivePoints(Uint16 points)
 ===================
 */
 
-void PollControls(void)
+static void PollControls(void)
 {
 	IN_ReadControl(0, &c);
 	if (c.yaxis != -1)
