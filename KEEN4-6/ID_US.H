@@ -47,8 +47,6 @@
 #define	MaxX	320
 #define	MaxY	200
 
-#define	MaxHelpLines	500
-
 #define	MaxHighName	57
 #define	MaxScores	8
 typedef	struct
@@ -98,15 +96,10 @@ extern	boolean		ingame,		// Set by game code if a game is in progress
 #endif
 					NoWait,
 					HighScoresDirty;
-extern	char		*abortprogram;	// Set to error msg if program is dying
 extern	GameDiff	restartgame;	// Normally gd_Continue, else starts game
 extern	word		PrintX,PrintY;	// Current printing location in the window
 extern	word		WindowX,WindowY,// Current location of window
 					WindowW,WindowH;// Current size of window
-
-extern	boolean		Button0,Button1,
-					CursorBad;
-extern	int			CursorX,CursorY;
 
 extern	void		(*USL_MeasureString)(char far *,word *,word *),
 					(*USL_DrawString)(char far *);

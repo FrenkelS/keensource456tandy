@@ -43,8 +43,6 @@
 //      abortgame - Flag set if the current game should be aborted (if a load
 //                      game fails)
 //              loadedgame - Flag set if a game was loaded
-//              abortprogram - Normally nil, this points to a terminal error message
-//                      if the program needs to abort
 //              restartgame - Normally set to gd_Continue, this is set to one of the
 //                      difficulty levels if a new game should be started
 //              PrintX, PrintY - Where the User Mgr will print (global coords)
@@ -66,7 +64,6 @@ extern  boolean         oldshooting;
 extern  ScanCode        firescan;
 
 //      Global variables
-		char            *abortprogram;
 		boolean         NoWait,
 					HighScoresDirty;
 		word            PrintX,PrintY;
@@ -78,10 +75,7 @@ extern  ScanCode        firescan;
 static  char            *ParmStrings[] = {"TEDLEVEL","NOWAIT"},
 					*ParmStrings2[] = {"COMP","NOCOMP"};
 static  boolean         US_Started;
-
-		boolean         Button0,Button1,
-					CursorBad;
-		int                     CursorX,CursorY;
+static	char            *abortprogram;	// Set to error msg if program is dying
 
 		void            (*USL_MeasureString)(char far *,word *,word *) = VW_MeasurePropString,
 					(*USL_DrawString)(char far *) = VWB_DrawPropString;
