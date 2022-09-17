@@ -265,8 +265,8 @@ void 	VW_SetLineWidth(int width);
 void 	VW_SetScreen (unsigned CRTC, unsigned pelpan);
 
 void	VW_SetScreenMode (int grmode);
-void	VW_ClearVideo ();
-void	VW_ClearVideoBottom ();
+void	VW_ClearVideo (void);
+void	VW_ClearVideoBottom (void);
 void	VW_WaitVBL (int number);
 
 void	VW_ColorBorder (int color);
