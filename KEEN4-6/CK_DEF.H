@@ -398,11 +398,8 @@ extern boolean debugok;
 extern boolean jumpbutton, jumpheld, pogobutton, pogoheld, firebutton, fireheld, upheld;
 
 
-void CheckKeys(void);
-void StatusWindow(void);
 void CenterActor(objtype *ob);
 void WorldScrollScreen(objtype *ob);
-void ScrollScreen(objtype *ob);
 void InitObjArray(void);
 void GetNewObj(boolean usedummy);
 void RemoveObj(objtype *ob);

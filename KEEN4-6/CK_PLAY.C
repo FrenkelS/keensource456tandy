@@ -70,36 +70,38 @@ boolean jumpbutton, jumpheld, pogobutton, pogoheld, firebutton, fireheld, upheld
 
 #define MAXACTORS 100
 
-Uint16 centerlevel;
+static Uint16 centerlevel;
 
-objtype objarray[MAXACTORS];
-objtype *lastobj;
-objtype *objfreelist;
+static objtype objarray[MAXACTORS];
+static objtype *lastobj;
+static objtype *objfreelist;
 
-Sint16 inactivateleft;
-Sint16 inactivateright;
-Sint16 inactivatetop;
-Sint16 inactivatebottom;
+static Sint16 inactivateleft;
+static Sint16 inactivateright;
+static Sint16 inactivatetop;
+static Sint16 inactivatebottom;
 
 #ifdef KEEN6Ev15
-Uint16 __dummy__;	// never used, but must be present to recreate the original EXE
+static Uint16 __dummy__;	// never used, but must be present to recreate the original EXE
 #endif
 
-Uint16 extravbls;
+static Uint16 extravbls;
 
 #if GRMODE == EGAGR
-Uint16 windowofs;
-Sint16 vislines;
-boolean scrollup;
+static Uint16 windowofs;
+static Sint16 vislines;
+static boolean scrollup;
 #endif
 
-boolean singlestep;
+static boolean singlestep;
 
-Sint16 oldfirecount;
+static Sint16 oldfirecount;
 
-objtype dummyobj;
+static objtype dummyobj;
 
 //===========================================================================
+
+static void StatusWindow(void)
 
 /*
 ==================
@@ -109,7 +111,7 @@ objtype dummyobj;
 ==================
 */
 
-void CountObjects(void)
+static void CountObjects(void)
 {
 	Uint16 activeobjects, inactiveobjects;
 	objtype *ob;
@@ -145,7 +147,7 @@ void CountObjects(void)
 ==================
 */
 
-void DebugMemory(void)
+static void DebugMemory(void)
 {
 	VW_FixRefreshBuffer();
 	US_CenterWindow(16, 7);
@@ -172,7 +174,7 @@ void DebugMemory(void)
 ===================
 */
 
-void TestSprites(void)
+static void TestSprites(void)
 {
 	Uint16 infox, infoy;
 	Sint16 chunk, oldchunk;
@@ -316,7 +318,7 @@ void TestSprites(void)
 ===================
 */
 
-void PicturePause(void)
+static void PicturePause(void)
 {
 	Uint16 source;
 	Sint16 y;
@@ -404,7 +406,7 @@ void PicturePause(void)
 ===================
 */
 
-void MaskOnTile(Uint16 dest, Uint16 source)
+static void MaskOnTile(Uint16 dest, Uint16 source)
 {
 	Sint16 i;
 	Uint16 _seg *sourceseg;
@@ -436,7 +438,7 @@ void MaskOnTile(Uint16 dest, Uint16 source)
 ===================
 */
 
-void WallDebug(void)
+static void WallDebug(void)
 {
 	Sint16 i, val;
 
@@ -502,7 +504,7 @@ void WallDebug(void)
 ================
 */
 
-boolean DebugKeys(void)
+static boolean DebugKeys(void)
 {
 	Sint16 level, i, esc;
 
@@ -727,7 +729,7 @@ boolean DebugKeys(void)
 ================
 */
 
-void UserCheat(void)
+static void UserCheat(void)
 {
 	Sint16 i;
 
@@ -767,7 +769,7 @@ void UserCheat(void)
 =====================
 */
 
-void CheckKeys(void)
+static void CheckKeys(void)
 {
 	if (screenfaded)			// don't do anything with a faded screen
 	{
@@ -975,7 +977,7 @@ void CheckKeys(void)
 ==================
 */
 
-void PrintNumbers(Sint16 x, Sint16 y, Sint16 maxlen, Sint16 basetile, Sint32 number)
+static void PrintNumbers(Sint16 x, Sint16 y, Sint16 maxlen, Sint16 basetile, Sint32 number)
 {
 	register Sint16 i;
 	Sint16 len;
@@ -1020,7 +1022,7 @@ void PrintNumbers(Sint16 x, Sint16 y, Sint16 maxlen, Sint16 basetile, Sint32 num
 
 #endif
 
-void DrawStatusWindow(void)
+static void DrawStatusWindow(void)
 {
 	Sint16 x, y, w, h, i;
 	Uint16 height;
@@ -1211,7 +1213,7 @@ void DrawStatusWindow(void)
 ==================
 */
 
-void ScrollStatusWindow(void)
+static void ScrollStatusWindow(void)
 {
 	Uint16 source, dest;
 	Sint16 height;
@@ -1276,7 +1278,7 @@ void ScrollStatusWindow(void)
 ==================
 */
 
-void StatusWindow(void)
+static void StatusWindow(void)
 {
 #if GRMODE == CGAGR || GRMODE == TGAGR
 
@@ -1557,7 +1559,7 @@ void WorldScrollScreen(objtype *ob)
 ==================
 */
 
-void ScrollScreen(objtype *ob)
+static void ScrollScreen(objtype *ob)
 {
 	Sint16 xscroll, yscroll, pix, speed;
 	Uint16 bottom;
