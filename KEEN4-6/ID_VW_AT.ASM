@@ -44,7 +44,6 @@ DATASEG
 
 plotpixels	db	11110000b,00001111b
 colorbyte	db	0,11h,22h,33h,44h,55h,66h,77h,88h,99h,0aah,0bbh,0cch,0ddh,0eeh,0ffh
-colorword	dw	0,1111h,2222h,3333h,4444h,5555h,6666h,7777h,8888h,9999h,0aaaah,0bbbbh,0cccch,0ddddh,0eeeeh,0ffffh
 
 CODESEG
 
@@ -89,8 +88,6 @@ USES	SI,DI
 	mov [es:di],al
 	add	di,dx
 	loop	@@plot
-
-	ret
 
 	ret
 
@@ -1123,8 +1120,7 @@ PROC	VWL_XORBuffer	NEAR
 USES	BP
 	mov	bl,[fontcolor]
 	xor	bh,bh
-	shl	bx,1
-	mov	ax,[colorword+bx]
+	mov	ax,[word colorbyte+bx]
 	mov	[fontcolormask],ax
 
 	mov	es,[screenseg]
@@ -1166,7 +1162,7 @@ ENDM
 @@lineloop:
 	mov	cx,dx
 @@byteloop:
-	lodsb						;get a word from the buffer
+	lodsb						;get a byte from the buffer
 	and	ax,bp
 	xor	[es:di],al				;draw it
 	inc	di
