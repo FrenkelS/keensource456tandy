@@ -1067,8 +1067,6 @@ charwidth	=	514		;every character's width in pixels
 propchar	dw	?			; the character number to shift
 stringptr	dw	?,?
 
-fontcolormask	dw	?			; font color expands into this
-
 BUFFWIDTH	=	105
 BUFFHEIGHT	=   32			; must be twice as high as font for masked fonts
 
@@ -1120,8 +1118,7 @@ PROC	VWL_XORBuffer	NEAR
 USES	BP
 	mov	bl,[fontcolor]
 	xor	bh,bh
-	mov	ax,[word colorbyte+bx]
-	mov	[fontcolormask],ax
+	mov	dl,[colorbyte+bx]
 
 	mov	es,[screenseg]
 	mov	di,[screenspot]
@@ -1155,15 +1152,14 @@ ENDM
 	mov	ax,BUFFWIDTH
 	sub	ax,bx
 	mov	[bufferextra],ax
-	mov	dx,bx
+	mov	bp,bx
 
 	mov	bx,[bufferheight]		;lines to copy
-	mov	bp,[fontcolormask]
 @@lineloop:
-	mov	cx,dx
+	mov	cx,bp
 @@byteloop:
 	lodsb						;get a byte from the buffer
-	and	ax,bp
+	and	al,dl
 	xor	[es:di],al				;draw it
 	inc	di
 	loop	@@byteloop
