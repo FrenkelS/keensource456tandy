@@ -101,7 +101,7 @@ static objtype dummyobj;
 
 //===========================================================================
 
-static void StatusWindow(void)
+static void StatusWindow(void);
 
 /*
 ==================
