@@ -240,6 +240,8 @@ void VW_ColorBorder (int color)
 	_BH=color;
 	geninterrupt (0x10);
 	bordercolor = color;
+
+	VW_ClearVideoBottom();
 }
 
 void VW_SetDefaultColors(void)
@@ -458,10 +460,18 @@ asm	rep stosw;
 ==========================
 */
 
+#if GRMODE == CGAGR || GRMODE == EGAGR
+
 void VW_ClearVideoBottom (void)
 {
-#if GRMODE == TGAGR
+}
 
+#elif GRMODE == TGAGR
+
+static int clearcolor[16]={0,0x1111,0x2222,0x3333,0x4444,0x5555,0x6666,0x7777,0x8888,0x9999,0xaaaa,0xbbbb,0xcccc,0xdddd,0xeeee,0xffff};
+
+void VW_ClearVideoBottom (void)
+{
 #ifndef MCGA
 
 asm	mov	ax,0xb800+(SCREENTILESHIGH*16)/4*160/0x10
@@ -469,7 +479,9 @@ asm	mov	es,ax
 
 asm	xor	di,di
 
-asm	xor	ax,ax
+asm	mov	bx,[bordercolor]
+asm	shl	bx,1
+asm	mov	ax,WORD PTR clearcolor[bx]
 asm	mov	bx,(200-SCREENTILESHIGH*16)/4	// group of 4 scan lines to clear
 asm	mov	dx,80							// words accross screen
 clearfourlines:
@@ -496,16 +508,15 @@ asm	mov	es,ax
 
 asm	xor	di,di
 
-asm	xor	ax,ax
+asm	mov	bx,[bordercolor]
+asm	shl	bx,1
+asm	mov	ax,WORD PTR clearcolor[bx]
 asm	mov	cx,(200-SCREENTILESHIGH*16)*320/2
 asm	rep	stosw
 
 #endif
-
-asm	mov	ax,ss
-asm	mov	es,ax
-#endif
 }
+#endif
 
 //===========================================================================
 
