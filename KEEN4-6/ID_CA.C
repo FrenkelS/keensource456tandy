@@ -1397,11 +1397,6 @@ void CA_SetAllPurge (void)
 	CA_ClearMarks ();
 
 //
-// free cursor sprite and background save
-//
-	VW_FreeCursor ();
-
-//
 // free map headers and map planes
 //
 	for (i=0;i<NUMMAPS;i++)

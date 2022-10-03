@@ -323,14 +323,6 @@ void VW_TGABottomUpdate (void);
 #endif
 
 //
-// cursor
-//
-
-void VW_ShowCursor (void);
-void VW_HideCursor (void);
-void VW_FreeCursor (void);
-
-//
 // mode independant routines
 // coordinates in pixels, rounded to best screen res
 // regions marked in double buffer

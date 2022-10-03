@@ -952,51 +952,6 @@ ENDP
 
 ;===========================================================================
 ;
-; VWL_ScreenToMem
-;
-; Copies a block of video memory to main memory, in order from planes 0-3.
-; This could be optimized along the lines of VWL_MemToScreen to take advantage
-; of word copies, but this is an infrequently called routine.
-;
-; DONE
-;
-;===========================================================================
-
-PROC	VWL_ScreenToMem	source:WORD, dest:WORD, wide:WORD, height:WORD
-PUBLIC	VWL_ScreenToMem
-USES	SI,DI
-
-	mov	es,[dest]
-
-	mov	bx,[linewidth]
-	sub	bx,[wide]
-
-	mov	ds,[screenseg]
-
-	xor	di,di
-
-	mov	si,[source]
-	mov	dx,[height]				;scan lines to draw
-
-@@lineloop:
-	mov	cx,[wide]
-	rep	movsb
-
-	add	si,bx
-
-	dec	dx
-	jnz	@@lineloop
-
-	mov	ax,ss
-	mov	ds,ax					;restore turbo's data segment
-
-	ret
-
-ENDP
-
-
-;===========================================================================
-;
 ;                    MISC TGA ROUTINES
 ;
 ;===========================================================================

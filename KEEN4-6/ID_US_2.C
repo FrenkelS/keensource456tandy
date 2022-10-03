@@ -650,15 +650,12 @@ USL_HandleError(int num)
 	else
 		strcat(buf,sys_errlist[num]);
 
-	VW_HideCursor();
-
 	USL_CtlDialog(buf,"PRESS ANY KEY",nil);
 	VW_UpdateScreen();
 
 	IN_ClearKeysDown();
 	IN_Ack();
 
-	VW_ShowCursor();
 	VW_UpdateScreen();
 }
 

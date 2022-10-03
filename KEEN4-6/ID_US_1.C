@@ -1021,8 +1021,6 @@ US_LineInput(int x,int y,char *buf,char *def,boolean escok,
 				len;
 	longword        lasttime;
 
-	VW_HideCursor();
-
 	if (def)
 		strcpy(s,def);
 	else
@@ -1182,7 +1180,6 @@ US_LineInput(int x,int y,char *buf,char *def,boolean escok,
 		py = y;
 		USL_DrawString(olds);
 	}
-	VW_ShowCursor();
 	VW_UpdateScreen();
 
 	IN_ClearKeysDown();

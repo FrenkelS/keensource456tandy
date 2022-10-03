@@ -78,22 +78,14 @@ boolean			nopan;
 =============================================================================
 */
 
-void	VWL_MeasureString (char far *string, word *width, word *height,
+static void	VWL_MeasureString (char far *string, word *width, word *height,
 		fontstruct _seg *font);
-void 	VWL_DrawCursor (void);
-void 	VWL_EraseCursor (void);
-boolean	VWL_MarkUpdateBlock (int x1, int y1, int x2, int y2);
+static boolean	VWL_MarkUpdateBlock (int x1, int y1, int x2, int y2);
 void	VWL_Vlin(unsigned yl, unsigned yh, unsigned x, unsigned color);
 void	VWL_DrawTile8(unsigned x, unsigned y, unsigned tile);
 void	VWL_MemToScreen(memptr source,unsigned dest,unsigned width,unsigned height);
-void	VWL_ScreenToMem(unsigned source,memptr dest,unsigned width,unsigned height);
 void	VWL_DrawPropString (char far *string);
 void	VWL_UpdateScreenBlocks (void);
-
-static	int			cursorvisible;
-static	int			cursornumber,cursorwidth,cursorheight,cursorx,cursory;
-static	memptr		cursorsave;
-static	unsigned	cursorspot;
 
 //===========================================================================
 
@@ -131,8 +123,6 @@ void	VW_Startup (void)
 #elif GRMODE == CGAGR || GRMODE == TGAGR
 	MM_GetPtr (&(memptr)screenseg,0x10000l);	// grab 64k for floating screen
 #endif
-
-	cursorvisible = 0;
 }
 
 //===========================================================================
@@ -1387,111 +1377,6 @@ asm	rep	stosw
 /*
 =============================================================================
 
-					   CURSOR ROUTINES
-
-These only work in the context of the double buffered update routines
-
-=============================================================================
-*/
-
-/*
-====================
-=
-= VWL_DrawCursor
-=
-= Background saves, then draws the cursor at cursorspot
-=
-====================
-*/
-
-static void VWL_DrawCursor (void)
-{
-	cursorspot = bufferofs + ylookup[cursory+pansy]+(cursorx+pansx)/SCREENXDIV;
-	VWL_ScreenToMem(cursorspot,cursorsave,cursorwidth,cursorheight);
-	VWB_DrawSprite(cursorx,cursory,cursornumber);
-}
-
-
-//==========================================================================
-
-
-/*
-====================
-=
-= VWL_EraseCursor
-=
-====================
-*/
-
-static void VWL_EraseCursor (void)
-{
-	VWL_MemToScreen(cursorsave,cursorspot,cursorwidth,cursorheight);
-	VWL_MarkUpdateBlock ((cursorx+pansx)&SCREENXMASK,cursory+pansy,
-		( (cursorx+pansx)&SCREENXMASK)+cursorwidth*SCREENXDIV-1,
-		cursory+pansy+cursorheight-1);
-}
-
-
-//==========================================================================
-
-
-/*
-====================
-=
-= VW_ShowCursor
-=
-====================
-*/
-
-void VW_ShowCursor (void)
-{
-	cursorvisible++;
-}
-
-
-//==========================================================================
-
-/*
-====================
-=
-= VW_HideCursor
-=
-====================
-*/
-
-void VW_HideCursor (void)
-{
-	cursorvisible--;
-}
-
-//==========================================================================
-
-/*
-====================
-=
-= VW_FreeCursor
-=
-= Frees the memory used by the cursor and its background save
-=
-====================
-*/
-
-void VW_FreeCursor (void)
-{
-	if (cursornumber)
-	{
-		MM_SetLock (&grsegs[cursornumber],false);
-		MM_SetPurge (&grsegs[cursornumber],true);
-		MM_SetLock (&cursorsave,false);
-		MM_FreePtr (&cursorsave);
-		cursornumber = 0;
-	}
-}
-
-
-/*
-=============================================================================
-
 				Double buffer management routines
 
 =============================================================================
@@ -1595,16 +1480,13 @@ static boolean VWL_MarkUpdateBlock (int x1, int y1, int x2, int y2)
 =
 = VW_UpdateScreen
 =
-= Updates any changed areas of the double buffer and displays the cursor
+= Updates any changed areas of the double buffer
 =
 ===========================
 */
 
 void VW_UpdateScreen (void)
 {
-	if (cursorvisible>0)
-		VWL_DrawCursor();
-
 #if GRMODE == EGAGR
 	VWL_UpdateScreenBlocks();
 #endif
@@ -1614,9 +1496,6 @@ void VW_UpdateScreen (void)
 #if GRMODE == TGAGR
 	VW_TGAFullUpdate();
 #endif
-
-	if (cursorvisible>0)
-		VWL_EraseCursor();
 }
 
 
