@@ -868,6 +868,7 @@ charwidth	=	514		;every character's width in pixels
 propchar	dw	?			; the character number to shift
 stringptr	dw	?,?
 
+
 BUFFWIDTH	=	100
 BUFFHEIGHT	=   32			; must be twice as high as font for masked fonts
 
@@ -878,12 +879,13 @@ bufferheight dw	?						; number of lines currently used
 
 bufferbyte	dw	?
 bufferbit	dw	?
-PUBLIC	bufferwidth,bufferheight,bufferbyte,bufferbit
 
 screenspot	dw	?						; where the buffer is going
 
 bufferextra	dw	?						; add at end of a line copy
 screenextra	dw	?
+
+PUBLIC	bufferwidth,bufferheight
 
 CODESEG
 
