@@ -458,7 +458,7 @@ void VW_ClearVideoBottom (void)
 
 #elif GRMODE == TGAGR
 
-static int clearcolor[16]={0,0x1111,0x2222,0x3333,0x4444,0x5555,0x6666,0x7777,0x8888,0x9999,0xaaaa,0xbbbb,0xcccc,0xdddd,0xeeee,0xffff};
+static byte clearcolor[16]={0,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 
 void VW_ClearVideoBottom (void)
 {
@@ -470,8 +470,8 @@ asm	mov	es,ax
 asm	xor	di,di
 
 asm	mov	bx,[bordercolor]
-asm	shl	bx,1
-asm	mov	ax,WORD PTR clearcolor[bx]
+asm	mov	al,clearcolor[bx]
+asm	mov	ah,al
 asm	mov	bx,(200-SCREENTILESHIGH*16)/4	// group of 4 scan lines to clear
 asm	mov	dx,80							// words accross screen
 clearfourlines:
