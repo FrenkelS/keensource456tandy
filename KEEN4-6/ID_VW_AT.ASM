@@ -45,6 +45,8 @@ DATASEG
 plotpixels	db	11110000b,00001111b
 colorbyte	db	0,11h,22h,33h,44h,55h,66h,77h,88h,99h,0aah,0bbh,0cch,0ddh,0eeh,0ffh
 
+PUBLIC colorbyte
+
 CODESEG
 
 ;============================================================================

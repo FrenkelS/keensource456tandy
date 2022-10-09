@@ -458,8 +458,6 @@ void VW_ClearVideoBottom (void)
 
 #elif GRMODE == TGAGR
 
-static byte clearcolor[16]={0,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
-
 void VW_ClearVideoBottom (void)
 {
 #ifndef MCGA
@@ -470,7 +468,7 @@ asm	mov	es,ax
 asm	xor	di,di
 
 asm	mov	bx,[bordercolor]
-asm	mov	al,clearcolor[bx]
+asm	mov	al,colorbyte[bx]
 asm	mov	ah,al
 asm	mov	bx,(200-SCREENTILESHIGH*16)/4	// group of 4 scan lines to clear
 asm	mov	dx,80							// words accross screen
@@ -758,7 +756,6 @@ asm	stosb
 
 static unsigned char leftmask[2] = {0xff,0x0f};
 static unsigned char rightmask[2] = {0xf0,0xff};
-static unsigned char colorbyte[16] = {0,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 
 //
 // could be optimized for rep stosw
