@@ -242,7 +242,7 @@ extern	boolean			nopan;
 //
 
 extern	unsigned	*shifttabletable[8];
-extern	unsigned	bufferwidth,bufferheight,screenspot;	// used by font drawing stuff
+extern	unsigned	bufferwidth,bufferheight;	// used by font drawing stuff
 
 #if GRMODE == TGAGR
 extern	unsigned char	colorbyte[16];

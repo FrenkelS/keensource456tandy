@@ -1086,7 +1086,7 @@ screenspot	dw	?						; where the buffer is going
 bufferextra	dw	?						; add at end of a line copy
 screenextra	dw	?
 
-PUBLIC	bufferwidth,bufferheight,screenspot
+PUBLIC	bufferwidth,bufferheight
 
 CODESEG
 
