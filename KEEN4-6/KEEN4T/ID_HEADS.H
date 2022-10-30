@@ -65,7 +65,7 @@ extern	char far introscn;
 
 #define GREXT	"TGA"
 
-//#define MCGA
+#define TANDY
 
 //#define PROFILE
 

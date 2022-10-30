@@ -166,11 +166,11 @@ void VW_SetScreenMode (int grmode)
 		  geninterrupt (0x10);		// screenseg is actually a main mem buffer
 		  break;
 #elif GRMODE == TGAGR
-#ifndef MCGA
+#if defined TANDY
 	  case TGAGR: _AX = 9;
 		  geninterrupt (0x10);		// screenseg is actually a main mem buffer
 		  break;
-#else
+#elif defined MCGA
 	  case TGAGR: _AX = 0x13;
 		  geninterrupt (0x10);
 		  VW_SetDefaultColors();
@@ -195,13 +195,13 @@ void VW_SetScreenMode (int grmode)
 */
 
 #if GRMODE == EGAGR || GRMODE == TGAGR
-#ifndef MCGA
+#if GRMODE == EGAGR || defined TANDY
 char colors[4][17]=
 {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
  {0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,0},
  {0,0,0,0,0,0,0,0,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0},
  {0,1,2,3,4,5,6,7,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0}};
-#else
+#elif defined MCGA
 static char palette[3*16]=
 {0x00, 0x00, 0x00,
  0x00, 0x00, 0x2a,
@@ -237,13 +237,13 @@ void VW_ColorBorder (int color)
 void VW_SetDefaultColors(void)
 {
 #if GRMODE == EGAGR || GRMODE == TGAGR
-#ifndef MCGA
+#if GRMODE == EGAGR || defined TANDY
 	colors[3][16] = bordercolor;
 	_ES=FP_SEG(&colors[3]);
 	_DX=FP_OFF(&colors[3]);
 	_AX=0x1002;
 	geninterrupt(0x10);
-#else
+#elif defined MCGA
 	int i,j;
 
 	outportb(0x3c8, 0);
@@ -276,7 +276,7 @@ void VW_FadeOut(void)
 	}
 	screenfaded = true;
 #elif GRMODE == TGAGR
-#ifndef MCGA
+#if defined TANDY
 	int i,j;
 	
 	for (i=3;i>=0;i--)
@@ -289,7 +289,7 @@ void VW_FadeOut(void)
 		VW_WaitVBL(3);
 	}
 	screenfaded = true;
-#else
+#elif defined MCGA
 	int i,j,k;
 
 	for (k=0;k<24*3;k+=3)
@@ -329,7 +329,7 @@ void VW_FadeIn(void)
 	}
 	screenfaded = false;
 #elif GRMODE == TGAGR
-#ifndef MCGA
+#if defined TANDY
 	int i,j;
 	
 	for (i=0;i<4;i++)
@@ -342,7 +342,7 @@ void VW_FadeIn(void)
 		VW_WaitVBL(3);
 	}
 	screenfaded = false;
-#else
+#elif defined MCGA
 	int i,j,k;
 
 	for (k=0;k<24*3;k+=3)
@@ -460,7 +460,7 @@ void VW_ClearVideoBottom (void)
 
 void VW_ClearVideoBottom (void)
 {
-#ifndef MCGA
+#if defined TANDY
 
 asm	mov	ax,0xb800+(SCREENTILESHIGH*16)/4*160/0x10
 asm	mov	es,ax
@@ -489,7 +489,7 @@ asm	sub	di,0x6000						// go to the first bank
 asm	dec	bx
 asm	jnz	clearfourlines
 
-#else
+#elif defined MCGA
 
 asm	mov	ax,0xa000+(SCREENTILESHIGH*16)*320/0x10
 asm	mov	es,ax
@@ -497,8 +497,8 @@ asm	mov	es,ax
 asm	xor	di,di
 
 asm	mov	bx,[bordercolor]
-asm	shl	bx,1
-asm	mov	ax,WORD PTR clearcolor[bx]
+asm	mov	al,colorbyte[bx]
+asm	mov	ah,al
 asm	mov	cx,(200-SCREENTILESHIGH*16)*320/2
 asm	rep	stosw
 
@@ -1008,7 +1008,7 @@ void VW_TGAFullUpdate (void)
 {
 	displayofs = bufferofs+panadjust;
 
-#ifndef MCGA
+#if defined TANDY
 
 asm	mov	ax,0xb800
 asm	mov	es,ax
@@ -1083,7 +1083,7 @@ asm	sub	di,0x6000			// go to the first bank
 asm	dec	bx
 asm	jnz	copyfourlines
 
-#else
+#elif defined MCGA
 
 asm	mov	ax,0xa000
 asm	mov	es,ax
@@ -1152,7 +1152,7 @@ void VW_TGABottomUpdate (void)
 {
 	displayofs = bufferofs+panadjust+(SCREENTILESHIGH*16)*SCREENWIDTH;
 
-#ifndef MCGA
+#if defined TANDY
 
 asm	mov	ax,0xb800+(SCREENTILESHIGH*16)/4*160/0x10
 asm	mov	es,ax
@@ -1227,7 +1227,7 @@ asm	sub	di,0x6000			// go to the first bank
 asm	dec	bx
 asm	jnz	copyfourlines
 
-#else
+#elif defined MCGA
 
 asm	mov	ax,0xa000+(SCREENTILESHIGH*16)*320/0x10
 asm	mov	es,ax
