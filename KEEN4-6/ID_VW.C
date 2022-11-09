@@ -100,11 +100,16 @@ void	VWL_UpdateScreenBlocks (void);
 
 #if GRMODE == EGAGR
 static	char *ParmStrings[] = {"NOPAN",""};
+#elif GRMODE == TGAGR && defined TANDY
+static	char *ParmStrings[] = {"HIDDENCARD",""};
 #endif
 
 void	VW_Startup (void)
 {
 	int i;
+#if GRMODE == TGAGR && defined TANDY
+	boolean hiddencard = false;
+#endif
 
 	asm	cld;				// all string instructions assume forward
 
@@ -116,12 +121,33 @@ void	VW_Startup (void)
 			nopan = true;
 		}
 	}
+#elif GRMODE == TGAGR && defined TANDY
+	for (i = 1;i < _argc;i++)
+	{
+		if (US_CheckParm(_argv[i],ParmStrings) == 0)
+		{
+			hiddencard = true;
+		}
+	}
 #endif
 
 #if GRMODE == EGAGR
 	EGAWRITEMODE(0);
 #elif GRMODE == CGAGR || GRMODE == TGAGR
 	MM_GetPtr (&(memptr)screenseg,0x10000l);	// grab 64k for floating screen
+#if defined TANDY
+	if (peekb(0xF000, 0xFFFE) == (char)((unsigned char)0xFF) && peekb(0xFC00, 0) == 0x21)
+	{
+		// Tandy 1000 detected
+		if (!hiddencard)
+		{
+			int protectedMemory = peek(0x40, 0x15) - peek(0x40, 0x13);
+			if (0 < protectedMemory && protectedMemory < 32)
+				Quit ("Improper video card!  If you really have 32k of video memory that I am not\n"
+					  "detecting, use the -HIDDENCARD command line parameter!");
+		}
+	}
+#endif
 #endif
 }
 
@@ -450,16 +476,9 @@ asm	rep stosw;
 ==========================
 */
 
-#if GRMODE == CGAGR || GRMODE == EGAGR
-
 void VW_ClearVideoBottom (void)
 {
-}
-
-#elif GRMODE == TGAGR
-
-void VW_ClearVideoBottom (void)
-{
+#if GRMODE == TGAGR
 #if defined TANDY
 
 asm	mov	ax,0xb800+(SCREENTILESHIGH*16)/4*160/0x10
@@ -503,8 +522,8 @@ asm	mov	cx,(200-SCREENTILESHIGH*16)*320/2
 asm	rep	stosw
 
 #endif
-}
 #endif
+}
 
 //===========================================================================
 
