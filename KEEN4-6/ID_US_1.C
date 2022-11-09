@@ -282,7 +282,7 @@ rcfailed:
 		sd = sdm_Off;
 		sm = smm_Off;
 		ctl = ctrl_Keyboard;
-		showscorebox = true;
+		showscorebox = false;
 		oldshooting = false;
 		gotit = false;
 		HighScoresDirty = true;

@@ -5,7 +5,8 @@ It includes Tandy music.
 If the graphics are corrupted, you probably need to run `ADJMEM -16` before running this game.
 It needs 32k of video memory.
 
-Pressing Backspace disables the score box. This speeds up the game.
+The score box is disabled by default. The game runs faster this way.
+Pressing Backspace enables the score box.
 
 If you can create executables that are byte for byte 100% identical
 to the Keen 4 v1.4 EGA and CGA executables with K1n9_Duk3's reconstructed Commander Keen 4-6 source code, you can probably also compile this code.
