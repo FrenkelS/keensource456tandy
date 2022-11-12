@@ -136,15 +136,20 @@ void	VW_Startup (void)
 #elif GRMODE == CGAGR || GRMODE == TGAGR
 	MM_GetPtr (&(memptr)screenseg,0x10000l);	// grab 64k for floating screen
 #if defined TANDY
-	if (peekb(0xF000, 0xFFFE) == (char)((unsigned char)0xFF) && peekb(0xFC00, 0) == 0x21)
+	if (!hiddencard)
 	{
-		// Tandy 1000 detected
-		if (!hiddencard)
+		if (peekb(0xF000, 0xFFFE) == (char)((unsigned char)0xFF) && peekb(0xFC00, 0) == 0x21)
 		{
-			int protectedMemory = peek(0x40, 0x15) - peek(0x40, 0x13);
-			if (0 < protectedMemory && protectedMemory < 32)
-				Quit ("Improper video card!  If you really have 32k of video memory that I am not\n"
-					  "detecting, use the -HIDDENCARD command line parameter!");
+			// Tandy 1000 detected
+			int videoMemory = peek(0x40, 0x15) - peek(0x40, 0x13);
+			if (0 < videoMemory && videoMemory < 32)
+			{
+				char str[160];
+				sprintf(str, "Improper video card! Detected %dk of video memory.\n"
+							 "If you really have 32k of video memory that I am not detecting,\n"
+							 "use the -HIDDENCARD command line parameter!", videoMemory);
+				Quit (str);
+			}
 		}
 	}
 #endif
