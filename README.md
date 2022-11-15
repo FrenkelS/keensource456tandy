@@ -5,6 +5,7 @@ This is a Tandy 320x200 16 color version of Commander Keen 4.
 It includes Tandy music.
 There's also a version for MCGA with smooth palette fading.
 And EGA and CGA versions that feature the same Tandy music.
+The EGA version also has smooth palette fading when a VGA card is detected.
 
 If the graphics get corrupted in the Tandy version while playing one or two levels, like in [this video](https://youtu.be/zyuhOdDRiHk?t=6211),
 you don't have enough video memory allocated. This version of the game needs 32k of video memory.

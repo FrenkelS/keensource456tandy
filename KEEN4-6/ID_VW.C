@@ -46,6 +46,12 @@
 =============================================================================
 */
 
+#if GRMODE == EGAGR
+typedef enum {NOcard,MDAcard,CGAcard,EGAcard,MCGAcard,VGAcard,
+			  HGCcard=0x80,HGCPcard,HICcard} cardtype;
+cardtype	videocard;		// set by VW_Startup
+#endif
+
 unsigned	bufferofs;		// hidden area to draw to before displaying
 unsigned	displayofs;		// origin of the visable screen
 unsigned	pansx,pansy;	// panning adjustments inside port in screen
@@ -89,6 +95,17 @@ void	VWL_UpdateScreenBlocks (void);
 
 //===========================================================================
 
+#if GRMODE == EGAGR
+static cardtype VWL_VideoID (void)
+{
+	_AX=0x1a00;
+	geninterrupt(0x10);
+	if (_AL == 0x1a)
+		return VGAcard;
+	else
+		return EGAcard;
+}
+#endif
 
 /*
 =======================
@@ -121,6 +138,8 @@ void	VW_Startup (void)
 			nopan = true;
 		}
 	}
+
+	videocard = VWL_VideoID ();
 #elif GRMODE == TGAGR && defined TANDY
 	for (i = 1;i < _argc;i++)
 	{
@@ -225,14 +244,15 @@ void VW_SetScreenMode (int grmode)
 =============================================================================
 */
 
-#if GRMODE == EGAGR || GRMODE == TGAGR
-#if GRMODE == EGAGR || defined TANDY
+#if GRMODE == EGAGR || (GRMODE == TGAGR && defined TANDY)
 char colors[4][17]=
 {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
  {0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,0},
  {0,0,0,0,0,0,0,0,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0},
  {0,1,2,3,4,5,6,7,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0}};
-#elif defined MCGA
+#endif
+
+#if GRMODE == EGAGR || (GRMODE == TGAGR && defined MCGA)
 static char palette[3*16]=
 {0x00, 0x00, 0x00,
  0x00, 0x00, 0x2a,
@@ -250,7 +270,6 @@ static char palette[3*16]=
  0x3f, 0x15, 0x3f,
  0x3f, 0x3f, 0x15,
  0x3f, 0x3f, 0x3f};
-#endif
 #endif
 
 
@@ -274,6 +293,23 @@ void VW_SetDefaultColors(void)
 	_DX=FP_OFF(&colors[3]);
 	_AX=0x1002;
 	geninterrupt(0x10);
+#if GRMODE == EGAGR
+	if (videocard == VGAcard)
+	{
+		int i;
+
+		outportb(0x3c8, 0);
+		for (i=0;i<3*8;i++)
+		{
+			outportb(0x3c9, palette[i]);
+		}
+		outportb(0x3c8, 0x18);
+		for (i=3*8;i<3*16;i++)
+		{
+			outportb(0x3c9, palette[i]);
+		}
+	}
+#endif
 #elif defined MCGA
 	int i,j;
 
@@ -294,16 +330,44 @@ void VW_SetDefaultColors(void)
 void VW_FadeOut(void)
 {
 #if GRMODE == EGAGR
-	int i;
-
-	for (i=3;i>=0;i--)
+	if (videocard == VGAcard)
 	{
-	  colors[i][16] = bordercolor;
-	  _ES=FP_SEG(&colors[i]);
-	  _DX=FP_OFF(&colors[i]);
-	  _AX=0x1002;
-	  geninterrupt(0x10);
-	  VW_WaitVBL(6);
+		int i,j,k;
+
+		for (k=0;k<24*3;k+=3)
+		{
+			outportb(0x3c8, 0);
+			for (i=0;i<3*8;i++)
+			{
+				int c = palette[i] - k;
+				if (c < 0)
+					c = 0;
+				outportb(0x3c9, c);
+			}
+			outportb(0x3c8, 0x18);
+			for (i=3*8;i<3*16;i++)
+			{
+				int c = palette[i] - k;
+				if (c < 0)
+					c = 0;
+				outportb(0x3c9, c);
+			}
+			VW_WaitVBL(1);
+		}
+	}
+	else
+	{
+		int i;
+
+		for (i=3;i>=0;i--)
+		{
+			colors[i][16] = bordercolor;
+			_ES=FP_SEG(&colors[i]);
+			_DX=FP_OFF(&colors[i]);
+			_AX=0x1002;
+			geninterrupt(0x10);
+			VW_WaitVBL(6);
+		}
 	}
 	screenfaded = true;
 #elif GRMODE == TGAGR
@@ -347,16 +411,44 @@ void VW_FadeOut(void)
 void VW_FadeIn(void)
 {
 #if GRMODE == EGAGR
-	int i;
-
-	for (i=0;i<4;i++)
+	if (videocard == VGAcard)
 	{
-	  colors[i][16] = bordercolor;
-	  _ES=FP_SEG(&colors[i]);
-	  _DX=FP_OFF(&colors[i]);
-	  _AX=0x1002;
-	  geninterrupt(0x10);
-	  VW_WaitVBL(6);
+		int i,j,k;
+
+		for (k=0;k<24*3;k+=3)
+		{
+			outportb(0x3c8, 0);
+			for (i=0;i<3*8;i++)
+			{
+				int c = k;
+				if (c > palette[i])
+					c = palette[i];
+				outportb(0x3c9, c);
+			}
+			outportb(0x3c8, 0x18);
+			for (i=3*8;i<3*16;i++)
+			{
+				int c = k;
+				if (c > palette[i])
+					c = palette[i];
+				outportb(0x3c9, c);
+			}
+			VW_WaitVBL(1);
+		}
+	}
+	else
+	{
+		int i;
+
+		for (i=0;i<4;i++)
+		{
+			colors[i][16] = bordercolor;
+			_ES=FP_SEG(&colors[i]);
+			_DX=FP_OFF(&colors[i]);
+			_AX=0x1002;
+			geninterrupt(0x10);
+			VW_WaitVBL(6);
+		}
 	}
 	screenfaded = false;
 #elif GRMODE == TGAGR
