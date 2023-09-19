@@ -1,5 +1,5 @@
 /* Commander Keen 4 Tandy Version Source Code
- * Copyright (C) 2021-2022 Frenkel Smeijers
+ * Copyright (C) 2021-2023 Frenkel Smeijers
  *
  * This file is primarily based on:
  * Reconstructed Commander Keen 4-6 Source Code
@@ -145,7 +145,7 @@ static int 			mmfree, mmrover;
 
 static boolean		bombonerror;
 
-static unsigned	totalEMSpages,freeEMSpages,EMSpageframe,EMSpagesmapped,EMShandle;
+static unsigned	EMSpageframe,EMSpagesmapped,EMShandle;
 
 static void		(* XMSaddr) (void);		// far pointer to XMS driver
 
@@ -231,7 +231,7 @@ static void MML_SetupEMS (void)
 	char	str[80],str2[10];
 	unsigned	error;
 
-	totalEMSpages = freeEMSpages = EMSpageframe = EMSpagesmapped = 0;
+	EMSpageframe = EMSpagesmapped = 0;
 
 asm {
 	mov	ah,EMS_STATUS
@@ -256,8 +256,6 @@ asm {
 	int	EMS_INT						// find out how much EMS is there
 	or	ah,ah
 	jnz	error
-	mov	[totalEMSpages],dx
-	mov	[freeEMSpages],bx
 	or	bx,bx
 	jz	noEMS						// no EMS at all to allocate
 
