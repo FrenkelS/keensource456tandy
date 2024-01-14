@@ -1,4 +1,6 @@
 # Commander Keen 4 Tandy 320x200 16 color source code port
+![Commander Keen 4 Tandy 320x200 16 color source code port](keen4t.png?raw=true)
+
 Download the game [here](https://github.com/FrenkelS/keensource456tandy/releases).
 
 This is a Tandy 320x200 16 color version of Commander Keen 4.
